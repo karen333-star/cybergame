@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberGame - Registro</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        function validarContraseña(password) {
+            const regex = /^(?=.*[A-Z])(?=.*\d).{7,}$/;
+            return regex.test(password);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('password');
+            const confirmInput = document.getElementById('confirm_password');
+            const registerForm = document.getElementById('registerForm');
+
+            passwordInput.addEventListener('input', function() {
+                const mensaje = document.getElementById('passwordHelp');
+                if (this.value && !validarContraseña(this.value)) {
+                    mensaje.textContent = '❌ Mínimo 7 caracteres, 1 mayúscula y 1 número';
+                    mensaje.style.color = '#ff6b6b';
+                } else if (this.value) {
+                    mensaje.textContent = '✓ Contraseña válida';
+                    mensaje.style.color = '#51cf66';
+                }
+            });
+
+            registerForm.addEventListener('submit', function(e) {
+                if (passwordInput.value !== confirmInput.value) {
+                    e.preventDefault();
+                    alert('Las contraseñas no coinciden');
+                    return;
+                }
+
+                if (!validarContraseña(passwordInput.value)) {
+                    e.preventDefault();
+                    alert('La contraseña debe tener mínimo 7 caracteres, 1 mayúscula y 1 número');
+                    return;
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1 id="main-title">🛡️ CyberGame</h1>
+        
+        <div class="card">
+            <h2>Crear Cuenta</h2>
+            
+            <form id="registerForm" method="POST" action="register.php">
+                <div class="form-group">
+                    <label for="email">Correo Electrónico:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="nombre_usuario">Nombre de Usuario:</label>
+                    <input type="text" id="nombre_usuario" name="nombre_usuario" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Contraseña:</label>
+                    <input type="password" id="password" name="password" required>
+                    <small id="passwordHelp" style="display: block; margin-top: 5px;"></small>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm_password">Confirmar Contraseña:</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required>
+                </div>
+
+                <button type="submit" class="btn">Registrarse</button>
+            </form>
+
+            <p class="toggle-text">
+                ¿Ya tienes cuenta? <a href="login.html">Inicia sesión aquí</a>
+            </p>
+        </div>
+
+        <!-- Mostrar errores si existen -->
+        <?php
+        if (isset($_GET['error'])) {
+            echo '<div style="color: #ff6b6b; text-align: center; margin-top: 20px;">' . htmlspecialchars($_GET['error']) . '</div>';
+        }
+        ?>
+    </div>
+</body>
+</html>

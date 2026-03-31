@@ -17,7 +17,7 @@
 
         <form id="formLogin" action="index.php" method="post">
             <input type="hidden" name="accion" value="login">
-            <input type="email" name="correo" required placeholder="Correo electrónico">
+            <input type="text" name="identidad" required placeholder="Correo o nombre de usuario">
             <input type="password" name="password" required placeholder="Contraseña">
             <button type="submit">Iniciar Sesión</button>
         </form>
@@ -33,9 +33,9 @@
 
         <form id="formRegister" action="index.php" method="post">
             <input type="hidden" name="accion" value="registro">
-            <input type="email" name="correo" required placeholder="Correo electrónico">
-            <input type="text" name="usuario" required placeholder="Nombre de usuario">
-            <input type="password" name="password" required placeholder="Contraseña">
+            <input type="email" name="email" required placeholder="Correo electrónico">
+            <input type="text" name="nombre_usuario" required placeholder="Nombre de usuario">
+            <input type="password" name="password" required placeholder="Contraseña (7+ chars, 1 mayús, 1 número)">
             <input type="password" name="password_confirm" required placeholder="Confirmar contraseña">
             <button type="submit">Registrarse</button>
         </form>
