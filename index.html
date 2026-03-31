@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>CYBERGAME - Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="card">
+
+    <!-- LOGIN -->
+    <div id="login">
+        <div class="title">CYBERGAME</div>
+        <div class="subtitle">Iniciar Sesión</div>
+
+        <input type="email" placeholder="Correo electrónico">
+        <input type="password" placeholder="Contraseña">
+
+        <button>Iniciar Sesión</button>
+
+        <div class="link">¿Olvidaste tu contraseña?</div>
+        <div class="link" onclick="mostrarRegistro()">Registrarse</div>
+    </div>
+
+    <!-- REGISTRO -->
+    <div id="register" class="hidden">
+        <div class="title">CYBERGAME</div>
+        <div class="subtitle">Crear Cuenta</div>
+
+        <input type="email" placeholder="Correo electrónico">
+        <input type="password" placeholder="Contraseña">
+        <input type="password" placeholder="Confirmar contraseña">
+
+        <button>Registrarse</button>
+
+        <div class="link" onclick="mostrarLogin()">Volver a Iniciar Sesión</div>
+    </div>
+
+    <div class="footer-text">
+        © 2026 CyberGame
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>             
