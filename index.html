@@ -77,14 +77,14 @@
     <!-- CONFIGURACIÓN INICIAL PARTIDA -->
     <div id="config" class="hidden">
         <div class="title">CYBERGAME</div>
-        <div class="subtitle">Configuración inicial de partida</div>
+        <div class="subtitle">Configuración inicial, esto afectara la dificultad inicial de tu partida</div>
 
         <form id="formConfig" onsubmit="return false;">
             <div class="stat-row">
                 <label for="cia">CIA inicial</label>
-                <div class="stat-row-controls">
+                <div class="stat-row-controls"> 
                     <div class="stat-input-group">
-                        <input type="number" id="cia" min="0" max="100" value="50" placeholder="0-100">
+                        <input type="number" id="cia" min="30" max="80" value="50" placeholder="30-80">
                         <span class="unit">%</span>
                     </div>
                     <div class="number-arrows">
@@ -95,15 +95,15 @@
             </div>
 
             <div class="stat-row">
-                <label for="presupuesto">Presupuesto inicial</label>
+                <label for="presupuesto">Presupuesto inicial (millones de pesos)</label>
                 <div class="stat-row-controls">
                     <div class="stat-input-group">
-                        <input type="number" id="presupuesto" min="0" value="100000" placeholder="0">
-                        <span class="unit">$</span>
+                        <input type="number" id="presupuesto" min="10" max="80" value="50" placeholder="10-80">
+                        <span class="unit">M COP</span>
                     </div>
                     <div class="number-arrows">
-                        <button type="button" onclick="cambiarValor('presupuesto', 1000)">▲</button>
-                        <button type="button" onclick="cambiarValor('presupuesto', -1000)">▼</button>
+                        <button type="button" onclick="cambiarValor('presupuesto', 1)">▲</button>
+                        <button type="button" onclick="cambiarValor('presupuesto', -1)">▼</button>
                     </div>
                 </div>
             </div>
@@ -112,7 +112,7 @@
                 <label for="despido">Probabilidad de despido</label>
                 <div class="stat-row-controls">
                     <div class="stat-input-group">
-                        <input type="number" id="despido" min="0" max="100" value="10" placeholder="0-100">
+                        <input type="number" id="despido" min="5" max="80" value="20" placeholder="5-80">
                         <span class="unit">%</span>
                     </div>
                     <div class="number-arrows">
@@ -122,10 +122,66 @@
                 </div>
             </div>
 
+            <div class="stat-row">
+                <label for="maxRondas">Máximo de rondas</label>
+                <div class="stat-row-controls">
+                    <div class="stat-input-group">
+                        <input type="number" id="maxRondas" min="15" max="40" value="25" placeholder="15-40">
+                        <span class="unit">rondas</span>
+                    </div>
+                    <div class="number-arrows">
+                        <button type="button" onclick="cambiarValor('maxRondas', 1)">▲</button>
+                        <button type="button" onclick="cambiarValor('maxRondas', -1)">▼</button>
+                    </div>
+                </div>
+            </div>
+
             <button type="button" onclick="iniciarPartida()">Iniciar Partida</button>
         </form>
 
-        <div class="link" onclick="mostrarLogin()">Volver a Iniciar Sesión</div>
+        <div class="link" onclick="window.location.href='menu.php'">Volver al Menú Principal</div>
+    </div>
+
+    <div id="partida" class="hidden">
+        <div class="title">CYBERGAME</div>
+        <div class="subtitle">En partida</div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; padding: 10px; background: #f0f0f0; border-radius: 5px;">
+            <div style="text-align: center;">
+                <strong>CIA</strong><br>
+                <span id="stat-cia" style="font-size: 24px; font-weight: bold;">50</span>%
+            </div>
+            <div style="text-align: center;">
+                <strong>Presupuesto</strong><br>
+                <span id="stat-presupuesto" style="font-size: 24px; font-weight: bold;">50</span>M COP
+            </div>
+            <div style="text-align: center;">
+                <strong>Despido</strong><br>
+                <span id="stat-despido" style="font-size: 24px; font-weight: bold;">10</span>%
+            </div>
+        </div>
+
+        <p><strong>Partida:</strong> <span id="partida-id">-</span></p>
+        <p><strong>Turno:</strong> <span id="turno-orden">-</span></p>
+        <p><strong>Remitente:</strong> <span id="esc-remitente">-</span></p>
+        <p><strong>Tipo:</strong> <span id="esc-tipo">-</span></p>
+        <p><strong>Asunto:</strong> <span id="esc-titulo">-</span></p>
+        <p><strong>Contenido:</strong> <span id="esc-texto">-</span></p>
+
+        <div style="margin-top: 20px; padding: 10px; background: #ffe0e0; border-radius: 5px; text-align: center;">
+            <strong>Tiempo restante:</strong> <span id="cronometro" style="font-size: 32px; font-weight: bold; color: #d32f2f;">60</span>s
+        </div>
+
+        <div id="opciones-container" style="margin-top: 20px; display: none;">
+            <p><strong>Opciones:</strong></p>
+            <div id="opciones-lista"></div>
+        </div>
+
+        <div id="sin-opciones-msg" style="margin-top: 20px;">
+            <button type="button" onclick="cargarSiguienteEscenario()">Siguiente Escenario</button>
+        </div>
+
+        <div class="link" onclick="mostrarConfig()">Volver a configuración</div>
     </div>
 
     <div class="footer-text">

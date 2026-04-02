@@ -80,12 +80,16 @@
             </p>
         </div>
 
-        <!-- Mostrar errores si existen -->
-        <?php
-        if (isset($_GET['error'])) {
-            echo '<div style="color: #ff6b6b; text-align: center; margin-top: 20px;">' . htmlspecialchars($_GET['error']) . '</div>';
-        }
-        ?>
+        <div id="errorDiv" style="display: none; color: #ff6b6b; text-align: center; margin-top: 20px;"></div>
     </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('error')) {
+            const errorDiv = document.getElementById('errorDiv');
+            errorDiv.textContent = params.get('error');
+            errorDiv.style.display = 'block';
+        }
+    </script>
 </body>
 </html>
