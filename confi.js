@@ -32,6 +32,7 @@ window.estadoPartida = {
     presupuesto: 50,
     despido: 10,
     maxRondas: 25,
+    opciones_actuales: [],
     intervalo_cronometro: null,
     tiempo_restante: 60
 };
@@ -65,7 +66,7 @@ function iniciarCronometro() {
 
         if (window.estadoPartida.tiempo_restante <= 0) {
             clearInterval(window.estadoPartida.intervalo_cronometro);
-            aplicarTimeoutAutomatico();
+            aplicarTimeoutAutomatico('tiempo');
         }
     }, 1000);
 }
@@ -77,9 +78,11 @@ function detenerCronometro() {
     }
 }
 
-function aplicarTimeoutAutomatico() {
+function aplicarTimeoutAutomatico(motivo) {
     detenerCronometro();
     deshabilitarOpciones();
+
+    const motivoAplicado = motivo || 'tiempo';
     
     const body = new URLSearchParams({
         accion: 'procesar_opcion',
@@ -111,9 +114,13 @@ function aplicarTimeoutAutomatico() {
                 return;
             }
 
-            alert('Se acabó el tiempo.\nPenalización automática aplicada:\nCIA: ' + respuesta.delta.delta_cia_aplicado +
-                  '\nPresupuesto: ' + respuesta.delta.delta_presupuesto_aplicado +
-                  '\nDespido: ' + respuesta.delta.delta_despido_aplicado.toFixed(2));
+            const encabezado = motivoAplicado === 'presupuesto'
+                ? 'No hay decisiones costeables por presupuesto.\nPenalizacion automática aplicada:'
+                : 'Se acabó el tiempo.\nPenalización automática aplicada:';
+
+            alert(encabezado + '\nCIA: ' + respuesta.delta.delta_cia_aplicado +
+                '\nPresupuesto: ' + respuesta.delta.delta_presupuesto_aplicado +
+                '\nDespido: ' + respuesta.delta.delta_despido_aplicado.toFixed(2));
 
             setTimeout(function() {
                 cargarSiguienteEscenario();
@@ -135,6 +142,19 @@ function deshabilitarOpciones() {
             btn.style.cursor = 'not-allowed';
         });
     }
+}
+
+function obtenerDeltaPresupuestoBase(opcion) {
+    const delta = Number(opcion && opcion.delta_presupuesto_base);
+    return Number.isFinite(delta) ? delta : 0;
+}
+
+function puedeCostearOpcion(opcion, presupuestoActual) {
+    const deltaPresupuesto = obtenerDeltaPresupuestoBase(opcion);
+    if (deltaPresupuesto >= 0) {
+        return true;
+    }
+    return (Number(presupuestoActual) + deltaPresupuesto) >= 0;
 }
 
 function mostrarFinPartida(mensaje) {
@@ -172,7 +192,23 @@ function cambiarValor(id, delta) {
     input.value = valor;
 }
 
-function procesarOpcion(idOpcion, codigoOpcion) {
+function procesarOpcion(idOpcion, codigoOpcion, deltaPresupuestoBase) {
+    const deltaPresupuesto = Number(deltaPresupuestoBase || 0);
+    if (deltaPresupuesto < 0 && (window.estadoPartida.presupuesto + deltaPresupuesto) < 0) {
+        alert('No te alcanza para tomar esta desicion, elige otra');
+
+        const hayOpcionCosteable = (window.estadoPartida.opciones_actuales || []).some(function(opcion) {
+            return puedeCostearOpcion(opcion, window.estadoPartida.presupuesto);
+        });
+
+        if (!hayOpcionCosteable) {
+            setTimeout(function() {
+                aplicarTimeoutAutomatico('presupuesto');
+            }, 250);
+        }
+        return;
+    }
+
     detenerCronometro();
     deshabilitarOpciones();
 
@@ -192,7 +228,8 @@ function procesarOpcion(idOpcion, codigoOpcion) {
         .then(function(response) { return response.json(); })
         .then(function(respuesta) {
             if (!respuesta.ok) {
-                alert('Error procesando opcion: ' + (respuesta.error || 'ERROR'));
+                const mensajeError = respuesta.mensaje || respuesta.error || 'ERROR';
+                alert('Error procesando opcion: ' + mensajeError);
                 return;
             }
 
@@ -276,12 +313,15 @@ function renderTurno(data) {
         ];
     }
 
+    window.estadoPartida.opciones_actuales = opcionesValidas;
+
     if (!opcionesValidas || opcionesValidas.length === 0) {
         opcionesContainer.style.display = 'none';
         sinOpcionesMsg.style.display = 'block';
         sinOpcionesMsg.innerHTML = '<button type="button" onclick="cargarSiguienteEscenario()">Siguiente Escenario</button>';
         detenerCronometro();
     } else {
+        const presupuestoActual = Number(window.estadoPartida.presupuesto);
         opcionesContainer.style.display = 'block';
         sinOpcionesMsg.style.display = 'none';
         opcionesList.innerHTML = '';
@@ -295,8 +335,12 @@ function renderTurno(data) {
             btn.style.marginBottom = '5px';
             btn.style.cursor = 'pointer';
             btn.textContent = opcion.codigo_opcion + ': ' + opcion.texto_opcion;
+            if (!puedeCostearOpcion(opcion, presupuestoActual)) {
+                btn.style.border = '1px solid #d32f2f';
+                btn.title = 'No alcanza el presupuesto para esta decision';
+            }
             btn.onclick = function() {
-                procesarOpcion(opcion.id_opcion, opcion.codigo_opcion);
+                procesarOpcion(opcion.id_opcion, opcion.codigo_opcion, opcion.delta_presupuesto_base);
             };
             opcionesList.appendChild(btn);
         });

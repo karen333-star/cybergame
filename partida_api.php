@@ -163,8 +163,10 @@ function obtener_escenario_random_no_repetido(mysqli $conn, int $idPartida): ?ar
             o.id_opcion,
             o.codigo_opcion,
             o.texto_opcion,
-            o.feedback_opcion
+            o.feedback_opcion,
+            COALESCE(io.delta_presupuesto_base, 0) AS delta_presupuesto_base
         FROM opciones_escenario o
+        LEFT JOIN impactos_opcion io ON io.id_opcion = o.id_opcion AND io.activo = 1
         WHERE o.id_escenario = ? AND o.activa = 1
         ORDER BY o.id_opcion ASC
     ";
@@ -455,6 +457,15 @@ try {
         $ciaActual = (float)$estadoRes['cia_actual'];
         $presupuestoActual = (float)$estadoRes['presupuesto_actual'];
         $despigoActual = (float)$estadoRes['despido_actual'];
+
+        // Evitar decisiones cuyo costo base de presupuesto no puede cubrir el jugador.
+        if ($fueTimeout === 0 && $deltaPresupuestoBase < 0 && ($presupuestoActual + $deltaPresupuestoBase) < 0) {
+            responder([
+                'ok' => false,
+                'error' => 'PRESUPUESTO_INSUFICIENTE',
+                'mensaje' => 'No te alcanza para tomar esta desicion, elige otra'
+            ]);
+        }
 
         // Aplicar modificadores definidos por reglas de balance.
         $modificadores = aplicar_modificadores(
