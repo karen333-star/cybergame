@@ -49,6 +49,16 @@ function aplicar_modificadores(float $ciaActual, float $presupuestoActual, float
     ];
 }
 
+function calcular_ajuste_trimestral_por_despido(float $despido): int {
+    if ($despido <= 10) return 20;
+    if ($despido <= 20) return 15;
+    if ($despido <= 30) return 10;
+    if ($despido <= 50) return 7;
+    if ($despido <= 60) return 4;
+    if ($despido <= 80) return 0;
+    return -5;
+}
+
 function evaluar_estado_final(float $cia, float $presupuesto, float $despido): array {
     if ($presupuesto <= 0) {
         return ['resultado' => 'perdida', 'motivo' => 'presupuesto_cero'];
@@ -525,6 +535,63 @@ try {
         );
         $stmtEvento->execute();
 
+        $ajusteTrimestral = [
+            'emitir_correo' => false,
+            'monto' => 0,
+            'presupuesto_antes' => $presupuestoNuevoInt,
+            'presupuesto_despues' => $presupuestoNuevoInt,
+            'despido_actual' => (int)$despigoNuevoDecimal,
+            'mensaje_tipo' => 'sin_ajuste',
+            'turnos_respondidos' => 0
+        ];
+
+        // Solo cuentan turnos respondidos por el jugador (sin timeout).
+        $sqlConteoRespondidos = "
+            SELECT COUNT(*) AS total_respondidos
+            FROM eventos_partida ep
+            INNER JOIN partida_escenarios pe ON pe.id_partida_escenario = ep.id_partida_escenario
+            WHERE pe.id_partida = ?
+              AND ep.fue_timeout = 0
+        ";
+        $stmtRespondidos = $conn->prepare($sqlConteoRespondidos);
+        if (!$stmtRespondidos) {
+            throw new RuntimeException('Error prepare conteo respondidos: ' . $conn->error);
+        }
+        $stmtRespondidos->bind_param('i', $idPartida);
+        $stmtRespondidos->execute();
+        $turnosRespondidos = (int)$stmtRespondidos->get_result()->fetch_assoc()['total_respondidos'];
+
+        $ajusteTrimestral['turnos_respondidos'] = $turnosRespondidos;
+
+        if ($turnosRespondidos > 0 && ($turnosRespondidos % 3) === 0) {
+            $montoBase = calcular_ajuste_trimestral_por_despido((float)$despigoNuevoDecimal);
+            $presupuestoAjustado = max(0, min(100, $presupuestoNuevoInt + $montoBase));
+            $montoRealAplicado = $presupuestoAjustado - $presupuestoNuevoInt;
+
+            $presupuestoAntesAjuste = $presupuestoNuevoInt;
+            $presupuestoNuevoInt = $presupuestoAjustado;
+            $deltaPresupuestoAplicado += $montoRealAplicado;
+
+            $tipoMensaje = 'sin_ajuste';
+            if ($montoRealAplicado > 0) {
+                $tipoMensaje = 'bono_trimestral';
+            } elseif ($montoRealAplicado < 0) {
+                $tipoMensaje = 'recorte_rendimiento';
+            }
+
+            $ajusteTrimestral = [
+                'emitir_correo' => true,
+                'monto' => $montoRealAplicado,
+                'presupuesto_antes' => $presupuestoAntesAjuste,
+                'presupuesto_despues' => $presupuestoNuevoInt,
+                'despido_actual' => (int)$despigoNuevoDecimal,
+                'mensaje_tipo' => $tipoMensaje,
+                'turnos_respondidos' => $turnosRespondidos
+            ];
+        }
+
+        $presupuestoNuevo = $presupuestoNuevoInt;
+
         $estadoFinal = evaluar_estado_final($ciaNuevaInt, $presupuestoNuevoInt, (int)$despigoNuevoDecimal);
         if ($estadoFinal['resultado'] === 'ganada' || $estadoFinal['resultado'] === 'perdida') {
             cerrar_partida(
@@ -553,7 +620,8 @@ try {
                     'delta_presupuesto_aplicado' => round($deltaPresupuestoAplicado, 2),
                     'delta_despido_aplicado' => round($deltaDespigoAplicado, 2)
                 ],
-                'feedback' => $feedbackOpcion
+                'feedback' => $feedbackOpcion,
+                'ajuste_trimestral' => $ajusteTrimestral
             ]);
         }
 
@@ -571,7 +639,8 @@ try {
                 'delta_presupuesto_aplicado' => round($deltaPresupuestoAplicado, 2),
                 'delta_despido_aplicado' => round($deltaDespigoAplicado, 2)
             ],
-            'feedback' => $feedbackOpcion
+            'feedback' => $feedbackOpcion,
+            'ajuste_trimestral' => $ajusteTrimestral
         ]);
     }
 

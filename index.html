@@ -84,7 +84,7 @@
                 <label for="cia">CIA inicial</label>
                 <div class="stat-row-controls"> 
                     <div class="stat-input-group">
-                        <input type="number" id="cia" min="30" max="80" value="50" placeholder="30-80">
+                        <input type="number" id="cia" min="30" max="80" placeholder="30-80">
                         <span class="unit">%</span>
                     </div>
                     <div class="number-arrows">
@@ -98,7 +98,7 @@
                 <label for="presupuesto">Presupuesto inicial (millones de pesos)</label>
                 <div class="stat-row-controls">
                     <div class="stat-input-group">
-                        <input type="number" id="presupuesto" min="10" max="80" value="50" placeholder="10-80">
+                        <input type="number" id="presupuesto" min="10" max="80" placeholder="10-80">
                         <span class="unit">M COP</span>
                     </div>
                     <div class="number-arrows">
@@ -112,7 +112,7 @@
                 <label for="despido">Probabilidad de despido</label>
                 <div class="stat-row-controls">
                     <div class="stat-input-group">
-                        <input type="number" id="despido" min="5" max="80" value="20" placeholder="5-80">
+                        <input type="number" id="despido" min="5" max="80" placeholder="5-80">
                         <span class="unit">%</span>
                     </div>
                     <div class="number-arrows">
@@ -126,7 +126,7 @@
                 <label for="maxRondas">Máximo de rondas</label>
                 <div class="stat-row-controls">
                     <div class="stat-input-group">
-                        <input type="number" id="maxRondas" min="15" max="40" value="25" placeholder="15-40">
+                        <input type="number" id="maxRondas" min="15" max="40" placeholder="15-40">
                         <span class="unit">rondas</span>
                     </div>
                     <div class="number-arrows">
@@ -168,6 +168,27 @@
         <p><strong>Asunto:</strong> <span id="esc-titulo">-</span></p>
         <p><strong>Contenido:</strong> <span id="esc-texto">-</span></p>
 
+        <div id="estado-espera" style="display: none; margin-top: 16px; padding: 10px; background: #fff4d6; border-radius: 5px; color: #3f2f00; font-weight: 600;"></div>
+
+        <div id="mailbox-controls" style="margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap;">
+            <button type="button" id="btn-bandeja-escenarios" onclick="abrirBandeja('scenarios')" style="flex: 1; min-width: 180px; background: #374151; color: #fff; border-radius: 8px;">
+                Escenarios <span id="badge-scenarios" style="display: none; margin-left: 6px; background: #ef4444; padding: 2px 8px; border-radius: 999px; font-size: 12px;">0</span>
+            </button>
+            <button type="button" id="btn-bandeja-efectos" onclick="abrirBandeja('effects')" style="flex: 1; min-width: 180px; background: #1f2937; color: #fff; border-radius: 8px;">
+                Efectos <span id="badge-effects" style="display: none; margin-left: 6px; background: #f59e0b; padding: 2px 8px; border-radius: 999px; font-size: 12px;">0</span>
+            </button>
+        </div>
+
+        <div id="panel-bandeja" style="display: none; margin-top: 12px; background: #f8fafc; border: 1px solid #d1d5db; border-radius: 8px; padding: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <strong id="panel-bandeja-titulo">Bandeja</strong>
+                <button type="button" onclick="cerrarPanelBandeja()" style="width: auto; padding: 6px 10px;">Cerrar</button>
+            </div>
+            <div id="panel-bandeja-lista" style="display: flex; flex-direction: column; gap: 6px;"></div>
+        </div>
+
+        <div id="correo-repercusion" style="display: none; margin-top: 16px; padding: 12px; background: #f4f9ff; border: 1px solid #c9e0ff; border-radius: 6px; color: #15263a;"></div>
+
         <div style="margin-top: 20px; padding: 10px; background: #ffe0e0; border-radius: 5px; text-align: center;">
             <strong>Tiempo restante:</strong> <span id="cronometro" style="font-size: 32px; font-weight: bold; color: #d32f2f;">60</span>s
         </div>
@@ -190,7 +211,7 @@
 
 </div>
 
-<script src="script.js"></script>
-<script src="confi.js"></script>
+<script src="script.js?v=20260402"></script>
+<script src="confi.js?v=20260402"></script>
 </body>
 </html>             
