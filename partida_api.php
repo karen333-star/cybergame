@@ -14,12 +14,30 @@ function responder($data) {
     exit;
 }
 
+function repartir_cia_inicial(int $cia): array {
+    $cia = max(0, min(100, $cia));
+    $base = intdiv($cia, 3);
+    $resto = $cia % 3;
+
+    return [
+        'confidencialidad' => $base + ($resto > 0 ? 1 : 0),
+        'integridad' => $base + ($resto > 1 ? 1 : 0),
+        'accesibilidad' => $base,
+    ];
+}
+
+function calcular_cia_promedio(float $confidencialidad, float $integridad, float $accesibilidad): int {
+    return (int)round(($confidencialidad + $integridad + $accesibilidad) / 3);
+}
+
 function aplicar_modificador_signado(float $deltaBase, float $factorPositivo, float $factorNegativo): float {
     return ($deltaBase > 0) ? ($deltaBase * $factorPositivo) : ($deltaBase * $factorNegativo);
 }
 
-function aplicar_modificadores(float $ciaActual, float $presupuestoActual, float $deltaCiaBase, float $deltaPresupuestoBase, float $deltaDespidoBase): array {
-    $deltaCiaAplicado = $deltaCiaBase;
+function aplicar_modificadores(float $ciaActual, float $presupuestoActual, float $deltaConfBase, float $deltaInteBase, float $deltaAccBase, float $deltaPresupuestoBase, float $deltaDespidoBase): array {
+    $deltaConfAplicado = $deltaConfBase;
+    $deltaInteAplicado = $deltaInteBase;
+    $deltaAccAplicado = $deltaAccBase;
     $deltaPresupuestoAplicado = $deltaPresupuestoBase;
     $deltaDespidoAplicado = $deltaDespidoBase;
 
@@ -43,7 +61,9 @@ function aplicar_modificadores(float $ciaActual, float $presupuestoActual, float
     }
 
     return [
-        'delta_cia' => round($deltaCiaAplicado),
+        'delta_confidencialidad' => round($deltaConfAplicado),
+        'delta_integridad' => round($deltaInteAplicado),
+        'delta_accesibilidad' => round($deltaAccAplicado),
         'delta_presupuesto' => round($deltaPresupuestoAplicado),
         'delta_despido' => round($deltaDespidoAplicado),
     ];
@@ -87,11 +107,14 @@ function evaluar_estado_final(float $cia, float $presupuesto, float $despido): a
     return ['resultado' => 'en_curso', 'motivo' => 'sin_condicion'];
 }
 
-function cerrar_partida(mysqli $conn, int $idPartida, string $resultado, int $ciaFinal, int $presupuestoFinal, int $despidoFinal): void {
+function cerrar_partida(mysqli $conn, int $idPartida, string $resultado, int $ciaFinal, int $presupuestoFinal, int $despidoFinal, int $confidencialidadFinal, int $integridadFinal, int $accesibilidadFinal): void {
     $sqlActualizar = "
         UPDATE partidas
         SET estado_partida = ?,
             cia_final = ?,
+            c_final = ?,
+            i_final = ?,
+            a_final = ?,
             presupuesto_final = ?,
             despido_final = ?,
             tiempo_final = NOW(),
@@ -104,7 +127,7 @@ function cerrar_partida(mysqli $conn, int $idPartida, string $resultado, int $ci
         throw new RuntimeException('Error prepare cerrar partida: ' . $conn->error);
     }
 
-    $stmtActualizar->bind_param('siiii', $resultado, $ciaFinal, $presupuestoFinal, $despidoFinal, $idPartida);
+    $stmtActualizar->bind_param('siiiiiii', $resultado, $ciaFinal, $confidencialidadFinal, $integridadFinal, $accesibilidadFinal, $presupuestoFinal, $despidoFinal, $idPartida);
     $stmtActualizar->execute();
 }
 
@@ -174,6 +197,9 @@ function obtener_escenario_random_no_repetido(mysqli $conn, int $idPartida): ?ar
             o.codigo_opcion,
             o.texto_opcion,
             o.feedback_opcion,
+            COALESCE(io.delta_c_base, io.delta_cia_base, 0) AS delta_confidencialidad_base,
+            COALESCE(io.delta_i_base, io.delta_cia_base, 0) AS delta_integridad_base,
+            COALESCE(io.delta_a_base, io.delta_cia_base, 0) AS delta_accesibilidad_base,
             COALESCE(io.delta_presupuesto_base, 0) AS delta_presupuesto_base
         FROM opciones_escenario o
         LEFT JOIN impactos_opcion io ON io.id_opcion = o.id_opcion AND io.activo = 1
@@ -223,14 +249,20 @@ try {
         $presupuesto = isset($_POST['presupuesto']) ? (int)$_POST['presupuesto'] : -1;
         $despido = isset($_POST['despido']) ? (float)$_POST['despido'] : -1;
         $maxRondas = isset($_POST['maxRondas']) ? (int)$_POST['maxRondas'] : 25;
+        $desgloseInicial = repartir_cia_inicial($cia);
+        $ciaInicialPromedio = calcular_cia_promedio(
+            (float)$desgloseInicial['confidencialidad'],
+            (float)$desgloseInicial['integridad'],
+            (float)$desgloseInicial['accesibilidad']
+        );
 
         if ($cia < 0 || $cia > 100 || $presupuesto < 5 || $presupuesto > 100 || $despido < 0 || $despido > 100 || $maxRondas < 15 || $maxRondas > 40) {
             responder(['ok' => false, 'error' => 'PARAMETROS_INVALIDOS']);
         }
 
         $sqlPartida = "
-            INSERT INTO partidas (id_usuario, estado_partida, cia_inicial, presupuesto_inicial, despido_inicial, max_rondas)
-            VALUES (?, 'en_curso', ?, ?, ?, ?)
+            INSERT INTO partidas (id_usuario, estado_partida, cia_inicial, c_inicial, i_inicial, a_inicial, presupuesto_inicial, despido_inicial, max_rondas)
+            VALUES (?, 'en_curso', ?, ?, ?, ?, ?, ?, ?)
         ";
 
         $stmtPartida = $conn->prepare($sqlPartida);
@@ -238,7 +270,18 @@ try {
             throw new RuntimeException('Error prepare partida: ' . $conn->error);
         }
 
-        $stmtPartida->bind_param('iiidi', $idUsuario, $cia, $presupuesto, $despido, $maxRondas);
+        $partidaBindTypes = str_repeat('i', 6) . 'd' . 'i';
+        $stmtPartida->bind_param(
+            $partidaBindTypes,
+            $idUsuario,
+            $cia,
+            $desgloseInicial['confidencialidad'],
+            $desgloseInicial['integridad'],
+            $desgloseInicial['accesibilidad'],
+            $presupuesto,
+            $despido,
+            $maxRondas
+        );
         $stmtPartida->execute();
 
         $idPartida = (int)$stmtPartida->insert_id;
@@ -251,10 +294,14 @@ try {
             'accion' => 'iniciar_partida',
             'id_partida' => $idPartida,
             'estado' => [
-                'cia' => $cia,
+                'cia' => $ciaInicialPromedio,
+                'confidencialidad' => $desgloseInicial['confidencialidad'],
+                'integridad' => $desgloseInicial['integridad'],
+                'accesibilidad' => $desgloseInicial['accesibilidad'],
                 'presupuesto' => $presupuesto,
                 'despido' => $despido,
-                'maxRondas' => $maxRondas
+                'maxRondas' => $maxRondas,
+                'cia_inicial' => $cia
             ],
             'turno' => $turno
         ]);
@@ -415,7 +462,7 @@ try {
 
         // Obtener impacto base de la opción
         $sqlImpacto = "
-            SELECT io.delta_cia_base, io.delta_presupuesto_base, io.delta_despido_base, oe.feedback_opcion
+            SELECT io.delta_c_base, io.delta_i_base, io.delta_a_base, io.delta_presupuesto_base, io.delta_despido_base, oe.feedback_opcion
             FROM impactos_opcion io
             JOIN opciones_escenario oe ON oe.id_opcion = io.id_opcion
             WHERE io.id_opcion = ? AND io.activo = 1
@@ -432,7 +479,9 @@ try {
             responder(['ok' => false, 'error' => 'OPCION_NO_EXISTE']);
         }
         $impact = $resImpacto->fetch_assoc();
-        $deltaCiaBase = (int)$impact['delta_cia_base'];
+        $deltaConfBase = (int)$impact['delta_c_base'];
+        $deltaInteBase = (int)$impact['delta_i_base'];
+        $deltaAccBase = (int)$impact['delta_a_base'];
         $deltaPresupuestoBase = (int)$impact['delta_presupuesto_base'];
         $deltaDespigoBase = (float)$impact['delta_despido_base'];
         $feedbackOpcion = $impact['feedback_opcion'];
@@ -441,32 +490,43 @@ try {
         $sqlPartidaGetter = "
             SELECT 
                 p.cia_inicial,
+                p.c_inicial,
+                p.i_inicial,
+                p.a_inicial,
                 p.presupuesto_inicial,
                 p.despido_inicial,
-                COALESCE(MAX(ep.cia_despues), p.cia_inicial) AS cia_actual,
-                COALESCE(MAX(ep.presupuesto_despues), p.presupuesto_inicial) AS presupuesto_actual,
-                COALESCE(MAX(ep.despido_despues), p.despido_inicial) AS despido_actual
+                ep.cia_despues,
+                ep.c_despues,
+                ep.i_despues,
+                ep.a_despues,
+                ep.presupuesto_despues,
+                ep.despido_despues
             FROM partidas p
-            LEFT JOIN eventos_partida ep ON ep.id_partida_escenario IN (
-                SELECT id_partida_escenario FROM partida_escenarios WHERE id_partida = ?
-            )
+            LEFT JOIN partida_escenarios pe ON pe.id_partida = p.id_partida
+            LEFT JOIN eventos_partida ep ON ep.id_partida_escenario = pe.id_partida_escenario
             WHERE p.id_partida = ?
-            GROUP BY p.id_partida
+            ORDER BY pe.orden_en_partida DESC, ep.id_evento DESC
             LIMIT 1
         ";
         $stmtPartidaGet = $conn->prepare($sqlPartidaGetter);
         if (!$stmtPartidaGet) {
             throw new RuntimeException('Error prepare estado partida: ' . $conn->error);
         }
-        $stmtPartidaGet->bind_param('ii', $idPartida, $idPartida);
+        $stmtPartidaGet->bind_param('i', $idPartida);
         $stmtPartidaGet->execute();
         $estadoRes = $stmtPartidaGet->get_result()->fetch_assoc();
         if (!$estadoRes) {
             responder(['ok' => false, 'error' => 'ESTADO_NO_ENCONTRADO']);
         }
-        $ciaActual = (float)$estadoRes['cia_actual'];
-        $presupuestoActual = (float)$estadoRes['presupuesto_actual'];
-        $despigoActual = (float)$estadoRes['despido_actual'];
+        $desgloseInicial = repartir_cia_inicial((int)$estadoRes['cia_inicial']);
+
+        $confidencialidadActual = $estadoRes['c_despues'] !== null ? (int)$estadoRes['c_despues'] : ((int)($estadoRes['c_inicial'] ?? $desgloseInicial['confidencialidad']));
+        $integridadActual = $estadoRes['i_despues'] !== null ? (int)$estadoRes['i_despues'] : ((int)($estadoRes['i_inicial'] ?? $desgloseInicial['integridad']));
+        $accesibilidadActual = $estadoRes['a_despues'] !== null ? (int)$estadoRes['a_despues'] : ((int)($estadoRes['a_inicial'] ?? $desgloseInicial['accesibilidad']));
+
+        $ciaActual = (float)calcular_cia_promedio($confidencialidadActual, $integridadActual, $accesibilidadActual);
+        $presupuestoActual = (float)($estadoRes['presupuesto_despues'] !== null ? $estadoRes['presupuesto_despues'] : $estadoRes['presupuesto_inicial']);
+        $despigoActual = (float)($estadoRes['despido_despues'] !== null ? $estadoRes['despido_despues'] : $estadoRes['despido_inicial']);
 
         // Evitar decisiones cuyo costo base de presupuesto no puede cubrir el jugador.
         if ($fueTimeout === 0 && $deltaPresupuestoBase < 0 && ($presupuestoActual + $deltaPresupuestoBase) < 0) {
@@ -481,17 +541,24 @@ try {
         $modificadores = aplicar_modificadores(
             $ciaActual,
             $presupuestoActual,
-            $deltaCiaBase,
+            $deltaConfBase,
+            $deltaInteBase,
+            $deltaAccBase,
             $deltaPresupuestoBase,
             $deltaDespigoBase
         );
 
-        $deltaCiaAplicado = $modificadores['delta_cia'];
+        $deltaConfAplicado = $modificadores['delta_confidencialidad'];
+        $deltaInteAplicado = $modificadores['delta_integridad'];
+        $deltaAccAplicado = $modificadores['delta_accesibilidad'];
         $deltaPresupuestoAplicado = $modificadores['delta_presupuesto'];
         $deltaDespigoAplicado = $modificadores['delta_despido'];
 
         // Calcular nuevos puntajes
-        $ciaNueva = max(0, min(100, round($ciaActual + $deltaCiaAplicado)));
+        $confidencialidadNueva = max(0, min(100, round($confidencialidadActual + $deltaConfAplicado)));
+        $integridadNueva = max(0, min(100, round($integridadActual + $deltaInteAplicado)));
+        $accesibilidadNueva = max(0, min(100, round($accesibilidadActual + $deltaAccAplicado)));
+        $ciaNueva = calcular_cia_promedio($confidencialidadNueva, $integridadNueva, $accesibilidadNueva);
         $presupuestoNuevo = max(0, round($presupuestoActual + $deltaPresupuestoAplicado));
         $despigoNuevo = max(0, min(100, round($despigoActual + $deltaDespigoAplicado)));
 
@@ -502,10 +569,10 @@ try {
             INSERT INTO eventos_partida (
                 id_partida_escenario, id_opcion_elegida,
                 tiempo_respuesta_segundos, fue_timeout,
-                cia_antes, presupuesto_antes, despido_antes,
-                cia_despues, presupuesto_despues, despido_despues,
+                cia_antes, c_antes, i_antes, a_antes, presupuesto_antes, despido_antes,
+                cia_despues, c_despues, i_despues, a_despues, presupuesto_despues, despido_despues,
                 feedback_mostrado
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ";
         $stmtEvento = $conn->prepare($sqlEvento);
         if (!$stmtEvento) {
@@ -516,19 +583,32 @@ try {
         $presupuestoNuevoInt = (int)$presupuestoNuevo;
         $despigoNuevoDecimal = (float)$despigoNuevo;
         $ciaActualInt = (int)round($ciaActual);
+        $confidencialidadActualInt = (int)round($confidencialidadActual);
+        $integridadActualInt = (int)round($integridadActual);
+        $accesibilidadActualInt = (int)round($accesibilidadActual);
+        $confidencialidadNuevaInt = (int)$confidencialidadNueva;
+        $integridadNuevaInt = (int)$integridadNueva;
+        $accesibilidadNuevaInt = (int)$accesibilidadNueva;
         $presupuestoActualInt = (int)round($presupuestoActual);
         $despigoActualDecimal = (float)round($despigoActual);
 
+        $eventoBindTypes = str_repeat('i', 9) . 'd' . str_repeat('i', 5) . 'd' . 's';
         $stmtEvento->bind_param(
-            'iiiiiiiidds',
+            $eventoBindTypes,
             $idPartidaEscenario,
             $idOpcion,
             $tiempoRespuesta,
             $fueTimeout,
             $ciaActualInt,
+            $confidencialidadActualInt,
+            $integridadActualInt,
+            $accesibilidadActualInt,
             $presupuestoActualInt,
             $despigoActualDecimal,
             $ciaNuevaInt,
+            $confidencialidadNuevaInt,
+            $integridadNuevaInt,
+            $accesibilidadNuevaInt,
             $presupuestoNuevoInt,
             $despigoNuevoDecimal,
             $feedbackOpcion
@@ -542,7 +622,15 @@ try {
             'presupuesto_despues' => $presupuestoNuevoInt,
             'despido_actual' => (int)$despigoNuevoDecimal,
             'mensaje_tipo' => 'sin_ajuste',
-            'turnos_respondidos' => 0
+            'turnos_respondidos' => 0,
+            'cia_antes' => $ciaActualInt,
+            'cia_despues' => $ciaNuevaInt,
+            'confidencialidad_antes' => $confidencialidadActualInt,
+            'integridad_antes' => $integridadActualInt,
+            'accesibilidad_antes' => $accesibilidadActualInt,
+            'confidencialidad_despues' => $confidencialidadNuevaInt,
+            'integridad_despues' => $integridadNuevaInt,
+            'accesibilidad_despues' => $accesibilidadNuevaInt
         ];
 
         // Solo cuentan turnos respondidos por el jugador (sin timeout).
@@ -586,7 +674,15 @@ try {
                 'presupuesto_despues' => $presupuestoNuevoInt,
                 'despido_actual' => (int)$despigoNuevoDecimal,
                 'mensaje_tipo' => $tipoMensaje,
-                'turnos_respondidos' => $turnosRespondidos
+                'turnos_respondidos' => $turnosRespondidos,
+                'cia_antes' => $ciaActualInt,
+                'cia_despues' => $ciaNuevaInt,
+                'confidencialidad_antes' => $confidencialidadActualInt,
+                'integridad_antes' => $integridadActualInt,
+                'accesibilidad_antes' => $accesibilidadActualInt,
+                'confidencialidad_despues' => $confidencialidadNuevaInt,
+                'integridad_despues' => $integridadNuevaInt,
+                'accesibilidad_despues' => $accesibilidadNuevaInt
             ];
         }
 
@@ -600,7 +696,10 @@ try {
                 $estadoFinal['resultado'],
                 $ciaNuevaInt,
                 $presupuestoNuevoInt,
-                (int)$despigoNuevoDecimal
+                (int)$despigoNuevoDecimal,
+                $confidencialidadNuevaInt,
+                $integridadNuevaInt,
+                $accesibilidadNuevaInt
             );
 
             responder([
@@ -612,11 +711,17 @@ try {
                 'mensaje' => ($estadoFinal['resultado'] === 'ganada') ? 'Felicidades, ganaste' : 'Partida perdida',
                 'nuevo_estado' => [
                     'cia' => $ciaNuevaInt,
+                    'confidencialidad' => $confidencialidadNuevaInt,
+                    'integridad' => $integridadNuevaInt,
+                    'accesibilidad' => $accesibilidadNuevaInt,
                     'presupuesto' => $presupuestoNuevoInt,
                     'despido' => (int)$despigoNuevoDecimal
                 ],
                 'delta' => [
-                    'delta_cia_aplicado' => round($deltaCiaAplicado, 2),
+                    'delta_cia_aplicado' => round($ciaNuevaInt - $ciaActualInt, 2),
+                    'delta_confidencialidad_aplicado' => round($deltaConfAplicado, 2),
+                    'delta_integridad_aplicado' => round($deltaInteAplicado, 2),
+                    'delta_accesibilidad_aplicado' => round($deltaAccAplicado, 2),
                     'delta_presupuesto_aplicado' => round($deltaPresupuestoAplicado, 2),
                     'delta_despido_aplicado' => round($deltaDespigoAplicado, 2)
                 ],
@@ -631,15 +736,35 @@ try {
             'id_partida' => $idPartida,
             'nuevo_estado' => [
                 'cia' => $ciaNueva,
+                'confidencialidad' => $confidencialidadNuevaInt,
+                'integridad' => $integridadNuevaInt,
+                'accesibilidad' => $accesibilidadNuevaInt,
                 'presupuesto' => $presupuestoNuevo,
                 'despido' => $despigoNuevo
             ],
             'delta' => [
-                'delta_cia_aplicado' => round($deltaCiaAplicado, 2),
+                'delta_cia_aplicado' => round($ciaNuevaInt - $ciaActualInt, 2),
+                'delta_confidencialidad_aplicado' => round($deltaConfAplicado, 2),
+                'delta_integridad_aplicado' => round($deltaInteAplicado, 2),
+                'delta_accesibilidad_aplicado' => round($deltaAccAplicado, 2),
                 'delta_presupuesto_aplicado' => round($deltaPresupuestoAplicado, 2),
                 'delta_despido_aplicado' => round($deltaDespigoAplicado, 2)
             ],
             'feedback' => $feedbackOpcion,
+            'cia_desglose' => [
+                'antes' => [
+                    'cia' => $ciaActualInt,
+                    'confidencialidad' => $confidencialidadActualInt,
+                    'integridad' => $integridadActualInt,
+                    'accesibilidad' => $accesibilidadActualInt
+                ],
+                'despues' => [
+                    'cia' => $ciaNuevaInt,
+                    'confidencialidad' => $confidencialidadNuevaInt,
+                    'integridad' => $integridadNuevaInt,
+                    'accesibilidad' => $accesibilidadNuevaInt
+                ]
+            ],
             'ajuste_trimestral' => $ajusteTrimestral
         ]);
     }

@@ -147,10 +147,10 @@
         <div class="subtitle">En partida</div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; padding: 10px; background: #f0f0f0; border-radius: 5px;">
-            <div style="text-align: center;">
+            <button type="button" onclick="alternarDesgloseCIA()" style="text-align: center; background: transparent; color: inherit; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; cursor: pointer;">
                 <strong>CIA</strong><br>
                 <span id="stat-cia" style="font-size: 24px; font-weight: bold;">50</span>%
-            </div>
+            </button>
             <div style="text-align: center;">
                 <strong>Presupuesto</strong><br>
                 <span id="stat-presupuesto" style="font-size: 24px; font-weight: bold;">50</span>M COP
@@ -160,6 +160,8 @@
                 <span id="stat-despido" style="font-size: 24px; font-weight: bold;">10</span>%
             </div>
         </div>
+
+        <div id="panel-desglose-cia" style="display: none; margin-top: -6px; margin-bottom: 16px; padding: 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; color: #1e3a8a;"></div>
 
         <p><strong>Partida:</strong> <span id="partida-id">-</span></p>
         <p><strong>Turno:</strong> <span id="turno-orden">-</span></p>

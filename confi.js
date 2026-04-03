@@ -29,6 +29,7 @@ window.estadoPartida = {
     id_partida: null,
     id_partida_escenario: null,
     cia: 50,
+    cia_desglose: null,
     presupuesto: 50,
     despido: 10,
     maxRondas: 25,
@@ -69,6 +70,85 @@ function escaparHtml(valor) {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
+}
+
+function formatearPuntajeCIA(valor) {
+    const numero = Number(valor);
+    return Number.isFinite(numero) ? String(Math.round(numero)) : '-';
+}
+
+function formatearDesgloseCIA(desglose) {
+    if (!desglose || desglose.confidencialidad == null || desglose.integridad == null || desglose.accesibilidad == null) {
+        return 'Puntaje individual no disponible';
+    }
+
+    return 'Confidencialidad ' + formatearPuntajeCIA(desglose.confidencialidad) +
+        ' | Integridad ' + formatearPuntajeCIA(desglose.integridad) +
+        ' | Accesibilidad ' + formatearPuntajeCIA(desglose.accesibilidad) +
+        ' | CIA promedio ' + formatearPuntajeCIA(desglose.cia);
+}
+
+function formatearDesgloseCIAEvento(respuesta) {
+    const desglose = respuesta && respuesta.cia_desglose;
+    if (!desglose || !desglose.antes || !desglose.despues) {
+        return 'Puntaje individual no disponible';
+    }
+
+    const antes = desglose.antes;
+    const despues = desglose.despues;
+
+    return 'Antes: C ' + formatearPuntajeCIA(antes.confidencialidad) +
+        ' | I ' + formatearPuntajeCIA(antes.integridad) +
+        ' | A ' + formatearPuntajeCIA(antes.accesibilidad) +
+        ' | CIA ' + formatearPuntajeCIA(antes.cia) +
+        ' | Después: C ' + formatearPuntajeCIA(despues.confidencialidad) +
+        ' | I ' + formatearPuntajeCIA(despues.integridad) +
+        ' | A ' + formatearPuntajeCIA(despues.accesibilidad) +
+        ' | CIA ' + formatearPuntajeCIA(despues.cia);
+}
+
+function obtenerDesgloseCIAActual() {
+    const desglose = window.estadoPartida.cia_desglose;
+    if (!desglose) {
+        return null;
+    }
+
+    if (desglose.confidencialidad == null || desglose.integridad == null || desglose.accesibilidad == null) {
+        return null;
+    }
+
+    return desglose;
+}
+
+function actualizarPanelDesgloseCIA() {
+    const panel = document.getElementById('panel-desglose-cia');
+    if (!panel) return;
+
+    const desglose = obtenerDesgloseCIAActual();
+    if (!desglose) {
+        panel.innerHTML = '<strong>CIA</strong><div style="margin-top:6px;">Puntaje individual no disponible</div>';
+        return;
+    }
+
+    panel.innerHTML =
+        '<div><strong>Confidencialidad</strong>: ' + escaparHtml(formatearPuntajeCIA(desglose.confidencialidad)) + '%</div>' +
+        '<div><strong>Integridad</strong>: ' + escaparHtml(formatearPuntajeCIA(desglose.integridad)) + '%</div>' +
+        '<div><strong>Accesibilidad</strong>: ' + escaparHtml(formatearPuntajeCIA(desglose.accesibilidad)) + '%</div>' +
+        '<div style="margin-top:6px;"><strong>CIA promedio</strong>: ' + escaparHtml(formatearPuntajeCIA(desglose.cia)) + '%</div>';
+}
+
+function alternarDesgloseCIA() {
+    const panel = document.getElementById('panel-desglose-cia');
+    if (!panel) return;
+
+    const visible = panel.style.display !== 'none';
+    if (visible) {
+        panel.style.display = 'none';
+        return;
+    }
+
+    actualizarPanelDesgloseCIA();
+    panel.style.display = 'block';
 }
 
 function limpiarTemporizadoresEspera() {
@@ -706,6 +786,7 @@ function construirCorreoRepercusion(respuesta, contexto) {
     const tipoEscenario = String(window.estadoPartida.tipo_actual || '').toLowerCase();
     const feedbackEscenario = window.estadoPartida.feedback_general_actual || 'Mantener buenas practicas reduce riesgos futuros.';
     const feedbackOpcion = respuesta.feedback || 'Revisa tu decision para mejorar en el siguiente turno.';
+    const detalleCIA = formatearDesgloseCIAEvento(respuesta);
 
     const deltaCia = Number(respuesta.delta.delta_cia_aplicado || 0);
     const deltaDespido = Number(respuesta.delta.delta_despido_aplicado || 0);
@@ -819,6 +900,7 @@ function construirCorreoRepercusion(respuesta, contexto) {
         cuerpo: tipoEscenario === 'phishing' ? cuerpoPhishing : elegirAleatorio(plantillas)(),
         feedbackEscenario: feedbackEscenario,
         feedbackOpcion: feedbackOpcion,
+        detalleCIA: detalleCIA,
         cierre: elegirAleatorio(cierres),
         firma: firma
     };
@@ -835,7 +917,8 @@ function mostrarCorreoRepercusion(respuesta, contexto, mostrarCerrar) {
         '<div style="line-height:1.45; margin-bottom:8px;">' + escaparHtml(correo.cuerpo) + '</div>' +
         '<div style="margin-bottom:8px; padding:8px; background:#e8f4ff; border-radius:4px;">' +
             '<strong>Feedback del escenario:</strong> ' + escaparHtml(correo.feedbackEscenario) + '<br>' +
-            '<strong>Feedback de tu respuesta:</strong> ' + escaparHtml(correo.feedbackOpcion) +
+            '<strong>Feedback de tu respuesta:</strong> ' + escaparHtml(correo.feedbackOpcion) + '<br>' +
+            '<strong>Desglose CIA:</strong> ' + escaparHtml(correo.detalleCIA) +
         '</div>' +
         '<div style="margin-bottom:6px;">' + escaparHtml(correo.cierre) + '</div>' +
         '<div style="margin-top:10px; color:#314b65;">' +
@@ -938,12 +1021,21 @@ function actualizarContadores() {
     document.getElementById('stat-cia').textContent = String(Math.round(window.estadoPartida.cia));
     document.getElementById('stat-presupuesto').textContent = String(Math.round(window.estadoPartida.presupuesto));
     document.getElementById('stat-despido').textContent = String(Math.round(window.estadoPartida.despido));
+    actualizarPanelDesgloseCIA();
 }
 
 function aplicarEstadoDesdeRespuesta(respuesta) {
     if (!respuesta || !respuesta.nuevo_estado) return;
 
     window.estadoPartida.cia = Number(respuesta.nuevo_estado.cia);
+    if (respuesta.nuevo_estado.confidencialidad != null && respuesta.nuevo_estado.integridad != null && respuesta.nuevo_estado.accesibilidad != null) {
+        window.estadoPartida.cia_desglose = {
+            confidencialidad: respuesta.nuevo_estado.confidencialidad,
+            integridad: respuesta.nuevo_estado.integridad,
+            accesibilidad: respuesta.nuevo_estado.accesibilidad,
+            cia: respuesta.nuevo_estado.cia
+        };
+    }
     window.estadoPartida.presupuesto = Number(respuesta.nuevo_estado.presupuesto);
     window.estadoPartida.despido = Number(respuesta.nuevo_estado.despido);
     actualizarContadores();
@@ -1408,6 +1500,18 @@ function iniciarPartida() {
             if (!data.ok) {
                 alert('No se pudo iniciar la partida: ' + (data.error || 'ERROR'));
                 return;
+            }
+            if (data.estado) {
+                window.estadoPartida.cia = Number(data.estado.cia);
+                window.estadoPartida.cia_desglose = {
+                    confidencialidad: data.estado.confidencialidad,
+                    integridad: data.estado.integridad,
+                    accesibilidad: data.estado.accesibilidad,
+                    cia: data.estado.cia
+                };
+                window.estadoPartida.presupuesto = Number(data.estado.presupuesto);
+                window.estadoPartida.despido = Number(data.estado.despido);
+                actualizarContadores();
             }
             if (data.partida_finalizada || data.sin_escenarios || !data.turno) {
                 renderTurno(data);

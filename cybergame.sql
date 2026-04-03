@@ -1028,3 +1028,111 @@ WHERE id_escenario = 2;
 
 
 ALTER TABLE partidas ADD COLUMN max_rondas INT DEFAULT 25 AFTER despido_inicial;
+
+
+
+
+
+
+
+
+
+
+USE CYBERGAME;
+
+START TRANSACTION;
+
+-- =====================================================
+-- 1) PARTIDAS: agregar desglose CIA inicial/final
+-- =====================================================
+ALTER TABLE partidas
+  ADD COLUMN c_inicial TINYINT UNSIGNED NULL AFTER cia_inicial,
+  ADD COLUMN i_inicial TINYINT UNSIGNED NULL AFTER c_inicial,
+  ADD COLUMN a_inicial TINYINT UNSIGNED NULL AFTER i_inicial,
+  ADD COLUMN c_final TINYINT UNSIGNED NULL AFTER cia_final,
+  ADD COLUMN i_final TINYINT UNSIGNED NULL AFTER c_final,
+  ADD COLUMN a_final TINYINT UNSIGNED NULL AFTER i_final;
+
+-- =====================================================
+-- 2) EVENTOS_PARTIDA: agregar desglose CIA antes/después
+-- =====================================================
+ALTER TABLE eventos_partida
+  ADD COLUMN c_antes TINYINT UNSIGNED NULL AFTER cia_antes,
+  ADD COLUMN i_antes TINYINT UNSIGNED NULL AFTER c_antes,
+  ADD COLUMN a_antes TINYINT UNSIGNED NULL AFTER i_antes,
+  ADD COLUMN c_despues TINYINT UNSIGNED NULL AFTER cia_despues,
+  ADD COLUMN i_despues TINYINT UNSIGNED NULL AFTER c_despues,
+  ADD COLUMN a_despues TINYINT UNSIGNED NULL AFTER i_despues;
+
+-- =====================================================
+-- 3) IMPACTOS_OPCION: agregar deltas CIA separados
+-- =====================================================
+ALTER TABLE impactos_opcion
+  ADD COLUMN delta_c_base SMALLINT NOT NULL DEFAULT 0 AFTER delta_cia_base,
+  ADD COLUMN delta_i_base SMALLINT NOT NULL DEFAULT 0 AFTER delta_c_base,
+  ADD COLUMN delta_a_base SMALLINT NOT NULL DEFAULT 0 AFTER delta_i_base;
+
+-- =====================================================
+-- 4) Opcional: dejar columnas antiguas intactas por compatibilidad
+--    No se borran cia_* para no romper historial viejo ni el flujo actual.
+-- =====================================================
+
+COMMIT;
+
+UPDATE impactos_opcion
+SET delta_c_base = delta_cia_base,
+    delta_i_base = delta_cia_base,
+    delta_a_base = delta_cia_base
+WHERE id_impacto > 0
+  AND delta_c_base = 0
+  AND delta_i_base = 0
+  AND delta_a_base = 0;
+
+USE CYBERGAME;
+
+SHOW COLUMNS FROM partidas LIKE 'c_inicial';
+SHOW COLUMNS FROM partidas LIKE 'i_inicial';
+SHOW COLUMNS FROM partidas LIKE 'a_inicial';
+SHOW COLUMNS FROM partidas LIKE 'c_final';
+SHOW COLUMNS FROM partidas LIKE 'i_final';
+SHOW COLUMNS FROM partidas LIKE 'a_final';
+
+SHOW COLUMNS FROM eventos_partida LIKE 'c_antes';
+SHOW COLUMNS FROM eventos_partida LIKE 'i_antes';
+SHOW COLUMNS FROM eventos_partida LIKE 'a_antes';
+SHOW COLUMNS FROM eventos_partida LIKE 'c_despues';
+SHOW COLUMNS FROM eventos_partida LIKE 'i_despues';
+SHOW COLUMNS FROM eventos_partida LIKE 'a_despues';
+
+SHOW COLUMNS FROM impactos_opcion LIKE 'delta_c_base';
+SHOW COLUMNS FROM impactos_opcion LIKE 'delta_i_base';
+SHOW COLUMNS FROM impactos_opcion LIKE 'delta_a_base';
+
+
+
+USE CYBERGAME;
+
+UPDATE impactos_opcion
+SET
+  delta_c_base = delta_cia_base,
+  delta_i_base = delta_cia_base,
+  delta_a_base = delta_cia_base
+WHERE id_impacto > 0
+  AND (
+    delta_c_base IS NULL
+    OR delta_i_base IS NULL
+    OR delta_a_base IS NULL
+    OR (delta_c_base = 0 AND delta_i_base = 0 AND delta_a_base = 0)
+  );
+  
+  
+  USE CYBERGAME;
+
+SELECT
+  COUNT(*) AS filas_sin_desglose
+FROM impactos_opcion
+WHERE
+  delta_c_base IS NULL
+  OR delta_i_base IS NULL
+  OR delta_a_base IS NULL
+  OR (delta_c_base = 0 AND delta_i_base = 0 AND delta_a_base = 0);
