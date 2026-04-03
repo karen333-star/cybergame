@@ -7,7 +7,7 @@
 body {
     margin: 0;
     min-height: 100vh;
-    background: linear-gradient(135deg, #2d1b69, #4c1d95, #7c3aed);
+    background: linear-gradient(135deg, #cf2e11, #4c1d95, #7c3aed);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -76,7 +76,7 @@ input::placeholder {
    ================================ */
 
 /* Botón principal */
-button {
+.btn, button[type="submit"], button[type="button"]:not(.card-controls button) {
     width: 100%;
     padding: 12px;
     border: none;
@@ -90,7 +90,7 @@ button {
 }
 
 /* Hover del botón */
-button:hover {
+.btn:hover, button[type="submit"]:hover, button[type="button"]:not(.card-controls button):hover {
     background: #7c3aed;
 }
 
@@ -121,55 +121,13 @@ button:hover {
     display: none;
 }
 
-/* Estadísticas */
-.stat-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    gap: 10px;
+/* Pasos de recuperación de contraseña */
+.recovery-step {
+    display: block;
 }
 
-.stat-row label {
-    flex: 0 0 40%;
-    font-size: 18px;
-    font-weight: 600;
-    color: #f8fafc;
-}
-
-.stat-row-controls {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex: 1;
-    justify-content: flex-end;
-}
-
-.stat-input-group {
-    display: flex;
-    align-items: center;
-    background: #0f172a;
-    border: 1px solid #334155;
-    border-radius: 8px;
-    padding: 8px;
-    gap: 6px;
-    min-width: 140px;
-    max-width: 170px;
-}
-
-.stat-input-group input {
-    width: 100%;
-    border: none;
-    background: transparent;
-    padding: 0 10px;
-    color: white;
-    font-size: 18px;
-    font-weight: 600;
-    text-align: center;
-    outline: none;
-    appearance: textfield;
-    -webkit-appearance: none;
-    -moz-appearance: textfield;
+.recovery-step.hidden {
+    display: none;
 }
 
 /* ================================
@@ -178,9 +136,7 @@ button:hover {
 
 /* Quita flechas por defecto del input number */
 input[type=number]::-webkit-outer-spin-button,
-input[type=number]::-webkit-inner-spin-button,
-.stat-input-group input[type=number]::-webkit-outer-spin-button,
-.stat-input-group input[type=number]::-webkit-inner-spin-button {
+input[type=number]::-webkit-inner-spin-button {
     -webkit-appearance: none;
     display: none;
     margin: 0;
@@ -192,84 +148,6 @@ input[type=number]::-moz-number-spin-box {
 
 input[type=number]::-moz-focus-inner {
     border: 0;
-}
-
-/* ================================
-   FLECHAS PERSONALIZADAS
-   ================================ */
-
-/* Contenedor de botones subir/bajar */
-.number-arrows {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    background: #334155;
-    border-radius: 8px;
-    padding: 3px;
-    min-width: 30px;
-}
-
-/* Botones individuales */
-.number-arrows button {
-    width: 24px;
-    height: 20px;
-    border: none;
-    border-radius: 4px;
-    background: #0f172a;
-    color: #e2e8f0;
-    cursor: pointer;
-    font-size: 12px;
-    padding: 0;
-    line-height: 1;
-}
-
-/* Hover de flechas */
-.number-arrows button:hover {
-    background: #212f49;
-}
-
-/* ================================
-   PANEL DE AJUSTE CON SELECT
-   ================================ */
-
-/* Contenedor del select */
-.adjust-panel {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 10px 0;
-}
-
-/* Select personalizado */
-.adjust-panel select {
-    flex: 1;
-    border-radius: 8px;
-    border: 1px solid #334155;
-    background: #0f172a;
-    color: white;
-    padding: 8px;
-}
-
-/* ================================
-   UNIDADES Y TEXTO FINAL
-   ================================ */
-
-/* Unidad de medida del input */
-.stat-input-group .unit {
-    color: #94a3b8;
-    font-size: 14px;
-    margin-left: 4px;
-    white-space: nowrap;
-}
-
-/* Texto pequeño inferior */
-.footer-text {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 12px;
-    color: #94a3b8;
 }
 
 /* ================================

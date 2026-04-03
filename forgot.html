@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberGame - Recuperar Contraseña</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1 id="main-title">🛡️ CyberGame</h1>
+        
+        <div class="card">
+            <!-- PASO 1: SOLICITAR CÓDIGO -->
+            <div id="step-solicitar" class="recovery-step">
+                <h2>Recuperar Contraseña</h2>
+                <p style="margin-bottom: 20px; font-size: 14px; color: #666;">Ingresa tu correo para recibir un código de verificación</p>
+                
+                <form id="formSolicitar" onsubmit="return false;">
+                    <div class="form-group">
+                        <label for="correoForgot">Correo Electrónico:</label>
+                        <input type="email" id="correoForgot" required placeholder="tu@correo.com">
+                    </div>
+                    <button type="button" class="btn" onclick="solicitarCodigoForgot()">Enviar Código</button>
+                </form>
+
+                <p class="toggle-text">
+                    ¿Recordaste tu contraseña? <a href="login.html">Inicia sesión aquí</a>
+                </p>
+            </div>
+
+            <!-- PASO 2: VERIFICAR CÓDIGO -->
+            <div id="step-verificar" class="recovery-step hidden">
+                <h2>Verifica tu Código</h2>
+                <p style="margin-bottom: 20px; font-size: 14px; color: #666;">Ingresa el código de 6 dígitos que recibiste</p>
+                
+                <form id="formVerificar" onsubmit="return false;">
+                    <input type="hidden" id="correoVerificacion" />
+                    <div class="form-group">
+                        <label for="codigo">Código de Verificación (6 dígitos):</label>
+                        <input type="text" id="codigo" required placeholder="Ej: 123456" maxlength="6" pattern="[0-9]{6}">
+                    </div>
+                    <button type="button" class="btn" onclick="verificarCodigoForgot()">Verificar Código</button>
+                </form>
+
+                <p class="toggle-text">
+                    <a href="javascript:volver_paso_solicitar()" style="cursor: pointer;">Volver a solicitar código</a>
+                </p>
+            </div>
+
+            <!-- PASO 3: NUEVA CONTRASEÑA -->
+            <div id="step-reset" class="recovery-step hidden">
+                <h2>Nueva Contraseña</h2>
+                <p style="margin-bottom: 20px; font-size: 14px; color: #666;">Establece tu nueva contraseña segura</p>
+                
+                <form id="formReset" onsubmit="return false;">
+                    <input type="hidden" id="newPasswordEmail" />
+                    <div class="form-group">
+                        <label for="newPassword">Nueva Contraseña:</label>
+                        <input type="password" id="newPassword" required placeholder="Min. 7 chars, 1 mayús, 1 número">
+                        <small id="passwordHelp" style="display: block; margin-top: 5px;"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="newPasswordConfirm">Confirmar Contraseña:</label>
+                        <input type="password" id="newPasswordConfirm" required placeholder="Repite tu contraseña">
+                    </div>
+
+                    <button type="button" class="btn" onclick="resetearContraseñaForgot()">Actualizar Contraseña</button>
+                </form>
+
+                <p class="toggle-text">
+                    <a href="login.html" style="cursor: pointer;">Ir a inicio de sesión</a>
+                </p>
+            </div>
+
+            <div id="error-message" style="color: #ff6b6b; text-align: center; margin-top: 20px; display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // VALIDACIÓN DE CONTRASEÑA (7+ chars, 1 mayús, 1 número)
+        function validarContraseña(password) {
+            const regex = /^(?=.*[A-Z])(?=.*\d).{7,}$/;
+            return regex.test(password);
+        }
+
+        function mostrarError(mensaje) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = mensaje;
+            errorDiv.style.display = 'block';
+        }
+
+        function ocultarError() {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.style.display = 'none';
+        }
+
+        function volver_paso_solicitar() {
+            document.getElementById('step-solicitar').classList.remove('hidden');
+            document.getElementById('step-verificar').classList.add('hidden');
+            document.getElementById('step-reset').classList.add('hidden');
+            ocultarError();
+            document.getElementById('correoForgot').value = '';
+            document.getElementById('formSolicitar').reset();
+        }
+
+        function solicitarCodigoForgot() {
+            const correo = document.getElementById('correoForgot').value.trim();
+            
+            if (!correo) {
+                mostrarError('Ingresa un correo válido');
+                return;
+            }
+
+            if (!correo.includes('@')) {
+                mostrarError('Ingresa un correo válido');
+                return;
+            }
+
+            ocultarError();
+            window.recoveryEmail = correo;
+
+            fetch('recuperar.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'accion=solicitar_codigo&email=' + encodeURIComponent(correo)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Respuesta solicitar_codigo:", data);
+                if (data.ok) {
+                    // ========== MOSTRAR CÓDIGO AL USUARIO ==========
+                    // El código siempre viene en codigo_debug (sandbox y email real)
+                    const codigo = data.codigo_debug || '';
+                    const mensajeAlerta = `✅ ${data.mensaje}\n\n` +
+                        `Tu código es:\n\n🔑 ${codigo}\n\n` +
+                        `(Cópialo y úsalo en el siguiente paso)`;
+                    
+                    alert(mensajeAlerta);
+                    document.getElementById('step-solicitar').classList.add('hidden');
+                    document.getElementById('step-verificar').classList.remove('hidden');
+                    document.getElementById('correoVerificacion').value = correo;
+                } else {
+                    mostrarError('Error: ' + (data.error || 'Error desconocido'));
+                }
+            })
+            .catch(err => {
+                console.error('Error fetch:', err);
+                mostrarError('Error de conexión');
+            });
+        }
+
+        function verificarCodigoForgot() {
+            const codigo = document.getElementById('codigo').value.trim();
+            
+            if (!codigo) {
+                mostrarError('Ingresa el código de verificación');
+                return;
+            }
+
+            if (!/^\d{6}$/.test(codigo)) {
+                mostrarError('El código debe tener exactamente 6 dígitos');
+                return;
+            }
+
+            const correo = window.recoveryEmail || document.getElementById('correoVerificacion').value;
+            ocultarError();
+
+            fetch('recuperar.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'accion=verificar_codigo&email=' + encodeURIComponent(correo) + '&codigo=' + encodeURIComponent(codigo)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Respuesta verificar_codigo:", data);
+                if (data.ok) {
+                    alert('Código verificado correctamente');
+                    window.tempResetToken = data.temp_token;
+                    document.getElementById('step-verificar').classList.add('hidden');
+                    document.getElementById('step-reset').classList.remove('hidden');
+                    document.getElementById('newPasswordEmail').value = correo;
+                } else {
+                    mostrarError('Error: ' + (data.error || 'Código inválido o expirado'));
+                }
+            })
+            .catch(err => {
+                console.error('Error fetch:', err);
+                mostrarError('Error de conexión');
+            });
+        }
+
+        function resetearContraseñaForgot() {
+            const password = document.getElementById('newPassword').value;
+            const passwordConfirm = document.getElementById('newPasswordConfirm').value;
+
+            if (!password || !passwordConfirm) {
+                mostrarError('Completa ambos campos');
+                return;
+            }
+
+            if (!validarContraseña(password)) {
+                mostrarError('Contraseña debe tener mínimo 7 caracteres, 1 mayúscula y 1 número');
+                return;
+            }
+
+            if (password !== passwordConfirm) {
+                mostrarError('Las contraseñas no coinciden');
+                return;
+            }
+
+            ocultarError();
+
+            fetch('recuperar.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'accion=resetear_contraseña&temp_token=' + encodeURIComponent(window.tempResetToken) + 
+                      '&password=' + encodeURIComponent(password) + 
+                      '&password_confirm=' + encodeURIComponent(passwordConfirm)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Respuesta resetear_contraseña:", data);
+                if (data.ok) {
+                    alert('Contraseña actualizada exitosamente. Por favor inicia sesión.');
+                    window.location.href = 'login.html';
+                } else {
+                    mostrarError('Error: ' + (data.error || 'Error desconocido'));
+                }
+            })
+            .catch(err => {
+                console.error('Error fetch:', err);
+                mostrarError('Error de conexión');
+            });
+        }
+
+        // Validar contraseña en tiempo real
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('newPassword');
+            if (passwordInput) {
+                passwordInput.addEventListener('input', function() {
+                    const mensaje = document.getElementById('passwordHelp');
+                    if (this.value && !validarContraseña(this.value)) {
+                        mensaje.textContent = '❌ Mínimo 7 caracteres, 1 mayúscula y 1 número';
+                        mensaje.style.color = '#ff6b6b';
+                    } else if (this.value) {
+                        mensaje.textContent = '✓ Contraseña válida';
+                        mensaje.style.color = '#51cf66';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
