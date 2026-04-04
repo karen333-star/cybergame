@@ -21,127 +21,31 @@ function mostrarRegistro() {
         document.getElementById("register").classList.add("hidden");
         document.getElementById("forgot").classList.remove("hidden");
         document.getElementById("verificarCodigo").classList.add("hidden");
-        document.getElementById("resetPassword").classList.add("hidden");
+        document.getElementById("config").classList.add("hidden");
     }
 
     function enviarCodigoRecuperacion() {
         const correo = document.getElementById("correoForgot").value;
         if (!correo) {
-            alert('Ingresa un correo válido');
+            alert('Ingresa un correo');
             return;
         }
 
-        if (!correo.includes('@')) {
-            alert('Ingresa un correo válido');
-            return;
-        }
-
-        // Guardar email para posterior verificación
-        window.recoveryEmail = correo;
-
-        fetch('recuperar.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: 'accion=solicitar_codigo&email=' + encodeURIComponent(correo)
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log("Respuesta solicitar_codigo:", data);
-            if (data.ok) {
-                // ========== MENSAJE PARA USUARIO ==========
-                let mensajeAlerta = '✅ Hemos enviado un código de verificación a tu correo.\n\nRevisa tu bandeja de entrada (o spam).';
-                
-                // ========== DEBUG: En desarrollo, mostrar código si está disponible ==========
-                // Si mail() no funciona, el servidor devuelve el código en la respuesta
-                if (data.codigo_debug) {
-                    mensajeAlerta += '\n\n🧪 CÓDIGO DE PRUEBA (DEV): ' + data.codigo_debug;
-                    console.log('💡 Código debug disponible:', data.codigo_debug);
-                }
-                
-                alert(mensajeAlerta);
-                document.getElementById("forgot").classList.add("hidden");
-                document.getElementById("verificarCodigo").classList.remove("hidden");
-                document.getElementById("correoVerificacion").value = correo;
-            } else {
-                alert('Error: ' + (data.error || 'Error desconocido'));
-            }
-        })
-        .catch(err => console.error('Error fetch:', err));
+        // TODO: Llamar a backend para enviar código real
+        alert(`Código enviado a ${correo}`);
+        document.getElementById("forgot").classList.add("hidden");
+        document.getElementById("verificarCodigo").classList.remove("hidden");
     }
 
 function verificarCodigoRecuperacion() {
     const codigo = document.getElementById("codigo").value;
     if (!codigo) {
-        alert('Ingresa el código de verificación');
+        alert('Ingresa un código');
         return;
     }
 
-    if (codigo.length < 8) {
-        alert('El código debe tener al menos 8 caracteres');
-        return;
-    }
-
-    const correo = window.recoveryEmail || document.getElementById("correoVerificacion").value;
-
-    fetch('recuperar.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'accion=verificar_codigo&email=' + encodeURIComponent(correo) + '&codigo=' + encodeURIComponent(codigo)
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log("Respuesta verificar_codigo:", data);
-        if (data.ok) {
-            alert('Código verificado correctamente');
-            window.tempResetToken = data.temp_token;
-            document.getElementById("verificarCodigo").classList.add("hidden");
-            document.getElementById("resetPassword").classList.remove("hidden");
-            document.getElementById("newPasswordEmail").value = correo;
-        } else {
-            alert('Error: ' + (data.error || 'Código inválido o expirado'));
-        }
-    })
-    .catch(err => console.error('Error fetch:', err));
-}
-
-function resetearContraseña() {
-    const password = document.getElementById("newPassword").value;
-    const passwordConfirm = document.getElementById("newPasswordConfirm").value;
-
-    if (!password || !passwordConfirm) {
-        alert('Completa ambos campos');
-        return;
-    }
-
-    if (!validarContraseña(password)) {
-        alert('Contraseña debe tener al menos 7 caracteres, 1 mayúscula y 1 número');
-        return;
-    }
-
-    if (password !== passwordConfirm) {
-        alert('Las contraseñas no coinciden');
-        return;
-    }
-
-    fetch('recuperar.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'accion=resetear_contraseña&temp_token=' + encodeURIComponent(window.tempResetToken) + 
-              '&password=' + encodeURIComponent(password) + 
-              '&password_confirm=' + encodeURIComponent(passwordConfirm)
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log("Respuesta resetear_contraseña:", data);
-        if (data.ok) {
-            alert('Contraseña actualizada exitosamente. Por favor inicia sesión con tu nueva contraseña.');
-            mostrarLogin();
-            document.getElementById("loginForm").reset();
-        } else {
-            alert('Error: ' + (data.error || 'Error desconocido'));
-        }
-    })
-    .catch(err => console.error('Error fetch:', err));
+    // TODO: Llamar a backend para verificar código
+    alert(`Código ${codigo} verificado. Redireccionar a reset de contraseña`);
 }
 
 // FORMULARIO LOGIN
@@ -232,10 +136,4 @@ if (formRegister) {
         .catch(err => console.error('Error fetch:', err));
     });
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-    if (typeof actualizarConfigVisual === 'function') {
-        actualizarConfigVisual();
-    }
-});
  

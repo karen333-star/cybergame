@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>CYBERGAME - Login</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="config.css">
     <link rel="stylesheet" href="juego.css">
 </head>
 <body>
@@ -14,7 +13,7 @@
     <!-- LOGIN -->
     <div id="login">
         <div class="title">CYBERGAME</div>
-        <div class="subtitle">iniciooooo</div>
+        <div class="subtitle">Iniciar Sesión</div>
 
         <form id="formLogin" action="index.php" method="post">
             <input type="hidden" name="accion" value="login">
@@ -53,7 +52,7 @@
 
         <form id="formForgot" onsubmit="return false;">
             <label for="correoForgot">Correo electrónico</label>
-            <input type="email" id="correoForgot" required placeholder="Ingresa tu correo registrado">
+            <input type="email" id="correoForgot" required placeholder="Ingresa tu correo">
             <button type="button" onclick="enviarCodigoRecuperacion()">Enviar Código</button>
         </form>
 
@@ -67,97 +66,80 @@
         <div class="subtitle">Verifica tu código</div>
 
         <form id="formVerificar" onsubmit="return false;">
-            <input type="hidden" id="correoVerificacion" />
-            <label for="codigo">Código de recuperación (8+ caracteres)</label>
-            <input type="text" id="codigo" required placeholder="Ingresa el código recibido en tu correo">
+            <label for="codigo">Código de recuperación</label>
+            <input type="text" id="codigo" required placeholder="Ingresa el código recibido">
             <button type="button" onclick="verificarCodigoRecuperacion()">Verificar Código</button>
         </form>
 
         <div class="link" onclick="mostrarForgot()">Volver a recuperar</div>
     </div>
 
-    <!-- RESETEAR CONTRASEÑA -->
-    <div id="resetPassword" class="hidden">
-        <div class="title">CYBERGAME</div>
-        <div class="subtitle">Establece tu nueva contraseña</div>
-
-        <form id="formResetPassword" onsubmit="return false;">
-            <input type="hidden" id="newPasswordEmail" />
-            <label for="newPassword">Nueva Contraseña</label>
-            <input type="password" id="newPassword" required placeholder="Contraseña (7+ chars, 1 mayús, 1 número)">
-            
-            <label for="newPasswordConfirm">Confirmar Contraseña</label>
-            <input type="password" id="newPasswordConfirm" required placeholder="Confirma tu contraseña">
-            
-            <button type="button" onclick="resetearContraseña()">Actualizar Contraseña</button>
-        </form>
-
-        <div class="link" onclick="mostrarLogin()">Volver a Iniciar Sesión</div>
-    </div>
-
     <!-- CONFIGURACIÓN INICIAL PARTIDA -->
-    <div id="config" class="hidden config-screen">
-        <div class="config-header">
-            <span class="config-tag">SYSTEM_CONFIG // INIT</span>
-            <h1>CONFIGURACIÓN INICIAL</h1>
-            <p>ESTO AFECTARÁ LA DIFICULTAD INICIAL DE TU PARTIDA</p>
-        </div>
+    <div id="config" class="hidden">
+        <div class="title">CYBERGAME</div>
+        <div class="subtitle">Configuración inicial, esto afectara la dificultad inicial de tu partida</div>
 
-        <form id="formConfig" onsubmit="return false;" class="config-grid">
-            <div class="config-card" id="card-cia">
-                <div class="card-icon">O</div>
-                <div class="card-title">CIA INICIAL</div>
-                <div class="card-value"><span id="ciaValue">50</span><small>%</small></div>
-                <div class="progress-bars" id="ciaBars"></div>
-                <div class="card-controls">
-                    <button type="button" onclick="cambiarValor('cia', -1)">▼</button>
-                    <button type="button" onclick="cambiarValor('cia', 1)">▲</button>
+        <form id="formConfig" onsubmit="return false;">
+            <div class="stat-row">
+                <label for="cia">CIA inicial</label>
+                <div class="stat-row-controls"> 
+                    <div class="stat-input-group">
+                        <input type="number" id="cia" min="30" max="80" placeholder="30-80">
+                        <span class="unit">%</span>
+                    </div>
+                    <div class="number-arrows">
+                        <button type="button" onclick="cambiarValor('cia', 1)">▲</button>
+                        <button type="button" onclick="cambiarValor('cia', -1)">▼</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="config-card" id="card-presupuesto">
-                <div class="card-icon">B</div>
-                <div class="card-title">PRESUPUESTO INICIAL</div>
-                <div class="card-value"><span id="presupuestoValue">50</span><small>M COP</small></div>
-                <div class="progress-bars" id="presupuestoBars"></div>
-                <div class="card-controls">
-                    <button type="button" onclick="cambiarValor('presupuesto', -1)">▼</button>
-                    <button type="button" onclick="cambiarValor('presupuesto', 1)">▲</button>
+            <div class="stat-row">
+                <label for="presupuesto">Presupuesto inicial (millones de pesos)</label>
+                <div class="stat-row-controls">
+                    <div class="stat-input-group">
+                        <input type="number" id="presupuesto" min="10" max="80" placeholder="10-80">
+                        <span class="unit">M COP</span>
+                    </div>
+                    <div class="number-arrows">
+                        <button type="button" onclick="cambiarValor('presupuesto', 1)">▲</button>
+                        <button type="button" onclick="cambiarValor('presupuesto', -1)">▼</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="config-card danger" id="card-despido">
-                <div class="card-icon">!</div>
-                <div class="card-title">PROBABILIDAD DE DESPIDO</div>
-                <div class="card-value" id="despidoValueContainer"><span id="despidoValue">20</span><small>%</small></div>
-                <div class="progress-bars" id="despidoBars"></div>
-                <div class="card-controls">
-                    <button type="button" onclick="cambiarValor('despido', -1)">▼</button>
-                    <button type="button" onclick="cambiarValor('despido', 1)">▲</button>
+            <div class="stat-row">
+                <label for="despido">Probabilidad de despido</label>
+                <div class="stat-row-controls">
+                    <div class="stat-input-group">
+                        <input type="number" id="despido" min="5" max="80" placeholder="5-80">
+                        <span class="unit">%</span>
+                    </div>
+                    <div class="number-arrows">
+                        <button type="button" onclick="cambiarValor('despido', 1)">▲</button>
+                        <button type="button" onclick="cambiarValor('despido', -1)">▼</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="config-card" id="card-maxRondas">
-                <div class="card-icon">⏱</div>
-                <div class="card-title">MÁXIMO DE RONDAS</div>
-                <div class="card-value"><span id="maxRondasValue">25</span><small>RONDAS</small></div>
-                <div class="progress-bars" id="maxRondasBars"></div>
-                <div class="card-controls">
-                    <button type="button" onclick="cambiarValor('maxRondas', -1)">▼</button>
-                    <button type="button" onclick="cambiarValor('maxRondas', 1)">▲</button>
+            <div class="stat-row">
+                <label for="maxRondas">Máximo de rondas</label>
+                <div class="stat-row-controls">
+                    <div class="stat-input-group">
+                        <input type="number" id="maxRondas" min="15" max="40" placeholder="15-40">
+                        <span class="unit">rondas</span>
+                    </div>
+                    <div class="number-arrows">
+                        <button type="button" onclick="cambiarValor('maxRondas', 1)">▲</button>
+                        <button type="button" onclick="cambiarValor('maxRondas', -1)">▼</button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Inputs escondidos, usados por JS -->
-            <input type="number" id="cia" name="cia" min="30" max="80" value="50" hidden>
-            <input type="number" id="presupuesto" name="presupuesto" min="10" max="80" value="50" hidden>
-            <input type="number" id="despido" name="despido" min="5" max="80" value="20" hidden>
-            <input type="number" id="maxRondas" name="maxRondas" min="15" max="40" value="25" hidden>
-
-            <button type="button" onclick="iniciarPartida()" class="btn-start">INICIAR PARTIDA</button>
+            <button type="button" onclick="iniciarPartida()">Iniciar Partida</button>
         </form>
 
-        <div class="link config-back" onclick="window.location.href='menu.php'">Volver al Menú Principal</div>
+        <div class="link" onclick="window.location.href='menu.php'">Volver al Menú Principal</div>
     </div>
 
     <div id="partida" class="hidden">
@@ -165,10 +147,10 @@
         <div class="subtitle">En partida</div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; padding: 10px; background: #f0f0f0; border-radius: 5px;">
-            <div style="text-align: center;">
+            <button type="button" onclick="alternarDesgloseCIA()" style="text-align: center; background: transparent; color: inherit; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; cursor: pointer;">
                 <strong>CIA</strong><br>
                 <span id="stat-cia" style="font-size: 24px; font-weight: bold;">50</span>%
-            </div>
+            </button>
             <div style="text-align: center;">
                 <strong>Presupuesto</strong><br>
                 <span id="stat-presupuesto" style="font-size: 24px; font-weight: bold;">50</span>M COP
@@ -179,12 +161,35 @@
             </div>
         </div>
 
+        <div id="panel-desglose-cia" style="display: none; margin-top: -6px; margin-bottom: 16px; padding: 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; color: #1e3a8a;"></div>
+
         <p><strong>Partida:</strong> <span id="partida-id">-</span></p>
         <p><strong>Turno:</strong> <span id="turno-orden">-</span></p>
         <p><strong>Remitente:</strong> <span id="esc-remitente">-</span></p>
         <p><strong>Tipo:</strong> <span id="esc-tipo">-</span></p>
         <p><strong>Asunto:</strong> <span id="esc-titulo">-</span></p>
         <p><strong>Contenido:</strong> <span id="esc-texto">-</span></p>
+
+        <div id="estado-espera" style="display: none; margin-top: 16px; padding: 10px; background: #fff4d6; border-radius: 5px; color: #3f2f00; font-weight: 600;"></div>
+
+        <div id="mailbox-controls" style="margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap;">
+            <button type="button" id="btn-bandeja-escenarios" onclick="abrirBandeja('scenarios')" style="flex: 1; min-width: 180px; background: #374151; color: #fff; border-radius: 8px;">
+                Escenarios <span id="badge-scenarios" style="display: none; margin-left: 6px; background: #ef4444; padding: 2px 8px; border-radius: 999px; font-size: 12px;">0</span>
+            </button>
+            <button type="button" id="btn-bandeja-efectos" onclick="abrirBandeja('effects')" style="flex: 1; min-width: 180px; background: #1f2937; color: #fff; border-radius: 8px;">
+                Efectos <span id="badge-effects" style="display: none; margin-left: 6px; background: #f59e0b; padding: 2px 8px; border-radius: 999px; font-size: 12px;">0</span>
+            </button>
+        </div>
+
+        <div id="panel-bandeja" style="display: none; margin-top: 12px; background: #f8fafc; border: 1px solid #d1d5db; border-radius: 8px; padding: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <strong id="panel-bandeja-titulo">Bandeja</strong>
+                <button type="button" onclick="cerrarPanelBandeja()" style="width: auto; padding: 6px 10px;">Cerrar</button>
+            </div>
+            <div id="panel-bandeja-lista" style="display: flex; flex-direction: column; gap: 6px;"></div>
+        </div>
+
+        <div id="correo-repercusion" style="display: none; margin-top: 16px; padding: 12px; background: #f4f9ff; border: 1px solid #c9e0ff; border-radius: 6px; color: #15263a;"></div>
 
         <div style="margin-top: 20px; padding: 10px; background: #ffe0e0; border-radius: 5px; text-align: center;">
             <strong>Tiempo restante:</strong> <span id="cronometro" style="font-size: 32px; font-weight: bold; color: #d32f2f;">60</span>s
@@ -208,7 +213,7 @@
 
 </div>
 
-<script src="script.js"></script>
-<script src="confi.js"></script>
+<script src="script.js?v=20260402"></script>
+<script src="confi.js?v=20260402"></script>
 </body>
 </html>             

@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->bind_param("ss", $identidad, $identidad);
     $stmt->execute();
     $result = $stmt->get_result();
-ap
+
     if ($result->num_rows === 0) {
         header("Location: login.html?error=Usuario o contraseña incorrectos");
         exit;

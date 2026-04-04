@@ -25,6 +25,23 @@ function formatear_fecha(?string $fecha): string {
     return date('d/m/Y H:i', $timestamp);
 }
 
+function formatear_desglose_cia(?array $datos): string {
+    if (!$datos) {
+        return 'Puntaje individual no disponible';
+    }
+
+    $confidencialidad = $datos['confidencialidad'] ?? null;
+    $integridad = $datos['integridad'] ?? null;
+    $accesibilidad = $datos['accesibilidad'] ?? null;
+    $cia = $datos['cia'] ?? null;
+
+    if ($confidencialidad === null || $integridad === null || $accesibilidad === null || $cia === null) {
+        return 'Puntaje individual no disponible';
+    }
+
+    return 'C ' . (int)$confidencialidad . '% | I ' . (int)$integridad . '% | A ' . (int)$accesibilidad . '% | CIA ' . (int)$cia . '%';
+}
+
 $sqlResumenUsuario = "
     SELECT
         COUNT(*) AS partidas_finalizadas,
@@ -50,9 +67,15 @@ $sqlPartidas = "
         p.id_partida,
         p.estado_partida,
         p.cia_inicial,
+        p.c_inicial,
+        p.i_inicial,
+        p.a_inicial,
         p.presupuesto_inicial,
         p.despido_inicial,
         p.cia_final,
+        p.c_final,
+        p.i_final,
+        p.a_final,
         p.presupuesto_final,
         p.despido_final,
         p.tiempo_inicial,
@@ -92,9 +115,15 @@ if ($partidaSeleccionada > 0) {
             p.id_partida,
             p.estado_partida,
             p.cia_inicial,
+            p.c_inicial,
+            p.i_inicial,
+            p.a_inicial,
             p.presupuesto_inicial,
             p.despido_inicial,
             p.cia_final,
+            p.c_final,
+            p.i_final,
+            p.a_final,
             p.presupuesto_final,
             p.despido_final,
             p.tiempo_inicial,
@@ -130,9 +159,15 @@ if ($partidaSeleccionada > 0) {
                 ep.tiempo_respuesta_segundos,
                 ep.fue_timeout,
                 ep.cia_antes,
+                ep.c_antes,
+                ep.i_antes,
+                ep.a_antes,
                 ep.presupuesto_antes,
                 ep.despido_antes,
                 ep.cia_despues,
+                ep.c_despues,
+                ep.i_despues,
+                ep.a_despues,
                 ep.presupuesto_despues,
                 ep.despido_despues,
                 ep.feedback_mostrado,
@@ -350,9 +385,15 @@ function es_activa(string $seccionActual, string $esperada): string {
                         </div>
                         <div class="history-detail-summary history-detail-summary-small">
                             <div><span>CIA inicial</span><strong><?php echo (int)$partidaDetalle['cia_inicial']; ?>%</strong></div>
+                            <div><span>C inicial</span><strong><?php echo $partidaDetalle['c_inicial'] !== null ? (int)$partidaDetalle['c_inicial'] . '%' : 'Puntaje individual no disponible'; ?></strong></div>
+                            <div><span>I inicial</span><strong><?php echo $partidaDetalle['i_inicial'] !== null ? (int)$partidaDetalle['i_inicial'] . '%' : 'Puntaje individual no disponible'; ?></strong></div>
+                            <div><span>A inicial</span><strong><?php echo $partidaDetalle['a_inicial'] !== null ? (int)$partidaDetalle['a_inicial'] . '%' : 'Puntaje individual no disponible'; ?></strong></div>
                             <div><span>Presupuesto inicial</span><strong><?php echo (int)$partidaDetalle['presupuesto_inicial']; ?></strong></div>
                             <div><span>Despido inicial</span><strong><?php echo h(number_format((float)$partidaDetalle['despido_inicial'], 2)); ?>%</strong></div>
                             <div><span>CIA final</span><strong><?php echo $partidaDetalle['cia_final'] !== null ? (int)$partidaDetalle['cia_final'] . '%' : '-'; ?></strong></div>
+                            <div><span>C final</span><strong><?php echo $partidaDetalle['c_final'] !== null ? (int)$partidaDetalle['c_final'] . '%' : 'Puntaje individual no disponible'; ?></strong></div>
+                            <div><span>I final</span><strong><?php echo $partidaDetalle['i_final'] !== null ? (int)$partidaDetalle['i_final'] . '%' : 'Puntaje individual no disponible'; ?></strong></div>
+                            <div><span>A final</span><strong><?php echo $partidaDetalle['a_final'] !== null ? (int)$partidaDetalle['a_final'] . '%' : 'Puntaje individual no disponible'; ?></strong></div>
                             <div><span>Presupuesto final</span><strong><?php echo $partidaDetalle['presupuesto_final'] !== null ? (int)$partidaDetalle['presupuesto_final'] : '-'; ?></strong></div>
                             <div><span>Despido final</span><strong><?php echo $partidaDetalle['despido_final'] !== null ? h(number_format((float)$partidaDetalle['despido_final'], 2)) . '%' : '-'; ?></strong></div>
                         </div>
@@ -391,11 +432,21 @@ function es_activa(string $seccionActual, string $esperada): string {
                                         <div class="event-grid event-grid-small">
                                             <div>
                                                 <span>Antes</span>
-                                                <strong>CIA <?php echo (int)$evento['cia_antes']; ?>% | Presupuesto <?php echo (int)$evento['presupuesto_antes']; ?> | Despido <?php echo h(number_format((float)$evento['despido_antes'], 2)); ?>%</strong>
+                                                <strong><?php echo h(formatear_desglose_cia([
+                                                    'confidencialidad' => $evento['c_antes'],
+                                                    'integridad' => $evento['i_antes'],
+                                                    'accesibilidad' => $evento['a_antes'],
+                                                    'cia' => $evento['cia_antes']
+                                                ])); ?> | Presupuesto <?php echo (int)$evento['presupuesto_antes']; ?> | Despido <?php echo h(number_format((float)$evento['despido_antes'], 2)); ?>%</strong>
                                             </div>
                                             <div>
                                                 <span>Después</span>
-                                                <strong>CIA <?php echo (int)$evento['cia_despues']; ?>% | Presupuesto <?php echo (int)$evento['presupuesto_despues']; ?> | Despido <?php echo h(number_format((float)$evento['despido_despues'], 2)); ?>%</strong>
+                                                <strong><?php echo h(formatear_desglose_cia([
+                                                    'confidencialidad' => $evento['c_despues'],
+                                                    'integridad' => $evento['i_despues'],
+                                                    'accesibilidad' => $evento['a_despues'],
+                                                    'cia' => $evento['cia_despues']
+                                                ])); ?> | Presupuesto <?php echo (int)$evento['presupuesto_despues']; ?> | Despido <?php echo h(number_format((float)$evento['despido_despues'], 2)); ?>%</strong>
                                             </div>
                                         </div>
                                         <div class="event-date">Registrado: <?php echo formatear_fecha($evento['fecha_evento'] ?? null); ?></div>
