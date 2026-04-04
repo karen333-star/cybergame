@@ -16,13 +16,13 @@ function responder($data) {
 
 function repartir_cia_inicial(int $cia): array {
     $cia = max(0, min(100, $cia));
-    $base = intdiv($cia, 3);
-    $resto = $cia % 3;
 
+    // El valor de CIA configurado representa el nivel inicial de cada pilar.
+    // Asi, el promedio CIA inicial coincide con el valor elegido en configuracion.
     return [
-        'confidencialidad' => $base + ($resto > 0 ? 1 : 0),
-        'integridad' => $base + ($resto > 1 ? 1 : 0),
-        'accesibilidad' => $base,
+        'confidencialidad' => $cia,
+        'integridad' => $cia,
+        'accesibilidad' => $cia,
     ];
 }
 

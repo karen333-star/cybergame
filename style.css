@@ -3,7 +3,6 @@
     font-family: 'Segoe UI', Tahoma, sans-serif;
 }
 
-/* Fondo degradado, centrado total del contenido */
 body {
     margin: 0;
     min-height: 100vh;
@@ -16,8 +15,6 @@ body {
     padding: 20px;
 }
 
-
-/* Título grande del sistema / juego */
 #main-title {
     font-size: 44px;
     font-weight: 900;
@@ -27,21 +24,15 @@ body {
     letter-spacing: 4px;
 }
 
-/* ================================
-   CONTENEDOR PRINCIPAL (CARD)
-   ================================ */
-
-/* Caja principal para login, registro, configuración */
 .card {
     background: #1e293b;
     width: 300px;
     padding: 24px;
     border-radius: 12px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
     color: white;
 }
 
-/* Títulos y subtítulos */
 .title {
     text-align: center;
     font-size: 26px;
@@ -71,11 +62,6 @@ input::placeholder {
     color: #94a3b8;
 }
 
-/* ================================
-   BOTONES
-   ================================ */
-
-/* Botón principal */
 button {
     width: 100%;
     padding: 12px;
@@ -89,16 +75,10 @@ button {
     transition: background 0.3s;
 }
 
-/* Hover del botón */
 button:hover {
     background: #7c3aed;
 }
 
-/* ================================
-   ENLACES TIPO TEXTO
-   ================================ */
-
-/* Texto clickeable para cambiar vistas */
 .link {
     text-align: center;
     margin-top: 15px;
@@ -107,21 +87,14 @@ button:hover {
     cursor: pointer;
 }
 
-/* Hover del link */
 .link:hover {
     text-decoration: underline;
 }
 
-/* ================================
-   UTILIDAD PARA OCULTAR ELEMENTOS
-   ================================ */
-
-/* Clase para ocultar secciones */
 .hidden {
     display: none;
 }
 
-/* Estadísticas */
 .stat-row {
     display: flex;
     align-items: center;
@@ -172,11 +145,6 @@ button:hover {
     -moz-appearance: textfield;
 }
 
-/* ================================
-   ELIMINAR SPINNERS NATIVOS
-   ================================ */
-
-/* Quita flechas por defecto del input number */
 input[type=number]::-webkit-outer-spin-button,
 input[type=number]::-webkit-inner-spin-button,
 .stat-input-group input[type=number]::-webkit-outer-spin-button,
@@ -194,11 +162,6 @@ input[type=number]::-moz-focus-inner {
     border: 0;
 }
 
-/* ================================
-   FLECHAS PERSONALIZADAS
-   ================================ */
-
-/* Contenedor de botones subir/bajar */
 .number-arrows {
     display: flex;
     flex-direction: column;
@@ -211,7 +174,6 @@ input[type=number]::-moz-focus-inner {
     min-width: 30px;
 }
 
-/* Botones individuales */
 .number-arrows button {
     width: 24px;
     height: 20px;
@@ -225,16 +187,10 @@ input[type=number]::-moz-focus-inner {
     line-height: 1;
 }
 
-/* Hover de flechas */
 .number-arrows button:hover {
     background: #212f49;
 }
 
-/* ================================
-   PANEL DE AJUSTE CON SELECT
-   ================================ */
-
-/* Contenedor del select */
 .adjust-panel {
     display: flex;
     align-items: center;
@@ -242,7 +198,6 @@ input[type=number]::-moz-focus-inner {
     margin: 10px 0;
 }
 
-/* Select personalizado */
 .adjust-panel select {
     flex: 1;
     border-radius: 8px;
@@ -252,11 +207,6 @@ input[type=number]::-moz-focus-inner {
     padding: 8px;
 }
 
-/* ================================
-   UNIDADES Y TEXTO FINAL
-   ================================ */
-
-/* Unidad de medida del input */
 .stat-input-group .unit {
     color: #94a3b8;
     font-size: 14px;
@@ -264,7 +214,6 @@ input[type=number]::-moz-focus-inner {
     white-space: nowrap;
 }
 
-/* Texto pequeño inferior */
 .footer-text {
     text-align: center;
     margin-top: 20px;
@@ -272,11 +221,6 @@ input[type=number]::-moz-focus-inner {
     color: #94a3b8;
 }
 
-/* ================================
-   MENÚ PRINCIPAL
-   ================================ */
-
-/* Contenedor del menú */
 .menu-opciones {
     display: flex;
     flex-direction: column;
@@ -284,7 +228,6 @@ input[type=number]::-moz-focus-inner {
     margin: 25px 0;
 }
 
-/* Botones del menú */
 .menu-btn {
     display: flex;
     align-items: center;
@@ -303,35 +246,26 @@ input[type=number]::-moz-focus-inner {
     box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
 }
 
-/* Hover del botón menú */
 .menu-btn:hover {
     background: linear-gradient(135deg, #9d70f9, #8b5cf6);
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(139, 92, 246, 0.5);
 }
 
-/* Botón cerrar sesión */
 .logout-btn {
     background: linear-gradient(135deg, #ef4444, #dc2626);
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
-/* Hover del botón cerrar sesión */
 .logout-btn:hover {
     background: linear-gradient(135deg, #f87171, #ef4444);
     box-shadow: 0 6px 16px rgba(239, 68, 68, 0.5);
 }
 
-/* Emoji del menú */
 .menu-btn span {
     font-size: 18px;
 }
 
-/* ================================
-   FORMULARIOS
-   ================================ */
-
-/* Contenedor general */
 .container {
     display: flex;
     flex-direction: column;
@@ -339,12 +273,10 @@ input[type=number]::-moz-focus-inner {
     gap: 20px;
 }
 
-/* Grupo de formulario */
 .form-group {
     margin-bottom: 15px;
 }
 
-/* Label personalizado */
 .form-group label {
     display: block;
     margin-bottom: 8px;
@@ -353,7 +285,6 @@ input[type=number]::-moz-focus-inner {
     font-weight: 500;
 }
 
-/* Inputs en formularios */
 .form-group input {
     width: 100%;
     padding: 12px;
@@ -371,7 +302,6 @@ input[type=number]::-moz-focus-inner {
     box-shadow: 0 0 8px rgba(139, 92, 246, 0.3);
 }
 
-/* Título h2 en card */
 .card h2 {
     text-align: center;
     font-size: 24px;
@@ -379,7 +309,6 @@ input[type=number]::-moz-focus-inner {
     margin: 0 0 20px 0;
 }
 
-/* Enlace toggle (Login/Registro) */
 .toggle-text {
     text-align: center;
     margin-top: 15px;

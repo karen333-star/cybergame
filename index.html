@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>CYBERGAME - Login</title>
+    <link rel="stylesheet" href="config.css?v=20260404">
+    <link rel="stylesheet" href="partida.css?v=20260404">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="juego.css">
 </head>
@@ -75,136 +77,244 @@
     </div>
 
     <!-- CONFIGURACIÓN INICIAL PARTIDA -->
-    <div id="config" class="hidden">
-        <div class="title">CYBERGAME</div>
-        <div class="subtitle">Configuración inicial, esto afectara la dificultad inicial de tu partida</div>
+    <div id="config" class="hidden config-screen">
+        <div class="config-shell">
+            <div class="config-kicker">SYSTEM_CONFIG // INIT</div>
+            <h1 class="config-title">CONFIGURACIÓN INICIAL</h1>
+            <div class="config-subtitle">ESTO AFECTARÁ LA DIFICULTAD INICIAL DE TU PARTIDA</div>
 
-        <form id="formConfig" onsubmit="return false;">
-            <div class="stat-row">
-                <label for="cia">CIA inicial</label>
-                <div class="stat-row-controls"> 
-                    <div class="stat-input-group">
-                        <input type="number" id="cia" min="30" max="80" placeholder="30-80">
-                        <span class="unit">%</span>
+            <form id="formConfig" onsubmit="return false;" class="config-grid">
+                <section class="config-card config-card-cyan">
+                    <div class="config-card-head">
+                        <span class="config-chip">0</span>
+                        <label for="cia">CIA INICIAL</label>
                     </div>
-                    <div class="number-arrows">
-                        <button type="button" onclick="cambiarValor('cia', 1)">▲</button>
+
+                    <div class="config-value-row">
+                        <span class="config-bracket">[</span>
+                        <input type="number" id="cia" min="30" max="80" value="50" placeholder="30-80">
+                        <span class="config-unit">%</span>
+                        <span class="config-bracket">]</span>
+                    </div>
+
+                    <div class="config-meter config-meter-cia" aria-hidden="true">
+                        <span class="is-on"></span>
+                        <span class="is-on"></span>
+                        <span class="is-on"></span>
+                        <span class="is-on"></span>
+                        <span class="is-on"></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <div class="config-adjust">
                         <button type="button" onclick="cambiarValor('cia', -1)">▼</button>
+                        <span>AJUSTAR</span>
+                        <button type="button" onclick="cambiarValor('cia', 1)">▲</button>
                     </div>
-                </div>
-            </div>
+                </section>
 
-            <div class="stat-row">
-                <label for="presupuesto">Presupuesto inicial (millones de pesos)</label>
-                <div class="stat-row-controls">
-                    <div class="stat-input-group">
-                        <input type="number" id="presupuesto" min="10" max="80" placeholder="10-80">
-                        <span class="unit">M COP</span>
+                <section class="config-card config-card-cyan">
+                    <div class="config-card-head">
+                        <span class="config-chip">9</span>
+                        <label for="presupuesto">PRESUPUESTO INICIAL</label>
                     </div>
-                    <div class="number-arrows">
-                        <button type="button" onclick="cambiarValor('presupuesto', 1)">▲</button>
+
+                    <div class="config-value-row config-value-row-money">
+                        <span class="config-bracket">[</span>
+                        <input type="number" id="presupuesto" min="10" max="80" value="50" placeholder="10-80">
+                        <span class="config-unit config-unit-money">M COP</span>
+                        <span class="config-bracket">]</span>
+                    </div>
+
+                    <div class="config-meter config-meter-money" aria-hidden="true">
+                        <span class="is-on"></span>
+                        <span class="is-on"></span>
+                        <span class="is-on"></span>
+                        <span class="is-on"></span>
+                        <span class="is-on"></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <div class="config-adjust">
                         <button type="button" onclick="cambiarValor('presupuesto', -1)">▼</button>
+                        <span>AJUSTAR</span>
+                        <button type="button" onclick="cambiarValor('presupuesto', 1)">▲</button>
                     </div>
-                </div>
-            </div>
+                </section>
 
-            <div class="stat-row">
-                <label for="despido">Probabilidad de despido</label>
-                <div class="stat-row-controls">
-                    <div class="stat-input-group">
-                        <input type="number" id="despido" min="5" max="80" placeholder="5-80">
-                        <span class="unit">%</span>
+                <section class="config-card config-card-rose">
+                    <div class="config-card-head">
+                        <span class="config-chip">△</span>
+                        <label for="despido">PROBABILIDAD DE DESPIDO</label>
                     </div>
-                    <div class="number-arrows">
-                        <button type="button" onclick="cambiarValor('despido', 1)">▲</button>
+
+                    <div class="config-value-row config-value-row-emphasis">
+                        <span class="config-bracket">[</span>
+                        <input type="number" id="despido" min="5" max="80" value="20" placeholder="5-80">
+                        <span class="config-unit">%</span>
+                        <span class="config-bracket">]</span>
+                    </div>
+
+                    <div class="config-meter config-meter-rose" aria-hidden="true">
+                        <span class="is-on"></span>
+                        <span class="is-on"></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <div class="config-adjust">
                         <button type="button" onclick="cambiarValor('despido', -1)">▼</button>
+                        <span>AJUSTAR</span>
+                        <button type="button" onclick="cambiarValor('despido', 1)">▲</button>
                     </div>
-                </div>
-            </div>
+                </section>
 
-            <div class="stat-row">
-                <label for="maxRondas">Máximo de rondas</label>
-                <div class="stat-row-controls">
-                    <div class="stat-input-group">
-                        <input type="number" id="maxRondas" min="15" max="40" placeholder="15-40">
-                        <span class="unit">rondas</span>
+                <section class="config-card config-card-cyan">
+                    <div class="config-card-head">
+                        <span class="config-chip">□</span>
+                        <label for="maxRondas">MÁXIMO DE RONDAS</label>
                     </div>
-                    <div class="number-arrows">
-                        <button type="button" onclick="cambiarValor('maxRondas', 1)">▲</button>
+
+                    <div class="config-value-row config-value-row-rounds">
+                        <span class="config-bracket">[</span>
+                        <input type="number" id="maxRondas" min="15" max="40" value="25" placeholder="15-40">
+                        <span class="config-unit config-unit-rounds">RONDAS</span>
+                        <span class="config-bracket">]</span>
+                    </div>
+
+                    <div class="config-meter config-meter-rounds" aria-hidden="true">
+                        <span class="is-on"></span>
+                        <span></span>
+                        <span class="is-on"></span>
+                        <span></span>
+                        <span class="is-on"></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <div class="config-adjust">
                         <button type="button" onclick="cambiarValor('maxRondas', -1)">▼</button>
+                        <span>AJUSTAR</span>
+                        <button type="button" onclick="cambiarValor('maxRondas', 1)">▲</button>
                     </div>
-                </div>
-            </div>
+                </section>
+            </form>
 
-            <button type="button" onclick="iniciarPartida()">Iniciar Partida</button>
-        </form>
-
-        <div class="link" onclick="window.location.href='menu.php'">Volver al Menú Principal</div>
+            <button type="button" class="config-start-btn" onclick="iniciarPartida()">
+                <span class="config-start-icon">⏻</span>
+                INICIAR PARTIDA
+            </button>
+        </div>
     </div>
 
-    <div id="partida" class="hidden">
-        <div class="title">CYBERGAME</div>
-        <div class="subtitle">En partida</div>
+    <div id="partida" class="hidden partida-screen">
+        <aside class="soc-left-col">
+            <section class="soc-panel profile-panel">
+                <h3>OPERATIVE_PROFILE</h3>
+                <div class="profile-name" id="profile-usuario">AGENT_K9</div>
+                <div class="profile-status">STATUS: ONLINE</div>
+                <div class="profile-role">RANK: SENIOR ANALYST</div>
+            </section>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; padding: 10px; background: #f0f0f0; border-radius: 5px;">
-            <button type="button" onclick="alternarDesgloseCIA()" style="text-align: center; background: transparent; color: inherit; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; cursor: pointer;">
-                <strong>CIA</strong><br>
-                <span id="stat-cia" style="font-size: 24px; font-weight: bold;">50</span>%
-            </button>
-            <div style="text-align: center;">
-                <strong>Presupuesto</strong><br>
-                <span id="stat-presupuesto" style="font-size: 24px; font-weight: bold;">50</span>M COP
+            <section class="soc-panel nav-panel">
+                <h3>SYSTEM_NAV</h3>
+                <button type="button" class="soc-nav-btn" onclick="window.location.href='menu.php'">VOLVER AL MENU</button>
+                <button type="button" class="soc-nav-btn" onclick="mostrarConfig()">VOLVER A CONFIGURACION</button>
+
+                <div id="mailbox-controls" class="soc-mailbox-controls">
+                    <button type="button" id="btn-bandeja-escenarios" onclick="abrirBandeja('scenarios')">
+                        ESCENARIOS <span id="badge-scenarios" style="display: none;">0</span>
+                    </button>
+                    <button type="button" id="btn-bandeja-efectos" onclick="abrirBandeja('effects')">
+                        EFECTOS <span id="badge-effects" style="display: none;">0</span>
+                    </button>
+                </div>
+            </section>
+        </aside>
+
+        <main class="soc-center-col">
+            <div class="soc-headline">
+                <div class="title">SOC_COMMAND_CENTER</div>
+                <div class="subtitle">THREAT_ANALYSIS // LIVE SESSION</div>
             </div>
-            <div style="text-align: center;">
-                <strong>Despido</strong><br>
-                <span id="stat-despido" style="font-size: 24px; font-weight: bold;">10</span>%
+
+            <section class="soc-panel scenario-panel">
+                <div class="scenario-type">THREAT_ANALYSIS // <span id="esc-tipo">-</span></div>
+                <div class="scenario-subject"><strong>Asunto:</strong> <span id="esc-titulo">-</span></div>
+                <div class="scenario-meta">
+                    <span><strong>Partida:</strong> <span id="partida-id">-</span></span>
+                    <span><strong>Turno:</strong> <span id="turno-orden">-</span></span>
+                    <span><strong>Remitente:</strong> <span id="esc-remitente">-</span></span>
+                </div>
+
+                <div class="scenario-content" id="esc-texto">-</div>
+
+                <div id="correo-repercusion" style="display: none;"></div>
+
+                <div id="estado-espera" style="display: none;"></div>
+
+                <div id="opciones-container" style="display: none;">
+                    <p><strong>Selecciona tu decision</strong></p>
+                    <div id="opciones-lista"></div>
+                </div>
+
+                <div id="sin-opciones-msg">
+                    <button type="button" onclick="cargarSiguienteEscenario()">Siguiente Escenario</button>
+                </div>
+            </section>
+
+            <div id="panel-bandeja" style="display: none;">
+                <div class="soc-panel bandeja-panel-head">
+                    <strong id="panel-bandeja-titulo">Bandeja</strong>
+                    <button type="button" onclick="cerrarPanelBandeja()">Cerrar</button>
+                </div>
+                <div id="panel-bandeja-lista"></div>
             </div>
-        </div>
 
-        <div id="panel-desglose-cia" style="display: none; margin-top: -6px; margin-bottom: 16px; padding: 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; color: #1e3a8a;"></div>
+            <div class="partida-link-legacy link" onclick="mostrarConfig()">Volver a configuración</div>
+        </main>
 
-        <p><strong>Partida:</strong> <span id="partida-id">-</span></p>
-        <p><strong>Turno:</strong> <span id="turno-orden">-</span></p>
-        <p><strong>Remitente:</strong> <span id="esc-remitente">-</span></p>
-        <p><strong>Tipo:</strong> <span id="esc-tipo">-</span></p>
-        <p><strong>Asunto:</strong> <span id="esc-titulo">-</span></p>
-        <p><strong>Contenido:</strong> <span id="esc-texto">-</span></p>
+        <aside class="soc-right-col">
+            <section class="soc-panel metrics-panel">
+                <h3>SYSTEM_METRICS // LIVE</h3>
+                <div class="metrics-rings">
+                    <button type="button" onclick="alternarDesgloseCIA()" class="metric-ring metric-cia">
+                        <span id="stat-cia">50</span>
+                        <small>CIA</small>
+                    </button>
+                    <div class="metric-ring metric-presupuesto">
+                        <span id="stat-presupuesto">50</span>
+                        <small>PRESUPUESTO</small>
+                    </div>
+                    <div class="metric-ring metric-despido">
+                        <span id="stat-despido">10</span>
+                        <small>DESPIDO</small>
+                    </div>
+                </div>
 
-        <div id="estado-espera" style="display: none; margin-top: 16px; padding: 10px; background: #fff4d6; border-radius: 5px; color: #3f2f00; font-weight: 600;"></div>
+                <div id="panel-desglose-cia" style="display: none;"></div>
 
-        <div id="mailbox-controls" style="margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap;">
-            <button type="button" id="btn-bandeja-escenarios" onclick="abrirBandeja('scenarios')" style="flex: 1; min-width: 180px; background: #374151; color: #fff; border-radius: 8px;">
-                Escenarios <span id="badge-scenarios" style="display: none; margin-left: 6px; background: #ef4444; padding: 2px 8px; border-radius: 999px; font-size: 12px;">0</span>
-            </button>
-            <button type="button" id="btn-bandeja-efectos" onclick="abrirBandeja('effects')" style="flex: 1; min-width: 180px; background: #1f2937; color: #fff; border-radius: 8px;">
-                Efectos <span id="badge-effects" style="display: none; margin-left: 6px; background: #f59e0b; padding: 2px 8px; border-radius: 999px; font-size: 12px;">0</span>
-            </button>
-        </div>
-
-        <div id="panel-bandeja" style="display: none; margin-top: 12px; background: #f8fafc; border: 1px solid #d1d5db; border-radius: 8px; padding: 10px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <strong id="panel-bandeja-titulo">Bandeja</strong>
-                <button type="button" onclick="cerrarPanelBandeja()" style="width: auto; padding: 6px 10px;">Cerrar</button>
-            </div>
-            <div id="panel-bandeja-lista" style="display: flex; flex-direction: column; gap: 6px;"></div>
-        </div>
-
-        <div id="correo-repercusion" style="display: none; margin-top: 16px; padding: 12px; background: #f4f9ff; border: 1px solid #c9e0ff; border-radius: 6px; color: #15263a;"></div>
-
-        <div style="margin-top: 20px; padding: 10px; background: #ffe0e0; border-radius: 5px; text-align: center;">
-            <strong>Tiempo restante:</strong> <span id="cronometro" style="font-size: 32px; font-weight: bold; color: #d32f2f;">60</span>s
-        </div>
-
-        <div id="opciones-container" style="margin-top: 20px; display: none;">
-            <p><strong>Opciones:</strong></p>
-            <div id="opciones-lista"></div>
-        </div>
-
-        <div id="sin-opciones-msg" style="margin-top: 20px;">
-            <button type="button" onclick="cargarSiguienteEscenario()">Siguiente Escenario</button>
-        </div>
-
-        <div class="link" onclick="mostrarConfig()">Volver a configuración</div>
+                <div class="timer-box">
+                    <strong>Tiempo restante</strong>
+                    <div><span id="cronometro">60</span>s</div>
+                </div>
+            </section>
+        </aside>
     </div>
 
     <div class="footer-text">

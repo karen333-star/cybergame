@@ -12,6 +12,7 @@ if (isset($_GET['logout'])) {
 }
 
 $nombre_usuario = $_SESSION['nombre_usuario'];
+$usuario_param = urlencode($nombre_usuario);
 ?>
 
 <!DOCTYPE html>
@@ -30,7 +31,7 @@ $nombre_usuario = $_SESSION['nombre_usuario'];
             <h2>Bienvenido, <?php echo htmlspecialchars($nombre_usuario); ?>!</h2>
             
             <div class="menu-opciones">
-                <a href="index.html?view=config" class="menu-btn">🎮 Iniciar Partida</a>
+                <a href="index.html?view=config&usuario=<?php echo $usuario_param; ?>" class="menu-btn">🎮 Iniciar Partida</a>
                 <a href="perfil.php" class="menu-btn">👤 Ver Perfil</a>
                 <a href="historial.php" class="menu-btn">📊 Ver Historial</a>
                 <a href="menu.php?logout=1" class="menu-btn logout-btn">🚪 Cerrar Sesión</a>

@@ -92,7 +92,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $_SESSION["usuario_id"] = $row["id_usuario"];
                 $_SESSION["nombre_usuario"] = $row["nombre_usuario"];
                 $_SESSION["email"] = $row["email"];
-                echo "LOGIN_OK";
+                echo "LOGIN_OK|" . $row["nombre_usuario"];
             } else {
                 echo "PASS_INCORRECTA";
             }

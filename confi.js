@@ -24,6 +24,25 @@ function mostrarPartida() {
     }
 }
 
+function actualizarNombreUsuarioPerfil() {
+    const perfilEl = document.getElementById('profile-usuario');
+    if (!perfilEl) {
+        return;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const nombreDesdeUrl = (params.get('usuario') || '').trim();
+    const nombreDesdeStorage = (localStorage.getItem('cybergame_nombre_usuario') || '').trim();
+    const nombreUsuario = nombreDesdeUrl || nombreDesdeStorage;
+
+    if (nombreUsuario) {
+        perfilEl.textContent = nombreUsuario;
+        if (nombreDesdeUrl && nombreDesdeUrl !== nombreDesdeStorage) {
+            localStorage.setItem('cybergame_nombre_usuario', nombreDesdeUrl);
+        }
+    }
+}
+
 // Estado global de la partida actual
 window.estadoPartida = {
     id_partida: null,
@@ -669,6 +688,54 @@ function formatearCambioConSigno(valor, sufijo) {
     return signo + abs + (sufijo || '');
 }
 
+function renderCorreoGmail(opts) {
+    const asunto = opts.asunto || 'Sin asunto';
+    const deNombre = opts.deNombre || 'Equipo interno';
+    const deCorreo = opts.deCorreo || 'soporte@cybergame.local';
+    const paraNombre = opts.paraNombre || 'Jefe de Seguridad';
+    const paraCorreo = opts.paraCorreo || 'usuario@cybergame.local';
+    const cuerpo = opts.cuerpo || '';
+    const feedbackEscenario = opts.feedbackEscenario || '';
+    const feedbackRespuesta = opts.feedbackRespuesta || '';
+    const detalleCIA = opts.detalleCIA || '';
+    const firmaNombre = opts.firmaNombre || deNombre;
+    const firmaCargo = opts.firmaCargo || 'Equipo interno';
+    const firmaCorreo = opts.firmaCorreo || deCorreo;
+    const cierre = opts.cierre || '';
+    const colorEtiqueta = opts.colorEtiqueta || '#ff4f88';
+    const compacto = !!opts.compacto;
+
+    return '' +
+        '<div class="correo-card correo-gmail' + (compacto ? ' correo-gmail-compacto' : '') + '" style="--correo-accent:' + escaparHtml(colorEtiqueta) + ';">' +
+            '<div class="correo-topbar">' +
+                '<div class="correo-subject">' + escaparHtml(asunto) + '</div>' +
+                '<div class="correo-time">Hoy</div>' +
+            '</div>' +
+            '<div class="correo-meta-grid">' +
+                '<div class="correo-meta-row"><span>From:</span><strong>' + escaparHtml(deNombre) + '</strong><small>' + escaparHtml(deCorreo) + '</small></div>' +
+                '<div class="correo-meta-row"><span>To:</span><strong>' + escaparHtml(paraNombre) + '</strong><small>' + escaparHtml(paraCorreo) + '</small></div>' +
+            '</div>' +
+            '<div class="correo-body">' +
+                '<p>' + escaparHtml(cuerpo) + '</p>' +
+            '</div>' +
+            (compacto ? '' : (
+                '<div class="correo-feeds">' +
+                    '<div><strong>Feedback del escenario:</strong> ' + escaparHtml(feedbackEscenario) + '</div>' +
+                    '<div><strong>Feedback de tu respuesta:</strong> ' + escaparHtml(feedbackRespuesta) + '</div>' +
+                    '<div><strong>Desglose CIA:</strong> ' + escaparHtml(detalleCIA) + '</div>' +
+                '</div>' +
+                '<div class="correo-footer">' +
+                    '<div class="correo-signature">' +
+                        '<strong>' + escaparHtml(firmaNombre) + '</strong><br>' +
+                        escaparHtml(firmaCargo) + '<br>' +
+                        escaparHtml(firmaCorreo) +
+                    '</div>' +
+                    (cierre ? '<div class="correo-closing">' + escaparHtml(cierre) + '</div>' : '') +
+                '</div>'
+            )) +
+        '</div>';
+}
+
 function construirCorreoAjusteTrimestral(ajuste) {
     const monto = Number(ajuste && ajuste.monto || 0);
     const despido = Number(ajuste && ajuste.despido_actual || window.estadoPartida.despido || 0);
@@ -716,16 +783,21 @@ function mostrarCorreoAjusteTrimestral(payload, mostrarCerrar) {
 
     const correo = construirCorreoAjusteTrimestral((payload && payload.ajuste) || {});
 
-    correoEl.innerHTML =
-        '<div style="font-weight:700; margin-bottom:8px;">Asunto: ' + escaparHtml(correo.asunto) + '</div>' +
-        '<div style="line-height:1.45; margin-bottom:8px;">' + escaparHtml(correo.cuerpo) + '</div>' +
-        '<div style="margin-bottom:6px;">' + escaparHtml(correo.cierre) + '</div>' +
-        '<div style="margin-top:10px; color:#314b65;">' +
-            '<strong>' + escaparHtml(correo.firma.nombre) + '</strong><br>' +
-            escaparHtml(correo.firma.cargo) + '<br>' +
-            escaparHtml(correo.firma.correo) +
-        '</div>' +
-        (mostrarCerrar ? '<div style="margin-top:10px;"><button type="button" onclick="cerrarCorreoRepercusion()" style="width:auto; padding:6px 12px;">Cerrar correo</button></div>' : '');
+    correoEl.innerHTML = renderCorreoGmail({
+        asunto: correo.asunto,
+        deNombre: correo.firma.nombre,
+        deCorreo: correo.firma.correo,
+        paraNombre: 'Jefe de Seguridad',
+        paraCorreo: 'jefe.seguridad@empresa.local',
+        cuerpo: correo.cuerpo,
+        feedbackEscenario: 'Actualizacion administrativa trimestral.',
+        feedbackRespuesta: correo.cierre,
+        detalleCIA: 'Sin variacion operativa directa.',
+        firmaNombre: correo.firma.nombre,
+        firmaCargo: correo.firma.cargo,
+        firmaCorreo: correo.firma.correo,
+        cierre: mostrarCerrar ? ' ' : ''
+    }) + (mostrarCerrar ? '<div class="correo-actions"><button type="button" onclick="cerrarCorreoRepercusion()">Cerrar correo</button></div>' : '');
 
     correoEl.style.display = 'block';
 }
@@ -912,21 +984,22 @@ function mostrarCorreoRepercusion(respuesta, contexto, mostrarCerrar) {
 
     const correo = construirCorreoRepercusion(respuesta, contexto);
 
-    correoEl.innerHTML =
-        '<div style="font-weight:700; margin-bottom:8px;">Asunto: ' + escaparHtml(correo.asunto) + '</div>' +
-        '<div style="line-height:1.45; margin-bottom:8px;">' + escaparHtml(correo.cuerpo) + '</div>' +
-        '<div style="margin-bottom:8px; padding:8px; background:#e8f4ff; border-radius:4px;">' +
-            '<strong>Feedback del escenario:</strong> ' + escaparHtml(correo.feedbackEscenario) + '<br>' +
-            '<strong>Feedback de tu respuesta:</strong> ' + escaparHtml(correo.feedbackOpcion) + '<br>' +
-            '<strong>Desglose CIA:</strong> ' + escaparHtml(correo.detalleCIA) +
-        '</div>' +
-        '<div style="margin-bottom:6px;">' + escaparHtml(correo.cierre) + '</div>' +
-        '<div style="margin-top:10px; color:#314b65;">' +
-            '<strong>' + escaparHtml(correo.firma.nombre) + '</strong><br>' +
-            escaparHtml(correo.firma.cargo) + '<br>' +
-            escaparHtml(correo.firma.correo) +
-        '</div>' +
-        (mostrarCerrar ? '<div style="margin-top:10px;"><button type="button" onclick="cerrarCorreoRepercusion()" style="width:auto; padding:6px 12px;">Cerrar correo</button></div>' : '');
+    correoEl.innerHTML = renderCorreoGmail({
+        asunto: correo.asunto,
+        deNombre: correo.firma.nombre,
+        deCorreo: correo.firma.correo,
+        paraNombre: 'Jefe de Seguridad',
+        paraCorreo: 'jefe.seguridad@empresa.local',
+        cuerpo: correo.cuerpo,
+        feedbackEscenario: correo.feedbackEscenario,
+        feedbackRespuesta: correo.feedbackOpcion,
+        detalleCIA: correo.detalleCIA,
+        firmaNombre: correo.firma.nombre,
+        firmaCargo: correo.firma.cargo,
+        firmaCorreo: correo.firma.correo,
+        cierre: correo.cierre,
+        colorEtiqueta: '#ff4f88'
+    }) + (mostrarCerrar ? '<div class="correo-actions"><button type="button" onclick="cerrarCorreoRepercusion()">Cerrar correo</button></div>' : '');
 
     correoEl.style.display = 'block';
 }
@@ -1021,6 +1094,10 @@ function actualizarContadores() {
     document.getElementById('stat-cia').textContent = String(Math.round(window.estadoPartida.cia));
     document.getElementById('stat-presupuesto').textContent = String(Math.round(window.estadoPartida.presupuesto));
     document.getElementById('stat-despido').textContent = String(Math.round(window.estadoPartida.despido));
+    const maxRondasEl = document.getElementById('stat-max-rondas');
+    if (maxRondasEl) {
+        maxRondasEl.textContent = String(Math.round(window.estadoPartida.maxRondas));
+    }
     actualizarPanelDesgloseCIA();
 }
 
@@ -1286,7 +1363,28 @@ function mostrarEscenarioEnVista(data, accionable) {
     document.getElementById('esc-remitente').textContent = remitenteNombre + ' <' + remitenteCorreo + '>';
     document.getElementById('esc-tipo').textContent = escenario.tipo_escenario || '-';
     document.getElementById('esc-titulo').textContent = escenario.titulo_correo || '-';
-    document.getElementById('esc-texto').textContent = escenario.texto_correo || '-';
+    const escenarioTextoEl = document.getElementById('esc-texto');
+    if (escenarioTextoEl) {
+        escenarioTextoEl.innerHTML = renderCorreoGmail({
+            asunto: escenario.titulo_correo || 'Sin asunto',
+            deNombre: remitenteNombre,
+            deCorreo: remitenteCorreo,
+            paraNombre: 'Jefe de Seguridad',
+            paraCorreo: 'jefe.seguridad@empresa.local',
+            cuerpo: escenario.texto_correo || '-',
+            firmaNombre: remitenteNombre,
+            firmaCargo: 'Equipo interno',
+            firmaCorreo: remitenteCorreo,
+            colorEtiqueta: '#00d4ff',
+            compacto: true
+        });
+    }
+
+    const correoRepercusionEl = document.getElementById('correo-repercusion');
+    if (correoRepercusionEl) {
+        correoRepercusionEl.style.display = 'none';
+        correoRepercusionEl.innerHTML = '';
+    }
 
     const opcionesContainer = document.getElementById('opciones-container');
     const opcionesList = document.getElementById('opciones-lista');
@@ -1404,6 +1502,9 @@ function renderTurno(data) {
 
     actualizarEstadoEspera('Nuevo escenario recibido. Revisa la bandeja de Escenarios.');
     mostrarPartida();
+
+    // El contador visible debe correr por segundos desde que llega el escenario.
+    iniciarCronometro();
 }
 
 // Evalúa si las condiciones iniciales generan victoria o derrota automática
@@ -1501,6 +1602,10 @@ function iniciarPartida() {
                 alert('No se pudo iniciar la partida: ' + (data.error || 'ERROR'));
                 return;
             }
+
+            // Mostrar la vista de partida apenas el backend confirma inicio.
+            mostrarPartida();
+
             if (data.estado) {
                 window.estadoPartida.cia = Number(data.estado.cia);
                 window.estadoPartida.cia_desglose = {
@@ -1563,6 +1668,7 @@ function cargarSiguienteEscenario() {
 
 document.addEventListener('DOMContentLoaded', function() {
     actualizarBandejasUI();
+    actualizarNombreUsuarioPerfil();
 
     const params = new URLSearchParams(window.location.search);
     if (params.get('view') === 'config') {

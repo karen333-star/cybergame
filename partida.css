@@ -1,0 +1,811 @@
+#partida.partida-screen {
+    --bg-0: #01040b;
+    --bg-1: #021224;
+    --bg-2: #031a2e;
+    --cyan-1: #00f0ff;
+    --cyan-2: #5fdcff;
+    --cyan-3: #9deeff;
+    --pink-1: #ff2f84;
+    --pink-2: #ff74b0;
+    --panel-border: rgba(0, 230, 255, 0.5);
+    --panel-bg: rgba(3, 20, 36, 0.84);
+    --text-main: #d6f5ff;
+    --text-soft: #8bb4c7;
+    --shadow-outer: 0 14px 40px rgba(0, 0, 0, 0.48);
+    --shadow-glow: 0 0 24px rgba(0, 236, 255, 0.22);
+    --radius-soft: 10px;
+    --radius-hard: 3px;
+
+    position: fixed;
+    inset: 0;
+    z-index: 65;
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr) 320px;
+    gap: 16px;
+    padding: 18px;
+    overflow: auto;
+    color: var(--text-main);
+    background:
+        radial-gradient(circle at 78% 14%, rgba(255, 47, 132, 0.14), transparent 36%),
+        radial-gradient(circle at 20% 10%, rgba(0, 240, 255, 0.12), transparent 32%),
+        linear-gradient(rgba(0, 210, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 210, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(160deg, var(--bg-0) 0%, #01070f 35%, #021426 100%);
+    background-size: auto, auto, 22px 22px, 22px 22px, auto;
+    animation: partida-bg-pan 16s linear infinite;
+}
+
+@keyframes partida-bg-pan {
+    0% {
+        background-position: 0 0, 0 0, 0 0, 0 0, 0 0;
+    }
+    100% {
+        background-position: 0 0, 0 0, 22px 22px, 22px 22px, 0 0;
+    }
+}
+
+#partida.hidden {
+    display: none !important;
+}
+
+#partida .soc-panel {
+    position: relative;
+    border: 1px solid var(--panel-border);
+    background: linear-gradient(180deg, rgba(4, 25, 45, 0.92) 0%, var(--panel-bg) 100%);
+    box-shadow: var(--shadow-outer), inset 0 0 0 1px rgba(164, 244, 255, 0.08), inset 0 24px 40px rgba(255, 255, 255, 0.02);
+    border-radius: var(--radius-soft);
+}
+
+#partida .soc-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(0, 240, 255, 0.15);
+    pointer-events: none;
+    border-radius: var(--radius-soft);
+}
+
+#partida .soc-panel::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(125, 241, 255, 0.9) 50%, transparent 100%);
+    opacity: 0.75;
+    pointer-events: none;
+}
+
+#partida h3 {
+    margin: 0;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--cyan-1);
+    text-transform: uppercase;
+    font-weight: 800;
+}
+
+#partida .soc-left-col,
+#partida .soc-right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-items: flex-end;
+}
+
+#partida .profile-panel,
+#partida .nav-panel,
+#partida .metrics-panel {
+    padding: 14px;
+    width: 100%;
+    max-width: 340px;
+    margin-left: auto;
+    justify-self: end;
+}
+
+#partida .metrics-panel {
+    padding: 10px 0 12px;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#partida .metrics-panel::before,
+#partida .metrics-panel::after {
+    display: none;
+}
+
+#partida .profile-panel {
+    min-height: 128px;
+}
+
+#partida .profile-name {
+    margin-top: 12px;
+    font-size: 20px;
+    color: #f2fdff;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+}
+
+#partida .profile-status,
+#partida .profile-role {
+    margin-top: 7px;
+    font-size: 11px;
+    color: #93ecff;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+#partida .nav-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#partida .soc-nav-btn,
+#partida #mailbox-controls button {
+    width: 100%;
+    border-radius: var(--radius-hard);
+    border: 1px solid rgba(0, 229, 255, 0.6);
+    background: linear-gradient(180deg, rgba(5, 46, 78, 0.88) 0%, rgba(3, 28, 49, 0.8) 100%);
+    color: #a7f0ff;
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 800;
+    padding: 11px 12px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+#partida .soc-nav-btn:hover,
+#partida #mailbox-controls button:hover {
+    transform: translateY(-1px);
+    border-color: #64f2ff;
+    box-shadow: var(--shadow-glow);
+    background: linear-gradient(180deg, rgba(8, 64, 108, 0.95) 0%, rgba(5, 41, 74, 0.9) 100%);
+}
+
+#partida #mailbox-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+#partida #badge-scenarios,
+#partida #badge-effects {
+    display: inline-block;
+    margin-left: 6px;
+    min-width: 24px;
+    text-align: center;
+    border-radius: 999px;
+    padding: 1px 7px;
+    font-size: 11px;
+    font-weight: 900;
+}
+
+#partida #badge-scenarios {
+    background: var(--pink-1);
+    color: #fff;
+}
+
+#partida #badge-effects {
+    background: #ffb04f;
+    color: #14151c;
+}
+
+#partida .soc-center-col {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+#partida .soc-headline {
+    border: 1px solid var(--panel-border);
+    background: linear-gradient(180deg, rgba(3, 27, 49, 0.94) 0%, rgba(2, 18, 34, 0.94) 100%);
+    padding: 14px 16px;
+    box-shadow: var(--shadow-outer), inset 0 0 24px rgba(0, 194, 255, 0.08), 0 0 36px rgba(0, 225, 255, 0.08);
+    border-radius: var(--radius-soft);
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+#partida .soc-headline .title {
+    margin: 0;
+    text-align: left;
+    font-size: clamp(26px, 2.45vw, 42px);
+    color: #ecfdff;
+    letter-spacing: 0.06em;
+    font-weight: 900;
+    text-shadow: 0 0 14px rgba(0, 247, 255, 0.58);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+#partida .soc-headline .subtitle {
+    margin: 8px 0 0;
+    text-align: left;
+    color: #7ec7d4;
+    font-size: 12px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+}
+
+#partida .scenario-panel {
+    padding: 0;
+    overflow: hidden;
+    border-radius: var(--radius-soft);
+}
+
+#partida .scenario-type {
+    padding: 11px 16px;
+    border-bottom: 1px solid rgba(0, 217, 255, 0.28);
+    color: #ff7cf0;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    font-weight: 800;
+    text-transform: uppercase;
+    background: linear-gradient(90deg, rgba(255, 46, 132, 0.14) 0%, rgba(255, 46, 132, 0) 70%);
+}
+
+#partida .scenario-subject,
+#partida .scenario-meta,
+#partida .scenario-content,
+#partida #opciones-container,
+#partida #sin-opciones-msg,
+#partida #estado-espera {
+    margin: 13px 16px;
+}
+
+#partida .scenario-subject {
+    color: #ecfdff;
+    font-size: clamp(24px, 2.3vw, 34px);
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+#partida .scenario-subject strong {
+    color: #84d6e5;
+    font-size: 14px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-bottom: 6px;
+}
+
+#partida .scenario-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    color: var(--text-soft);
+    font-size: 13px;
+}
+
+#partida .scenario-meta span {
+    background: rgba(10, 34, 53, 0.8);
+    border: 1px solid rgba(86, 200, 226, 0.24);
+    padding: 6px 9px;
+}
+
+#partida .scenario-content {
+    min-height: 236px;
+    padding: 18px;
+    border: 1px solid rgba(0, 214, 255, 0.28);
+    background: linear-gradient(180deg, rgba(2, 10, 20, 0.84) 0%, rgba(1, 8, 16, 0.9) 100%);
+    color: #d9f3f9;
+    white-space: pre-wrap;
+    line-height: 1.6;
+    font-size: 17px;
+    border-radius: var(--radius-hard);
+    position: relative;
+    overflow: hidden;
+}
+
+#partida .scenario-content::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 240, 255, 0.04) 0%, transparent 20%, transparent 80%, rgba(0, 240, 255, 0.03) 100%);
+    pointer-events: none;
+}
+
+#partida .scenario-content .correo-gmail {
+    margin: 0;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+}
+
+#partida .scenario-content .correo-gmail::before {
+    display: none;
+}
+
+#partida #estado-espera {
+    display: none;
+    padding: 11px 13px;
+    border: 1px solid rgba(255, 77, 133, 0.45);
+    background: linear-gradient(180deg, rgba(87, 11, 41, 0.42) 0%, rgba(65, 8, 31, 0.35) 100%);
+    color: #ff9fc0;
+    font-weight: 700;
+    border-radius: 0;
+}
+
+#partida #opciones-container p {
+    margin: 0 0 10px;
+    color: #93deea;
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 800;
+}
+
+#partida #opciones-lista button,
+#partida #sin-opciones-msg button,
+#partida #panel-bandeja button,
+#partida #correo-repercusion button {
+    width: 100%;
+    border-radius: var(--radius-hard);
+    border: 1px solid #38bdf8;
+    background: linear-gradient(180deg, rgba(6, 52, 94, 0.9) 0%, rgba(4, 34, 63, 0.85) 100%);
+    color: #9de6ff;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: left;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+#partida #opciones-lista button:hover,
+#partida #sin-opciones-msg button:hover,
+#partida #panel-bandeja button:hover,
+#partida #correo-repercusion button:hover {
+    border-color: #7be6ff;
+    box-shadow: 0 0 16px rgba(26, 212, 255, 0.22);
+    transform: translateY(-1px);
+}
+
+#partida #opciones-lista button:focus-visible,
+#partida .soc-nav-btn:focus-visible,
+#partida #mailbox-controls button:focus-visible {
+    outline: 2px solid rgba(125, 241, 255, 0.75);
+    outline-offset: 2px;
+}
+
+#partida #sin-opciones-msg button {
+    width: auto;
+    min-width: 220px;
+}
+
+#partida #panel-bandeja {
+    display: none;
+    margin-top: 4px;
+}
+
+#partida .bandeja-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    margin-bottom: 8px;
+    border-radius: var(--radius-soft);
+}
+
+#partida .bandeja-panel-head button {
+    width: auto;
+    margin: 0;
+    padding: 6px 10px;
+}
+
+#partida #panel-bandeja-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: rgba(5, 17, 34, 0.9);
+    border: 1px solid rgba(0, 214, 255, 0.34);
+    padding: 10px;
+    border-radius: var(--radius-soft);
+}
+
+#partida #correo-repercusion {
+    display: none;
+    margin: 13px 16px 16px;
+    padding: 0;
+    border: 1px solid rgba(0, 214, 255, 0.34);
+    background: linear-gradient(180deg, rgba(8, 22, 42, 0.96) 0%, rgba(5, 16, 30, 0.96) 100%);
+    color: #d2f8ff;
+    border-radius: var(--radius-soft);
+    overflow: hidden;
+}
+
+#partida .correo-gmail {
+    position: relative;
+    padding: 14px;
+}
+
+#partida .correo-gmail::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 240, 255, 0.05) 0%, transparent 28%, transparent 72%, rgba(255, 79, 136, 0.05) 100%);
+    pointer-events: none;
+}
+
+#partida .correo-topbar,
+#partida .correo-meta-grid,
+#partida .correo-body,
+#partida .correo-feeds,
+#partida .correo-footer,
+#partida .correo-actions {
+    position: relative;
+    z-index: 1;
+}
+
+#partida .correo-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(0, 214, 255, 0.24);
+    margin-bottom: 10px;
+}
+
+#partida .correo-subject {
+    font-size: 16px;
+    font-weight: 900;
+    color: #f8feff;
+    letter-spacing: 0.04em;
+}
+
+#partida .correo-time {
+    flex: 0 0 auto;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #8fc8d7;
+}
+
+#partida .correo-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+#partida .correo-meta-row {
+    background: rgba(3, 23, 43, 0.8);
+    border: 1px solid rgba(56, 189, 248, 0.18);
+    padding: 9px 10px;
+}
+
+#partida .correo-meta-row span {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    color: #7fd8ea;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+#partida .correo-meta-row strong {
+    display: block;
+    font-size: 13px;
+    color: #f2fdff;
+    margin-bottom: 2px;
+}
+
+#partida .correo-meta-row small {
+    display: block;
+    font-size: 11px;
+    color: #9cb9c7;
+}
+
+#partida .correo-body {
+    padding: 12px 12px 14px;
+    background: rgba(1, 10, 18, 0.55);
+    border: 1px solid rgba(0, 214, 255, 0.14);
+    border-radius: var(--radius-soft);
+}
+
+#partida .correo-body p {
+    margin: 0;
+    color: #d7f6ff;
+    line-height: 1.65;
+    font-size: 15px;
+}
+
+#partida .correo-feeds {
+    margin-top: 12px;
+    display: grid;
+    gap: 8px;
+    padding: 10px 12px;
+    background: rgba(226, 240, 255, 0.96);
+    color: #0b2b4a;
+    border-radius: var(--radius-soft);
+}
+
+#partida .correo-feeds div {
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+#partida .correo-feeds strong {
+    color: #132f4c;
+}
+
+#partida .correo-footer {
+    margin-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding-top: 12px;
+    border-top: 1px solid rgba(0, 214, 255, 0.18);
+}
+
+#partida .correo-signature {
+    color: #d4eef7;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+#partida .correo-signature strong {
+    color: #f8feff;
+    font-size: 14px;
+}
+
+#partida .correo-closing {
+    max-width: 320px;
+    color: #b9d8e6;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+#partida .correo-actions {
+    margin-top: 12px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+#partida .correo-actions button {
+    width: auto;
+    margin: 0;
+    padding: 8px 12px;
+    min-width: 120px;
+    text-align: center;
+}
+
+#partida .metrics-rings {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    width: 100%;
+    max-width: 270px;
+    margin: 11px auto 0;
+    justify-content: center;
+    justify-items: center;
+}
+
+#partida .metric-ring {
+    width: 82px;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #00ff8a;
+    border-radius: 999px;
+    background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.06), rgba(5, 18, 31, 0.93));
+    color: #cdffec;
+    font-weight: 800;
+    padding: 8px;
+    box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.42), 0 0 10px rgba(255, 255, 255, 0.42), 0 0 24px rgba(255, 255, 255, 0.18);
+    position: relative;
+    overflow: hidden;
+}
+
+#partida .metric-ring::before {
+    content: '';
+    position: absolute;
+    width: 120%;
+    height: 120%;
+    background: conic-gradient(from 0deg, rgba(255, 255, 255, 0.2), transparent 35%, transparent 65%, rgba(255, 255, 255, 0.18));
+    animation: metric-spin 12s linear infinite;
+    pointer-events: none;
+    opacity: 0.3;
+}
+
+@keyframes metric-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+#partida .metric-ring span {
+    font-size: 28px;
+    line-height: 1;
+    text-shadow: none;
+    position: relative;
+    z-index: 1;
+    font-weight: 900;
+    filter: none;
+}
+
+#partida .metric-ring small {
+    margin-top: 7px;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+#partida .timer-box {
+    width: 100%;
+    max-width: 270px;
+    margin: 14px auto 0;
+    text-align: center;
+}
+
+#partida .timer-box div {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 4px;
+}
+
+#partida .metric-cia {
+    border-color: #00ff8a;
+    color: #98ffbf;
+}
+
+#partida .metric-presupuesto {
+    border-color: #da45ff;
+    color: #efbcff;
+}
+
+#partida .metric-despido {
+    border-color: #ff2d64;
+    color: #ff8bb2;
+}
+
+#partida #panel-desglose-cia {
+    display: none !important;
+}
+
+#partida .timer-box {
+    margin-top: 14px;
+    padding: 14px 12px 12px;
+    border: 1px solid rgba(255, 56, 118, 0.65);
+    background: linear-gradient(180deg, rgba(84, 8, 41, 0.48) 0%, rgba(56, 6, 27, 0.42) 100%);
+    color: #ff91b6;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(255, 56, 118, 0.16);
+    border-radius: var(--radius-soft);
+    position: relative;
+    overflow: hidden;
+}
+
+#partida .timer-box::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent 0%, rgba(255, 158, 196, 0.14) 40%, transparent 80%);
+    animation: timer-sheen 3.4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes timer-sheen {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+#partida .timer-box strong {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+#partida #cronometro {
+    font-size: 50px;
+    font-weight: 900;
+    color: #ff4f88;
+    text-shadow: 0 0 14px rgba(255, 73, 141, 0.45);
+    position: relative;
+    z-index: 1;
+}
+
+#partida .partida-link-legacy {
+    display: none;
+}
+
+@media (max-width: 1400px) {
+    #partida.partida-screen {
+        grid-template-columns: 220px 1fr 270px;
+    }
+}
+
+@media (max-width: 1200px) {
+    #partida.partida-screen {
+        grid-template-columns: 1fr;
+    }
+
+    #partida .soc-left-col,
+    #partida .soc-right-col {
+        order: 2;
+    }
+
+    #partida .soc-center-col {
+        order: 1;
+    }
+
+    #partida .metrics-rings {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 760px) {
+    #partida.partida-screen {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    #partida .soc-headline .title {
+        font-size: 24px;
+    }
+
+    #partida .scenario-subject {
+        font-size: 20px;
+    }
+
+    #partida .scenario-content {
+        font-size: 14px;
+        min-height: 180px;
+    }
+
+    #partida .metrics-rings {
+        grid-template-columns: 1fr;
+        justify-content: stretch;
+    }
+
+    #partida .metric-ring {
+        width: 150px;
+        aspect-ratio: 1 / 1;
+        border-radius: 999px;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 14px;
+    }
+
+    #partida .metrics-panel {
+        max-width: none;
+    }
+
+    #partida .metric-ring small {
+        margin-top: 0;
+        font-size: 11px;
+    }
+
+    #partida #cronometro {
+        font-size: 42px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #partida.partida-screen,
+    #partida .metric-ring::before,
+    #partida .timer-box::before {
+        animation: none;
+    }
+}

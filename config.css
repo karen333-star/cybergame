@@ -1,0 +1,691 @@
+/* ================================
+   CONFIGURACIÓN INICIAL
+   ================================ */
+
+#config.config-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 18px 36px;
+    overflow: auto;
+    isolation: isolate;
+    background:
+        radial-gradient(circle at 10% 14%, rgba(0, 240, 255, 0.16), transparent 18%),
+        radial-gradient(circle at 86% 18%, rgba(255, 77, 116, 0.14), transparent 16%),
+        radial-gradient(circle at 52% 50%, rgba(0, 112, 255, 0.08), transparent 42%),
+        linear-gradient(180deg, #05070c 0%, #03050a 100%);
+}
+
+#config.config-screen::before,
+#config.config-screen::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+}
+
+#config.config-screen::before {
+    background:
+        linear-gradient(rgba(0, 230, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 230, 255, 0.08) 1px, transparent 1px);
+    background-size: 28px 28px;
+    opacity: 0.16;
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.8) 20%, rgba(0, 0, 0, 0.8) 80%, rgba(0, 0, 0, 0.12));
+}
+
+#config.config-screen::after {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, transparent 8%, transparent 92%, rgba(255, 255, 255, 0.02) 100%),
+        radial-gradient(circle at center, transparent 0 58%, rgba(0, 0, 0, 0.22) 100%);
+    opacity: 0.9;
+}
+
+#config.hidden {
+    display: none !important;
+}
+
+#config .config-shell {
+    width: min(100%, 1100px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: #edfaff;
+    padding: 0;
+    position: relative;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+}
+
+#config .config-shell::before,
+#config .config-shell::after {
+    display: none;
+}
+
+#config .config-kicker {
+    padding: 4px 12px;
+    border: 1px solid rgba(0, 242, 255, 0.78);
+    color: #28f4ff;
+    background: linear-gradient(180deg, rgba(5, 21, 34, 0.95) 0%, rgba(2, 12, 20, 0.95) 100%);
+    box-shadow:
+        0 0 18px rgba(0, 242, 255, 0.18),
+        inset 0 0 0 1px rgba(0, 242, 255, 0.06);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+}
+
+#config .config-title {
+    margin: 0;
+    color: #f2fdff;
+    text-align: center;
+    font-size: clamp(31px, 4.2vw, 54px);
+    line-height: 0.98;
+    font-weight: 900;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    text-shadow:
+        0 0 14px rgba(0, 242, 255, 0.95),
+        0 0 38px rgba(0, 242, 255, 0.22),
+        0 0 58px rgba(0, 242, 255, 0.1);
+}
+
+#config .config-subtitle {
+    margin: 0 0 8px;
+    padding: 7px 14px;
+    color: #93b9c8;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.36em;
+    text-transform: uppercase;
+    border-top: 1px solid rgba(0, 234, 255, 0.16);
+    border-bottom: 1px solid rgba(0, 234, 255, 0.16);
+    background: linear-gradient(90deg, transparent 0%, rgba(0, 234, 255, 0.03) 50%, transparent 100%);
+}
+
+#config .config-grid {
+    width: min(100%, 1040px);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    position: relative;
+    padding-top: 4px;
+}
+
+#config .config-grid::before {
+    content: '';
+    position: absolute;
+    inset: 22px 18px auto;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(0, 234, 255, 0.22) 25%, rgba(255, 77, 116, 0.22) 75%, transparent 100%);
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+#config .config-card {
+    --accent: #00eaff;
+    position: relative;
+    min-height: 320px;
+    padding: 20px 18px 16px;
+    overflow: hidden;
+    background:
+        linear-gradient(180deg, rgba(7, 17, 38, 0.98) 0%, rgba(4, 11, 24, 0.98) 100%),
+        radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.04), transparent 34%);
+    border: 1px solid rgba(0, 234, 255, 0.16);
+    border-radius: 22px;
+    box-shadow:
+        0 0 0 1px rgba(0, 234, 255, 0.05),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.03),
+        0 20px 44px rgba(0, 0, 0, 0.56);
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+#config .config-card:nth-child(1),
+#config .config-card:nth-child(4) {
+    transform: translateY(-2px);
+}
+
+#config .config-card:nth-child(2),
+#config .config-card:nth-child(3) {
+    transform: translateY(6px);
+}
+
+#config .config-card:nth-child(1) {
+    background:
+        linear-gradient(180deg, rgba(7, 17, 38, 0.98) 0%, rgba(4, 11, 24, 0.98) 100%),
+        radial-gradient(circle at 18% 0%, rgba(0, 234, 255, 0.12), transparent 32%);
+}
+
+#config .config-card:nth-child(2) {
+    background:
+        linear-gradient(180deg, rgba(8, 18, 42, 0.98) 0%, rgba(4, 10, 24, 0.98) 100%),
+        radial-gradient(circle at 82% 0%, rgba(79, 255, 190, 0.08), transparent 30%);
+}
+
+#config .config-card:nth-child(3) {
+    background:
+        linear-gradient(180deg, rgba(10, 16, 34, 0.98) 0%, rgba(4, 10, 22, 0.98) 100%),
+        radial-gradient(circle at 20% 0%, rgba(255, 77, 116, 0.12), transparent 34%);
+}
+
+#config .config-card:nth-child(4) {
+    background:
+        linear-gradient(180deg, rgba(6, 16, 34, 0.98) 0%, rgba(4, 10, 22, 0.98) 100%),
+        radial-gradient(circle at 72% 0%, rgba(0, 234, 255, 0.1), transparent 32%);
+}
+
+#config .config-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0, 234, 255, 0.28);
+    box-shadow:
+        0 0 0 1px rgba(0, 234, 255, 0.12),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+        0 28px 58px rgba(0, 0, 0, 0.62),
+        0 0 26px rgba(0, 234, 255, 0.08);
+}
+
+#config .config-card::before,
+#config .config-card::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-color: var(--accent);
+    pointer-events: none;
+}
+
+#config .config-card::before {
+    top: 0;
+    left: 0;
+    border-top: 2px solid var(--accent);
+    border-left: 2px solid var(--accent);
+    box-shadow: 0 0 12px rgba(0, 234, 255, 0.16);
+}
+
+#config .config-card::after {
+    right: 0;
+    bottom: 0;
+    border-right: 2px solid var(--accent);
+    border-bottom: 2px solid var(--accent);
+    box-shadow: 0 0 12px rgba(0, 234, 255, 0.16);
+}
+
+#config .config-card-cyan {
+    --accent: #19e9ff;
+}
+
+#config .config-card-rose {
+    --accent: #ff4d74;
+    box-shadow:
+        0 0 0 1px rgba(255, 77, 116, 0.18),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.02),
+        0 18px 34px rgba(0, 0, 0, 0.62);
+}
+
+#config .config-card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#config .config-chip {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--accent);
+    background: linear-gradient(180deg, rgba(5, 18, 34, 0.96) 0%, rgba(2, 10, 18, 0.96) 100%);
+    color: var(--accent);
+    font-size: 15px;
+    font-weight: 800;
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.03),
+        0 0 18px rgba(0, 234, 255, 0.12);
+    border-radius: 10px;
+}
+
+#config .config-card label {
+    color: #ecfbff;
+    font-size: clamp(18px, 1.8vw, 23px);
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+#config .config-value-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+#config .config-value-row input {
+    width: auto;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 0;
+    border: none;
+    background: transparent;
+    color: #f8ffff;
+    text-align: center;
+    font-size: 72px;
+    line-height: 1;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    outline: none;
+    text-shadow: 0 0 18px rgba(0, 242, 255, 0.45), 0 0 34px rgba(0, 242, 255, 0.08);
+    appearance: textfield;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+}
+
+#config .config-value-row input::-webkit-outer-spin-button,
+#config .config-value-row input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+#config .config-value-row-money input {
+    width: 168px;
+}
+
+#config .config-value-row-emphasis input {
+    color: #ff5a7a;
+    text-shadow: 0 0 18px rgba(255, 74, 117, 0.58);
+}
+
+#config .config-value-row-rounds input {
+    width: 138px;
+}
+
+#config .config-bracket {
+    color: rgba(0, 242, 255, 0.78);
+    font-size: 46px;
+    line-height: 1;
+    transform: translateY(6px);
+}
+
+#config .config-unit {
+    color: rgba(0, 242, 255, 0.78);
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    transform: translateY(-2px);
+    white-space: nowrap;
+}
+
+#config .config-unit-money {
+    font-size: 30px;
+}
+
+#config .config-unit-rounds {
+    font-size: 22px;
+    transform: translateY(-6px);
+}
+
+#config .config-meter {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 32px;
+    margin: 0 0 18px;
+    padding-left: 2px;
+}
+
+#config .config-meter span {
+    display: block;
+    flex: 0 0 auto;
+    width: 26px;
+    height: 11px;
+    border-radius: 999px;
+    background: rgba(27, 45, 74, 0.75);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+    transform: skewX(-18deg);
+}
+
+#config .config-meter span.is-on {
+    background: linear-gradient(180deg, rgba(58, 250, 255, 0.98) 0%, rgba(0, 206, 255, 0.94) 100%);
+    box-shadow: 0 0 12px rgba(0, 234, 255, 0.55), 0 0 22px rgba(0, 234, 255, 0.18);
+}
+
+#config .config-meter-cia span:nth-child(1) { height: 13px; }
+#config .config-meter-cia span:nth-child(2) { height: 16px; }
+#config .config-meter-cia span:nth-child(3) { height: 18px; }
+#config .config-meter-cia span:nth-child(4) { height: 16px; }
+#config .config-meter-cia span:nth-child(5) { height: 19px; }
+
+#config .config-meter-money {
+    gap: 10px;
+    align-items: flex-end;
+    height: 34px;
+}
+
+#config .config-meter-money span {
+    width: 16px;
+    border-radius: 1px;
+    transform: none;
+}
+
+#config .config-meter-money span:nth-child(1) { height: 13px; }
+#config .config-meter-money span:nth-child(2) { height: 17px; }
+#config .config-meter-money span:nth-child(3) { height: 23px; }
+#config .config-meter-money span:nth-child(4) { height: 19px; }
+#config .config-meter-money span:nth-child(5) { height: 26px; }
+
+#config .config-meter-rose span:nth-child(1) { height: 13px; }
+#config .config-meter-rose span:nth-child(2) { height: 15px; }
+
+#config .config-meter-rose span.is-on {
+    background: linear-gradient(180deg, rgba(255, 102, 132, 0.98) 0%, rgba(255, 61, 108, 0.95) 100%);
+    box-shadow: 0 0 12px rgba(255, 77, 116, 0.6);
+}
+
+#config .config-meter-rounds {
+    position: relative;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0;
+    height: 42px;
+    padding: 0 4px;
+    margin-bottom: 18px;
+}
+
+#config .config-meter-rounds::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    top: 50%;
+    height: 4px;
+    transform: translateY(-50%);
+    background: linear-gradient(90deg, rgba(0, 242, 255, 0.92) 0 30%, rgba(13, 29, 49, 0.92) 30% 100%);
+    box-shadow: 0 0 10px rgba(0, 242, 255, 0.35);
+}
+
+#config .config-meter-rounds span {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    transform: none;
+    background: rgba(28, 50, 79, 0.95);
+    box-shadow: none;
+    position: relative;
+    z-index: 1;
+}
+
+#config .config-meter-rounds span.is-on {
+    background: #24eaff;
+    box-shadow: 0 0 10px rgba(36, 234, 255, 0.8);
+}
+
+#config .config-adjust {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 56px;
+    padding: 7px 10px;
+    background: linear-gradient(180deg, rgba(17, 26, 44, 0.84) 0%, rgba(7, 13, 25, 0.92) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 0 0 1px rgba(0, 234, 255, 0.04);
+}
+
+#config .config-adjust span {
+    flex: 1;
+    text-align: center;
+    color: #8eb7c8;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.3em;
+}
+
+#config .config-adjust button {
+    width: 46px;
+    height: 36px;
+    padding: 0;
+    border: 1px solid rgba(25, 233, 255, 0.28);
+    border-radius: 6px;
+    background: linear-gradient(180deg, #07101f 0%, #040a13 100%);
+    color: #19e9ff;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1;
+    box-shadow:
+        inset 0 0 0 1px rgba(0, 0, 0, 0.34),
+        0 0 12px rgba(0, 234, 255, 0.08);
+}
+
+#config .config-card-rose .config-adjust button {
+    border-color: rgba(255, 77, 116, 0.32);
+    color: #ff5578;
+}
+
+#config .config-start-btn {
+    width: min(300px, 74%);
+    margin-top: 24px;
+    padding: 15px 26px;
+    border: none;
+    clip-path: polygon(8% 0, 100% 0, 100% 76%, 92% 100%, 0 100%, 0 24%);
+    background:
+        linear-gradient(180deg, #52fbff 0%, #00d9ff 100%),
+        radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.42), transparent 46%);
+    color: #00171d;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    box-shadow:
+        0 0 18px rgba(0, 242, 255, 0.95),
+        0 0 44px rgba(0, 242, 255, 0.24),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+}
+
+#config .config-start-btn:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+    box-shadow:
+        0 0 22px rgba(0, 242, 255, 0.98),
+        0 0 58px rgba(0, 242, 255, 0.28),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.26);
+}
+
+#config .config-start-btn:focus-visible,
+#config .config-adjust button:focus-visible {
+    outline: 2px solid rgba(0, 242, 255, 0.65);
+    outline-offset: 2px;
+}
+
+#config .config-start-icon {
+    font-size: 17px;
+    line-height: 1;
+}
+
+@media (max-width: 760px) {
+    #config.config-screen {
+        padding: 16px 12px 20px;
+    }
+
+    #config .config-grid {
+        grid-template-columns: 1fr;
+        width: min(100%, 390px);
+        gap: 12px;
+    }
+
+    #config .config-card {
+        min-height: 210px;
+        padding: 16px 14px 14px;
+    }
+
+    #config .config-card label {
+        font-size: 16px;
+    }
+
+    #config .config-value-row input {
+        font-size: 50px;
+    }
+
+    #config .config-value-row-money input {
+        width: 126px;
+    }
+
+    #config .config-value-row-rounds input {
+        width: 104px;
+    }
+
+    #config .config-bracket {
+        font-size: 36px;
+    }
+
+    #config .config-unit {
+        font-size: 18px;
+    }
+
+    #config .config-unit-money {
+        font-size: 20px;
+    }
+
+    #config .config-unit-rounds {
+        font-size: 16px;
+    }
+
+    #config .config-meter {
+        gap: 4px;
+        height: 22px;
+        margin-bottom: 14px;
+    }
+
+    #config .config-meter span {
+        width: 16px;
+        height: 8px;
+    }
+
+    #config .config-meter-money span {
+        width: 9px;
+    }
+
+    #config .config-adjust {
+        min-height: 42px;
+        padding: 5px 8px;
+    }
+
+    #config .config-adjust span {
+        font-size: 11px;
+    }
+
+    #config .config-adjust button {
+        width: 34px;
+        height: 30px;
+        font-size: 16px;
+    }
+
+    #config .config-start-btn {
+        width: min(290px, 92%);
+        margin-top: 18px;
+        padding: 14px 18px;
+        font-size: 11px;
+    }
+
+    #config .config-title {
+        font-size: clamp(26px, 7.2vw, 36px);
+        letter-spacing: 0.07em;
+    }
+
+    #config .config-subtitle {
+        letter-spacing: 0.22em;
+        padding: 6px 10px;
+    }
+
+
+@media (max-width: 1024px) {
+    #config .config-shell {
+        padding: 20px 18px 22px;
+    }
+
+    #config .config-grid {
+        gap: 16px;
+    }
+
+    #config .config-card {
+        min-height: 300px;
+    }
+
+    #config .config-card label {
+        font-size: 22px;
+    }
+
+    #config .config-value-row input {
+        font-size: 72px;
+    }
+
+    #config .config-meter span {
+        width: 26px;
+    }
+}
+    #config .config-value-row-rounds input {
+        width: 112px;
+    }
+
+    #config .config-bracket {
+        font-size: 42px;
+    }
+
+    #config .config-unit {
+        font-size: 22px;
+    }
+
+    #config .config-unit-money {
+        font-size: 24px;
+    }
+
+    #config .config-unit-rounds {
+        font-size: 20px;
+    }
+
+    #config .config-meter {
+        gap: 5px;
+        height: 24px;
+        margin-bottom: 18px;
+    }
+
+    #config .config-meter span {
+        width: 18px;
+        height: 9px;
+    }
+
+    #config .config-meter-money span {
+        width: 10px;
+    }
+
+    #config .config-adjust {
+        min-height: 46px;
+        padding: 6px 10px;
+    }
+
+    #config .config-adjust span {
+        font-size: 12px;
+    }
+
+    #config .config-adjust button {
+        width: 38px;
+        height: 32px;
+        font-size: 18px;
+    }
+
+    #config .config-title {
+        letter-spacing: 0.08em;
+    }
+}

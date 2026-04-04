@@ -8,12 +8,18 @@ function mostrarRegistro() {
     document.getElementById("login").classList.add("hidden");
     document.getElementById("register").classList.remove("hidden");
     document.getElementById("forgot").classList.add("hidden");
+    document.getElementById("verificarCodigo").classList.add("hidden");
+    document.getElementById("config").classList.add("hidden");
+    document.getElementById("partida").classList.add("hidden");
 }
 
     function mostrarLogin() {
         document.getElementById("register").classList.add("hidden");
         document.getElementById("login").classList.remove("hidden");
         document.getElementById("forgot").classList.add("hidden");
+        document.getElementById("verificarCodigo").classList.add("hidden");
+        document.getElementById("config").classList.add("hidden");
+        document.getElementById("partida").classList.add("hidden");
     }
 
     function mostrarForgot() {
@@ -22,6 +28,7 @@ function mostrarRegistro() {
         document.getElementById("forgot").classList.remove("hidden");
         document.getElementById("verificarCodigo").classList.add("hidden");
         document.getElementById("config").classList.add("hidden");
+        document.getElementById("partida").classList.add("hidden");
     }
 
     function enviarCodigoRecuperacion() {
@@ -70,7 +77,11 @@ if (formLogin) {
         .then(response => response.text())
         .then(data => {
             console.log("Respuesta servidor (login):", data);
-            if (data === "LOGIN_OK") {
+            if (data.indexOf("LOGIN_OK|") === 0) {
+                const nombreUsuario = data.split("|").slice(1).join("|").trim();
+                if (nombreUsuario) {
+                    localStorage.setItem('cybergame_nombre_usuario', nombreUsuario);
+                }
                 window.location.href = "menu.php";
             } else if (data === "NO_EXISTE") {
                 alert('Usuario o email no existe');
