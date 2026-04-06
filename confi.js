@@ -272,6 +272,7 @@ function ocultarCorreoRepercusion() {
 
 function cerrarCorreoRepercusion() {
     ocultarCorreoRepercusion();
+    activarModoVisualCorreo(false);
     if (window.estadoPartida.finalizacionPendiente) {
         const msg = window.estadoPartida.finalizacionPendiente.mensaje || 'Partida finalizada';
         const resultado = window.estadoPartida.finalizacionPendiente.resultado || 'finalizada';
@@ -357,6 +358,10 @@ function cerrarPanelBandeja() {
     if (panel) {
         panel.style.display = 'none';
     }
+    const partidaEl = document.getElementById('partida');
+    if (partidaEl) {
+        partidaEl.classList.remove('modo-inbox-escenarios');
+    }
     window.estadoPartida.panel_bandeja_abierto = false;
 }
 
@@ -368,29 +373,42 @@ function abrirPanelBandeja(titulo, correos, tipo) {
     const panel = document.getElementById('panel-bandeja');
     const tituloEl = document.getElementById('panel-bandeja-titulo');
     const listaEl = document.getElementById('panel-bandeja-lista');
-    if (!panel || !tituloEl || !listaEl) return;
+    if (!panel || !listaEl) return;
 
-    tituloEl.textContent = titulo;
+    if (tituloEl) {
+        tituloEl.textContent = titulo;
+    }
     listaEl.innerHTML = '';
+
+    const partidaEl = document.getElementById('partida');
+    if (partidaEl) {
+        partidaEl.classList.add('modo-inbox-escenarios');
+    }
 
     if (!correos || correos.length === 0) {
         const empty = document.createElement('div');
-        empty.style.padding = '10px';
-        empty.style.color = '#4b5563';
+        empty.className = 'bandeja-empty-msg';
         empty.textContent = 'No hay correos en esta bandeja.';
         listaEl.appendChild(empty);
     } else {
         correos.forEach(function(correo) {
+            const payload = correo && correo.payload ? correo.payload : {};
+            const escenario = payload && payload.data && payload.data.turno && payload.data.turno.escenario ? payload.data.turno.escenario : null;
+            const remitente = escenario ? (escenario.remitente_nombre || 'Sistema') : (tipo === 'effects' ? 'Sistema' : 'SOC');
+            const previewRaw = escenario ? (escenario.texto_correo || '') : ((payload && payload.contexto && payload.contexto.feedback_escenario) || (payload && payload.respuesta && payload.respuesta.feedback) || 'Sin contenido adicional.');
+            const preview = String(previewRaw || '').replace(/\s+/g, ' ').trim();
+            const fecha = correo && correo.createdAt ? new Date(correo.createdAt) : null;
+            const hora = fecha ? fecha.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }) : 'Hoy';
+
             const btn = document.createElement('button');
             btn.type = 'button';
-            btn.style.width = '100%';
-            btn.style.textAlign = 'left';
-            btn.style.padding = '8px';
-            btn.style.borderRadius = '6px';
-            btn.style.background = correo.pending ? '#fee2e2' : '#ffffff';
-            btn.style.border = '1px solid #d1d5db';
-            btn.style.color = '#111827';
-            btn.textContent = (correo.pending ? '[NUEVO] ' : '') + correo.subject;
+            btn.className = 'bandeja-mail-row' + (correo.pending ? ' is-new' : '');
+            btn.innerHTML = '' +
+                '<span class="mail-row-star" aria-hidden="true">☆</span>' +
+                '<span class="mail-row-from">' + escaparHtml(remitente) + '</span>' +
+                '<span class="mail-row-subject">' + escaparHtml(correo.subject || 'Sin asunto') + '</span>' +
+                '<span class="mail-row-preview">' + escaparHtml(preview || 'Sin vista previa') + '</span>' +
+                '<span class="mail-row-time">' + escaparHtml(hora) + '</span>';
             btn.onclick = function() {
                 abrirCorreoDesdeBandeja(tipo, correo.id);
             };
@@ -476,8 +494,44 @@ function cerrarCorreoEscenarioVista() {
     }
 
     limpiarVistaCorreoEscenario();
+    activarModoVisualCorreo(false);
 
     window.estadoPartida.escenario_abierto_accionable = false;
+}
+
+function alternarOpcionesEscenario(mostrar) {
+    const respuestaPanel = document.getElementById('respuesta-panel');
+    const opcionesContainer = document.getElementById('opciones-container');
+    const sinOpcionesMsg = document.getElementById('sin-opciones-msg');
+    const botonResponder = document.getElementById('btn-responder-escenario');
+
+    const debeMostrar = typeof mostrar === 'boolean'
+        ? mostrar
+        : !!(respuestaPanel && respuestaPanel.style.display === 'none');
+
+    if (respuestaPanel) {
+        respuestaPanel.style.display = debeMostrar ? 'block' : 'none';
+    }
+
+    if (opcionesContainer) {
+        opcionesContainer.style.display = debeMostrar ? 'block' : 'none';
+    }
+
+    if (botonResponder) {
+        botonResponder.textContent = 'Responder';
+    }
+
+    if (sinOpcionesMsg) {
+        sinOpcionesMsg.style.display = 'none';
+    }
+}
+
+function activarModoVisualCorreo(activo) {
+    const panelEscenario = document.querySelector('#partida .scenario-panel');
+    if (!panelEscenario) {
+        return;
+    }
+    panelEscenario.classList.toggle('gmail-open', !!activo);
 }
 
 function abrirBandeja(tipo) {
@@ -512,6 +566,10 @@ function abrirCorreoDesdeBandeja(tipo, correoId) {
     if (!correo) return;
 
     cerrarPanelBandeja();
+    const partidaEl = document.getElementById('partida');
+    if (partidaEl) {
+        partidaEl.classList.remove('modo-inbox-escenarios');
+    }
     actualizarBandejasUI();
 
     if (tipo === 'effects') {
@@ -704,16 +762,24 @@ function renderCorreoGmail(opts) {
     const cierre = opts.cierre || '';
     const colorEtiqueta = opts.colorEtiqueta || '#ff4f88';
     const compacto = !!opts.compacto;
+    const ocultarFooter = !!opts.ocultarFooter;
+    const mostrarCerrar = !!opts.mostrarCerrar;
+    const inicial = String(deNombre || 'M').trim().charAt(0).toUpperCase() || 'M';
 
     return '' +
         '<div class="correo-card correo-gmail' + (compacto ? ' correo-gmail-compacto' : '') + '" style="--correo-accent:' + escaparHtml(colorEtiqueta) + ';">' +
             '<div class="correo-topbar">' +
-                '<div class="correo-subject">' + escaparHtml(asunto) + '</div>' +
+                '<div class="correo-headline"><div class="correo-subject">' + escaparHtml(asunto) + '</div><span class="correo-inbox-tag">Recibidos</span></div>' +
                 '<div class="correo-time">Hoy</div>' +
+                (mostrarCerrar ? '<button type="button" class="correo-close-x" onclick="cerrarCorreoRepercusion()" aria-label="Cerrar correo">✖</button>' : '') +
             '</div>' +
-            '<div class="correo-meta-grid">' +
-                '<div class="correo-meta-row"><span>From:</span><strong>' + escaparHtml(deNombre) + '</strong><small>' + escaparHtml(deCorreo) + '</small></div>' +
-                '<div class="correo-meta-row"><span>To:</span><strong>' + escaparHtml(paraNombre) + '</strong><small>' + escaparHtml(paraCorreo) + '</small></div>' +
+            '<div class="correo-sender-row">' +
+                '<div class="correo-avatar" aria-hidden="true">' + escaparHtml(inicial) + '</div>' +
+                '<div class="correo-sender-meta">' +
+                    '<strong class="correo-sender-name">' + escaparHtml(deNombre) + '</strong>' +
+                    '<small class="correo-sender-email">&lt;' + escaparHtml(deCorreo) + '&gt;</small>' +
+                    '<small class="correo-sender-to">para ' + escaparHtml(paraNombre) + ' &lt;' + escaparHtml(paraCorreo) + '&gt;</small>' +
+                '</div>' +
             '</div>' +
             '<div class="correo-body">' +
                 '<p>' + escaparHtml(cuerpo) + '</p>' +
@@ -724,14 +790,16 @@ function renderCorreoGmail(opts) {
                     '<div><strong>Feedback de tu respuesta:</strong> ' + escaparHtml(feedbackRespuesta) + '</div>' +
                     '<div><strong>Desglose CIA:</strong> ' + escaparHtml(detalleCIA) + '</div>' +
                 '</div>' +
-                '<div class="correo-footer">' +
-                    '<div class="correo-signature">' +
-                        '<strong>' + escaparHtml(firmaNombre) + '</strong><br>' +
-                        escaparHtml(firmaCargo) + '<br>' +
-                        escaparHtml(firmaCorreo) +
-                    '</div>' +
-                    (cierre ? '<div class="correo-closing">' + escaparHtml(cierre) + '</div>' : '') +
-                '</div>'
+                (ocultarFooter ? '' : (
+                    '<div class="correo-footer">' +
+                        '<div class="correo-signature">' +
+                            '<strong>' + escaparHtml(firmaNombre) + '</strong><br>' +
+                            escaparHtml(firmaCargo) + '<br>' +
+                            escaparHtml(firmaCorreo) +
+                        '</div>' +
+                        (cierre ? '<div class="correo-closing">' + escaparHtml(cierre) + '</div>' : '') +
+                    '</div>'
+                ))
             )) +
         '</div>';
 }
@@ -796,9 +864,12 @@ function mostrarCorreoAjusteTrimestral(payload, mostrarCerrar) {
         firmaNombre: correo.firma.nombre,
         firmaCargo: correo.firma.cargo,
         firmaCorreo: correo.firma.correo,
-        cierre: mostrarCerrar ? ' ' : ''
-    }) + (mostrarCerrar ? '<div class="correo-actions"><button type="button" onclick="cerrarCorreoRepercusion()">Cerrar correo</button></div>' : '');
+        cierre: mostrarCerrar ? ' ' : '',
+        ocultarFooter: true,
+        mostrarCerrar: !!mostrarCerrar
+    });
 
+    activarModoVisualCorreo(true);
     correoEl.style.display = 'block';
 }
 
@@ -998,9 +1069,12 @@ function mostrarCorreoRepercusion(respuesta, contexto, mostrarCerrar) {
         firmaCargo: correo.firma.cargo,
         firmaCorreo: correo.firma.correo,
         cierre: correo.cierre,
-        colorEtiqueta: '#ff4f88'
-    }) + (mostrarCerrar ? '<div class="correo-actions"><button type="button" onclick="cerrarCorreoRepercusion()">Cerrar correo</button></div>' : '');
+        colorEtiqueta: '#ff4f88',
+        ocultarFooter: true,
+        mostrarCerrar: !!mostrarCerrar
+    });
 
+    activarModoVisualCorreo(true);
     correoEl.style.display = 'block';
 }
 
@@ -1341,6 +1415,8 @@ function mostrarEscenarioEnVista(data, accionable) {
     const escenario = turno.escenario;
     const remitenteNombre = escenario.remitente_nombre || 'Sin nombre';
     const remitenteCorreo = escenario.remitente_correo || 'sin-correo';
+    const respuestaPanelDestinatario = document.getElementById('respuesta-panel-destinatario');
+    const respuestaPanelAvatar = document.getElementById('respuesta-panel-avatar');
 
     window.estadoPartida.id_partida = data.id_partida;
     window.estadoPartida.id_partida_escenario = turno.id_partida_escenario;
@@ -1350,6 +1426,7 @@ function mostrarEscenarioEnVista(data, accionable) {
     window.estadoPartida.remitente_correo_actual = remitenteCorreo;
     window.estadoPartida.feedback_general_actual = escenario.feedback_general || '';
     window.estadoPartida.escenario_abierto_accionable = !!accionable;
+    activarModoVisualCorreo(true);
 
     // Guardar id_partida_escenario en sesión vía fetch silencioso
     fetch('partida_api.php', {
@@ -1363,6 +1440,12 @@ function mostrarEscenarioEnVista(data, accionable) {
     document.getElementById('esc-remitente').textContent = remitenteNombre + ' <' + remitenteCorreo + '>';
     document.getElementById('esc-tipo').textContent = escenario.tipo_escenario || '-';
     document.getElementById('esc-titulo').textContent = escenario.titulo_correo || '-';
+    if (respuestaPanelDestinatario) {
+        respuestaPanelDestinatario.textContent = remitenteNombre + ' (' + remitenteCorreo + ')';
+    }
+    if (respuestaPanelAvatar) {
+        respuestaPanelAvatar.textContent = (remitenteNombre || 'R').trim().charAt(0).toUpperCase() || 'R';
+    }
     const escenarioTextoEl = document.getElementById('esc-texto');
     if (escenarioTextoEl) {
         escenarioTextoEl.innerHTML = renderCorreoGmail({
@@ -1389,6 +1472,8 @@ function mostrarEscenarioEnVista(data, accionable) {
     const opcionesContainer = document.getElementById('opciones-container');
     const opcionesList = document.getElementById('opciones-lista');
     const sinOpcionesMsg = document.getElementById('sin-opciones-msg');
+    const botonResponder = document.getElementById('btn-responder-escenario');
+    const respuestaPanel = document.getElementById('respuesta-panel');
 
     let opcionesValidas = (escenario.opciones || []).filter(function(op) {
         return op.codigo_opcion !== 'timeout';
@@ -1405,6 +1490,8 @@ function mostrarEscenarioEnVista(data, accionable) {
 
     if (!accionable) {
         if (opcionesContainer) opcionesContainer.style.display = 'none';
+        if (botonResponder) botonResponder.style.display = 'none';
+        if (respuestaPanel) respuestaPanel.style.display = 'block';
         if (sinOpcionesMsg) {
             sinOpcionesMsg.style.display = 'block';
             const respuestaHist = (data && data.turno && data.turno.escenario && data.turno.escenario.respuesta_historial) || null;
@@ -1420,6 +1507,8 @@ function mostrarEscenarioEnVista(data, accionable) {
 
     if (!opcionesValidas || opcionesValidas.length === 0) {
         if (opcionesContainer) opcionesContainer.style.display = 'none';
+        if (botonResponder) botonResponder.style.display = 'none';
+        if (respuestaPanel) respuestaPanel.style.display = 'block';
         if (sinOpcionesMsg) {
             sinOpcionesMsg.style.display = 'block';
             sinOpcionesMsg.innerHTML =
@@ -1431,25 +1520,23 @@ function mostrarEscenarioEnVista(data, accionable) {
     }
 
     const presupuestoActual = Number(window.estadoPartida.presupuesto);
-    if (opcionesContainer) opcionesContainer.style.display = 'block';
+    if (botonResponder) botonResponder.style.display = 'inline-flex';
     if (sinOpcionesMsg) {
-        sinOpcionesMsg.style.display = 'block';
-        sinOpcionesMsg.innerHTML = '<button type="button" onclick="cerrarCorreoEscenarioVista()">Cerrar correo</button>';
+        sinOpcionesMsg.style.display = 'none';
+        sinOpcionesMsg.innerHTML = '';
     }
+    if (opcionesContainer) opcionesContainer.style.display = 'none';
+    if (respuestaPanel) respuestaPanel.style.display = 'none';
 
     if (opcionesList) {
         opcionesList.innerHTML = '';
         opcionesValidas.forEach(function(opcion) {
             const btn = document.createElement('button');
             btn.type = 'button';
-            btn.style.display = 'block';
-            btn.style.width = '100%';
-            btn.style.padding = '10px';
-            btn.style.marginBottom = '5px';
-            btn.style.cursor = 'pointer';
+            btn.className = 'decision-option-btn';
             btn.textContent = opcion.codigo_opcion + ': ' + opcion.texto_opcion;
             if (!puedeCostearOpcion(opcion, presupuestoActual)) {
-                btn.style.border = '1px solid #d32f2f';
+                btn.classList.add('is-disabled');
                 btn.title = 'No alcanza el presupuesto para esta decision';
             }
             btn.onclick = function() {
@@ -1467,6 +1554,8 @@ function mostrarEscenarioEnVista(data, accionable) {
             cronometroEl.textContent = String(window.estadoPartida.tiempo_restante);
         }
     }
+
+    alternarOpcionesEscenario(false);
 }
 
 function renderTurno(data) {
@@ -1498,13 +1587,29 @@ function renderTurno(data) {
         }
     });
 
+    const botonResponder = document.getElementById('btn-responder-escenario');
+    if (botonResponder) {
+        botonResponder.style.display = 'none';
+        botonResponder.textContent = 'Responder';
+    }
+    const respuestaPanel = document.getElementById('respuesta-panel');
+    if (respuestaPanel) {
+        respuestaPanel.style.display = 'none';
+    }
+
     iniciarTimerEscenarioPendiente();
 
-    actualizarEstadoEspera('Nuevo escenario recibido. Revisa la bandeja de Escenarios.');
+    actualizarEstadoEspera('');
     mostrarPartida();
 
-    // El contador visible debe correr por segundos desde que llega el escenario.
-    iniciarCronometro();
+    // El cronometro solo debe iniciar cuando el usuario abra un correo accionable.
+    detenerCronometro();
+    window.estadoPartida.tiempo_restante = 60;
+    const cronometroEl = document.getElementById('cronometro');
+    if (cronometroEl) {
+        cronometroEl.textContent = '60';
+        cronometroEl.style.color = '';
+    }
 }
 
 // Evalúa si las condiciones iniciales generan victoria o derrota automática

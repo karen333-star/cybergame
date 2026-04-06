@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <title>CYBERGAME - Login</title>
     <link rel="stylesheet" href="config.css?v=20260404">
-    <link rel="stylesheet" href="partida.css?v=20260404">
+    <link rel="stylesheet" href="partida.css?v=20260420">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="juego.css">
+    <link rel="stylesheet" href="profile.css"> 
 </head>
 <body>
 
@@ -267,22 +268,36 @@
                 <div id="correo-repercusion" style="display: none;"></div>
 
                 <div id="estado-espera" style="display: none;"></div>
-
-                <div id="opciones-container" style="display: none;">
-                    <p><strong>Selecciona tu decision</strong></p>
-                    <div id="opciones-lista"></div>
-                </div>
-
-                <div id="sin-opciones-msg">
-                    <button type="button" onclick="cargarSiguienteEscenario()">Siguiente Escenario</button>
-                </div>
             </section>
 
-            <div id="panel-bandeja" style="display: none;">
-                <div class="soc-panel bandeja-panel-head">
-                    <strong id="panel-bandeja-titulo">Bandeja</strong>
-                    <button type="button" onclick="cerrarPanelBandeja()">Cerrar</button>
+            <button type="button" id="btn-responder-escenario" class="btn-responder-escenario" style="display: none;" onclick="alternarOpcionesEscenario()">Responder</button>
+
+            <div id="respuesta-panel" class="respuesta-panel" style="display: none;">
+                <div class="respuesta-panel-compose">
+                    <div class="respuesta-panel-top">
+                        <div class="respuesta-panel-avatar" id="respuesta-panel-avatar" aria-hidden="true">R</div>
+                        <div class="respuesta-panel-recipient-line">
+                            <span class="respuesta-panel-back" aria-hidden="true">↶</span>
+                            <span class="respuesta-panel-recipient" id="respuesta-panel-destinatario">Jefe de Seguridad</span>
+                        </div>
+                        <div class="respuesta-panel-expand" aria-hidden="true">▣</div>
+                    </div>
+
+                    <div class="respuesta-panel-body">
+                        <div id="opciones-container" style="display: none;">
+                            <div id="opciones-lista"></div>
+                        </div>
+
+                        <div id="sin-opciones-msg">
+                            <button type="button" onclick="cargarSiguienteEscenario()">Siguiente Escenario</button>
+                        </div>
+                    </div>
+
                 </div>
+            </div>
+
+            <div id="panel-bandeja" style="display: none;">
+                <button type="button" class="bandeja-panel-close" onclick="cerrarPanelBandeja()" aria-label="Cerrar escenarios">×</button>
                 <div id="panel-bandeja-lista"></div>
             </div>
 
@@ -324,6 +339,6 @@
 </div>
 
 <script src="script.js?v=20260402"></script>
-<script src="confi.js?v=20260402"></script>
+<script src="confi.js?v=20260408"></script>
 </body>
 </html>             

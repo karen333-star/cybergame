@@ -6,7 +6,7 @@
     --cyan-2: #5fdcff;
     --cyan-3: #9deeff;
     --pink-1: #ff2f84;
-    --pink-2: #ff74b0;
+    --pink-2: #84ff74;
     --panel-border: rgba(0, 230, 255, 0.5);
     --panel-bg: rgba(3, 20, 36, 0.84);
     --text-main: #d6f5ff;
@@ -205,6 +205,306 @@
     gap: 14px;
 }
 
+#partida.modo-inbox-escenarios .scenario-panel {
+    display: none;
+}
+
+#partida.modo-inbox-escenarios #panel-bandeja {
+    display: block;
+    order: 0;
+    margin-top: 0;
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    z-index: auto;
+}
+
+#partida.modo-inbox-escenarios .bandeja-panel-close {
+    all: unset;
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    color: #9deeff;
+    font-size: 22px;
+    line-height: 1;
+    font-weight: 900;
+    z-index: 3;
+    cursor: pointer;
+}
+
+#partida #panel-bandeja .bandeja-panel-close,
+#partida #panel-bandeja .bandeja-panel-close:hover,
+#partida #panel-bandeja .bandeja-panel-close:focus,
+#partida #panel-bandeja .bandeja-panel-close:active,
+#partida #panel-bandeja .bandeja-panel-close:focus-visible {
+    all: unset;
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    width: auto !important;
+    min-width: 0 !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+    color: #9deeff !important;
+    font-size: 22px !important;
+    font-weight: 900;
+    line-height: 1;
+    text-align: left;
+    text-transform: none;
+    letter-spacing: 0;
+    transform: none !important;
+    z-index: 3;
+    cursor: pointer;
+}
+
+#partida.modo-inbox-escenarios .bandeja-panel-close:hover {
+    color: #00f0ff;
+    text-shadow: 0 0 8px rgba(0, 240, 255, 0.7);
+}
+
+#partida.modo-inbox-escenarios .bandeja-panel-close:focus-visible {
+    outline: none;
+}
+
+#partida.modo-inbox-escenarios #panel-bandeja-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 30px 0 0;
+    max-height: 320px;
+    scroll-snap-type: none;
+    scrollbar-width: thin;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+}
+
+#partida.modo-inbox-escenarios #panel-bandeja-lista::-webkit-scrollbar {
+    width: 8px;
+}
+
+#partida.modo-inbox-escenarios #panel-bandeja-lista::-webkit-scrollbar-thumb {
+    background: rgba(0, 220, 255, 0.35);
+    border-radius: 999px;
+}
+
+#partida.modo-inbox-escenarios .bandeja-empty-msg {
+    padding: 14px;
+    color: #8bb4c7;
+    font-size: 13px;
+}
+
+#partida.modo-inbox-escenarios .bandeja-mail-row {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 24px 180px minmax(260px, 1fr) minmax(220px, 1fr) 80px;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border: 0;
+    border-bottom: 1px solid rgba(0, 220, 255, 0.2);
+    background: linear-gradient(90deg, rgba(7, 37, 61, 0.9) 0%, rgba(4, 27, 45, 0.95) 100%);
+    color: #d6f5ff;
+    text-align: left;
+    cursor: pointer;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+#partida.modo-inbox-escenarios .bandeja-mail-row:not(.is-new) {
+    opacity: 0.62;
+}
+
+#partida.modo-inbox-escenarios .bandeja-mail-row:hover {
+    background: linear-gradient(90deg, rgba(8, 52, 84, 0.92) 0%, rgba(6, 39, 64, 0.96) 100%);
+    box-shadow: inset 2px 0 0 rgba(168, 85, 247, 0.9);
+}
+
+#partida.modo-inbox-escenarios .bandeja-mail-row:focus-visible {
+    outline: 2px solid rgba(0, 240, 255, 0.55);
+    outline-offset: -2px;
+}
+
+#partida.modo-inbox-escenarios .bandeja-mail-row.is-new {
+    background: linear-gradient(90deg, rgba(11, 63, 98, 0.95) 0%, rgba(8, 48, 76, 0.95) 100%);
+    opacity: 1;
+    font-weight: 700;
+    box-shadow: inset 3px 0 0 rgba(168, 85, 247, 0.95);
+}
+
+#partida.modo-inbox-escenarios .mail-row-star {
+    color: #7ee9ff;
+    font-size: 16px;
+    line-height: 1;
+    justify-self: center;
+}
+
+#partida.modo-inbox-escenarios .mail-row-from,
+#partida.modo-inbox-escenarios .mail-row-subject,
+#partida.modo-inbox-escenarios .mail-row-preview,
+#partida.modo-inbox-escenarios .mail-row-time {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#partida.modo-inbox-escenarios .mail-row-from {
+    font-size: 14px;
+    font-weight: 700;
+    color: #9deeff;
+}
+
+#partida.modo-inbox-escenarios .mail-row-subject {
+    font-size: 14px;
+    color: #e7fbff;
+}
+
+#partida.modo-inbox-escenarios .mail-row-preview {
+    font-size: 13px;
+    color: #89aebf;
+}
+
+#partida.modo-inbox-escenarios .mail-row-time {
+    font-size: 12px;
+    color: #77d9ec;
+    text-align: right;
+}
+
+#partida.modo-inbox-escenarios .bandeja-mail-card {
+    position: relative;
+    flex: 0 0 auto;
+    width: 440px;
+    min-height: 62px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 4px;
+    padding: 8px 14px;
+    text-align: left;
+    border-radius: 2px;
+    border: 1px solid rgba(0, 220, 255, 0.3);
+    border-left: 4px solid #00f0ff;
+    background: linear-gradient(90deg, rgba(7, 37, 61, 0.9) 0%, rgba(4, 27, 45, 0.95) 100%);
+    color: #d6f5ff;
+    box-shadow: none;
+    scroll-snap-align: start;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+#partida.modo-inbox-escenarios .bandeja-mail-card:hover {
+    transform: none;
+    border-color: rgba(0, 240, 255, 0.52);
+    box-shadow: 0 0 0 1px rgba(0, 240, 255, 0.35), 0 8px 18px rgba(0, 0, 0, 0.32);
+}
+
+#partida.modo-inbox-escenarios .bandeja-mail-card:focus-visible {
+    box-shadow: 0 0 0 2px rgba(0, 240, 255, 0.5), 0 8px 18px rgba(0, 0, 0, 0.32);
+}
+
+#partida.modo-inbox-escenarios .bandeja-mail-close {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 999px;
+    border: 1px solid #fda4af;
+    background: #fff1f2;
+    color: #be123c;
+    font-size: 16px;
+    line-height: 1;
+    font-weight: 900;
+    z-index: 2;
+}
+
+#partida.modo-inbox-escenarios .bandeja-mail-close:hover {
+    background: #ffe4e6;
+    border-color: #fb7185;
+}
+
+#partida.modo-inbox-escenarios .bandeja-mail-close:focus-visible {
+    outline: 2px solid rgba(251, 113, 133, 0.45);
+    outline-offset: 2px;
+}
+
+#partida.modo-inbox-escenarios .bandeja-mail-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding-left: 0;
+}
+
+#partida.modo-inbox-escenarios .bandeja-mail-from {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #7fd9eb;
+}
+
+#partida.modo-inbox-escenarios .bandeja-mail-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: rgba(255, 47, 132, 0.2);
+    color: #ff9fc4;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+}
+
+#partida.modo-inbox-escenarios .bandeja-mail-subject {
+    font-size: 13px;
+    font-weight: 700;
+    color: #e7fbff;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#partida.modo-inbox-escenarios .bandeja-mail-meta {
+    display: block;
+    font-size: 11px;
+    color: #89aebf;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#partida.modo-inbox-escenarios .bandeja-mail-preview {
+    font-size: 11px;
+    line-height: 1.25;
+    color: #89aebf;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 #partida .soc-headline {
     border: 1px solid var(--panel-border);
     background: linear-gradient(180deg, rgba(3, 27, 49, 0.94) 0%, rgba(2, 18, 34, 0.94) 100%);
@@ -242,6 +542,40 @@
     padding: 0;
     overflow: hidden;
     border-radius: var(--radius-soft);
+}
+
+#partida .scenario-panel.gmail-open {
+    background: linear-gradient(180deg, rgba(4, 25, 45, 0.94) 0%, rgba(2, 17, 31, 0.95) 100%);
+    border: 1px solid var(--panel-border);
+    box-shadow: var(--shadow-outer), inset 0 0 0 1px rgba(0, 240, 255, 0.1);
+}
+
+#partida .scenario-panel.gmail-open .scenario-type,
+#partida .scenario-panel.gmail-open .scenario-subject,
+#partida .scenario-panel.gmail-open .scenario-meta {
+    display: none;
+}
+
+#partida .scenario-panel.gmail-open .scenario-content {
+    margin: 0;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+}
+
+#partida .scenario-panel.gmail-open .scenario-content::before {
+    display: none;
+}
+
+#partida .scenario-panel.gmail-open #opciones-container,
+#partida .scenario-panel.gmail-open #sin-opciones-msg,
+#partida .scenario-panel.gmail-open #estado-espera,
+#partida .scenario-panel.gmail-open #correo-repercusion {
+    margin: 0;
+    border-top: 1px solid rgba(0, 214, 255, 0.25);
+    border-radius: 0;
 }
 
 #partida .scenario-type {
@@ -318,14 +652,24 @@
 
 #partida .scenario-content .correo-gmail {
     margin: 0;
-    border: 0;
-    background: transparent;
-    padding: 0;
-    box-shadow: none;
+    padding: 12px;
+    border: 1px solid rgba(0, 220, 255, 0.32);
+    border-radius: 10px;
+    background: linear-gradient(180deg, rgba(5, 29, 51, 0.9) 0%, rgba(3, 20, 36, 0.94) 100%);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.34), inset 0 0 0 1px rgba(0, 240, 255, 0.08);
 }
 
 #partida .scenario-content .correo-gmail::before {
     display: none;
+}
+
+#partida .scenario-content .correo-gmail .correo-subject,
+#partida .scenario-content .correo-gmail .correo-time,
+#partida .scenario-content .correo-gmail .correo-sender-name,
+#partida .scenario-content .correo-gmail .correo-sender-email,
+#partida .scenario-content .correo-gmail .correo-sender-to,
+#partida .scenario-content .correo-gmail .correo-body p {
+    color: inherit;
 }
 
 #partida #estado-espera {
@@ -385,9 +729,190 @@
     min-width: 220px;
 }
 
+#partida #btn-responder-escenario {
+    width: auto;
+    min-width: 132px;
+    margin: 12px 0 0 2px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(125, 241, 255, 0.7);
+    background: transparent;
+    color: #d7f7ff;
+    box-shadow: none;
+    text-align: center;
+}
+
+#partida #btn-responder-escenario:hover {
+    border-color: #90f4ff;
+    background: rgba(0, 214, 255, 0.08);
+}
+
+#partida .respuesta-panel {
+    margin: 10px 8px 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+}
+
+#partida .respuesta-panel-compose {
+    display: flex;
+    flex-direction: column;
+}
+
+#partida .respuesta-panel-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 2px 10px;
+    background: transparent;
+    border-bottom: 0;
+}
+
+#partida .respuesta-panel-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(160deg, rgba(168, 85, 247, 0.95) 0%, rgba(56, 189, 248, 0.88) 100%);
+    color: #f8fdff;
+    font-size: 20px;
+    font-weight: 700;
+    flex: 0 0 auto;
+}
+
+#partida .respuesta-panel-recipient-line {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #d6f5ff;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+#partida .respuesta-panel-back {
+    color: #89c5d6;
+    font-size: 16px;
+}
+
+#partida .respuesta-panel-recipient {
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+}
+
+#partida .respuesta-panel-expand {
+    margin-left: auto;
+    color: #89c5d6;
+    font-size: 12px;
+}
+
+#partida .respuesta-panel-body {
+    min-height: 176px;
+    padding: 0;
+    background: transparent;
+}
+
+#partida .respuesta-panel #opciones-container {
+    display: block;
+}
+
+#partida .respuesta-panel .respuesta-panel-placeholder {
+    margin: 0 0 10px;
+    color: #89b4c7;
+    font-size: 13px;
+    letter-spacing: 0;
+    text-transform: none;
+    font-weight: 500;
+}
+
+#partida .respuesta-panel #opciones-lista .decision-option-btn {
+    width: 100%;
+    margin: 0 0 8px;
+    padding: 10px 12px;
+    border: 1px solid rgba(0, 220, 255, 0.22);
+    background: rgba(7, 37, 61, 0.9);
+    color: #d9f7ff;
+    border-radius: 8px;
+    text-align: left;
+    box-shadow: none;
+    font-size: 14px;
+}
+
+#partida .respuesta-panel #opciones-lista .decision-option-btn:hover {
+    border-color: rgba(0, 240, 255, 0.6);
+    background: rgba(8, 52, 84, 0.96);
+}
+
+#partida .respuesta-panel #opciones-lista .decision-option-btn.is-disabled {
+    border-color: rgba(255, 93, 131, 0.55);
+    background: rgba(88, 16, 42, 0.38);
+    color: #ffb5cc;
+}
+
+#partida .respuesta-panel #sin-opciones-msg {
+    padding: 0;
+}
+
+#partida .respuesta-panel #sin-opciones-msg button {
+    width: auto;
+    min-width: 220px;
+}
+
+#partida .respuesta-panel-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px 12px;
+    background: transparent;
+}
+
+#partida .respuesta-send-btn {
+    border: 0;
+    border-radius: 20px;
+    padding: 8px 18px;
+    background: linear-gradient(180deg, rgba(8, 64, 108, 0.94) 0%, rgba(5, 41, 74, 0.9) 100%);
+    color: #b9f2ff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: default;
+    opacity: 1;
+}
+
+#partida .respuesta-send-btn[disabled] {
+    opacity: 1;
+}
+
+#partida .respuesta-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #89c5d6;
+    font-size: 16px;
+}
+
+#partida .scenario-panel.gmail-open #opciones-container {
+    display: none;
+    margin-top: 0;
+}
+
+#partida .scenario-panel.gmail-open #opciones-container.is-visible {
+    display: block;
+}
+
 #partida #panel-bandeja {
     display: none;
     margin-top: 4px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
 }
 
 #partida .bandeja-panel-head {
@@ -409,38 +934,77 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    background: rgba(5, 17, 34, 0.9);
-    border: 1px solid rgba(0, 214, 255, 0.34);
-    padding: 10px;
-    border-radius: var(--radius-soft);
+    background: transparent;
+    border: 0;
+    padding: 0;
+    border-radius: 0;
 }
 
 #partida #correo-repercusion {
     display: none;
-    margin: 13px 16px 16px;
+    margin: 10px 14px 14px;
     padding: 0;
-    border: 1px solid rgba(0, 214, 255, 0.34);
-    background: linear-gradient(180deg, rgba(8, 22, 42, 0.96) 0%, rgba(5, 16, 30, 0.96) 100%);
-    color: #d2f8ff;
-    border-radius: var(--radius-soft);
-    overflow: hidden;
+    position: relative;
+    border: 0;
+    background: transparent;
+    color: #d6f5ff;
+    border-radius: 0;
+    overflow: visible;
+    box-shadow: none;
+}
+
+#partida #correo-repercusion .correo-footer {
+    display: none !important;
+}   
+
+#partida #correo-repercusion .correo-close-x {
+    position: static;
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    margin: 0 4px 0 8px;
+    padding: 0;
+    border: 1px solid rgba(255, 110, 136, 0.62);
+    border-radius: 999px;
+    background: rgba(82, 14, 31, 0.82);
+    color: #ff7f98;
+    font-size: 16px;
+    line-height: 1;
+    font-weight: 900;
+    text-align: center;
+    cursor: pointer;
+    text-shadow: 0 0 8px rgba(255, 75, 95, 0.35);
+    z-index: 12;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+}
+
+#partida #correo-repercusion .correo-close-x:hover {
+    color: #ffd5df;
+    background: rgba(114, 20, 44, 0.92);
+    border-color: rgba(255, 151, 171, 0.95);
+    text-shadow: 0 0 12px rgba(255, 164, 182, 0.85);
 }
 
 #partida .correo-gmail {
     position: relative;
-    padding: 14px;
+    padding: 0;
+    font-family: "IBM Plex Sans", "Segoe UI", Tahoma, sans-serif;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    overflow: visible;
+    color: #d6f5ff;
 }
 
 #partida .correo-gmail::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(0, 240, 255, 0.05) 0%, transparent 28%, transparent 72%, rgba(255, 79, 136, 0.05) 100%);
-    pointer-events: none;
+    content: none;
 }
 
 #partida .correo-topbar,
-#partida .correo-meta-grid,
+#partida .correo-sender-row,
 #partida .correo-body,
 #partida .correo-feeds,
 #partida .correo-footer,
@@ -452,127 +1016,161 @@
 #partida .correo-topbar {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    gap: 12px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid rgba(0, 214, 255, 0.24);
-    margin-bottom: 10px;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 18px 10px;
+    border-bottom: 1px solid rgba(0, 220, 255, 0.26);
+    background: linear-gradient(180deg, rgba(7, 43, 72, 0.72) 0%, rgba(5, 32, 53, 0.5) 100%);
+}
+
+#partida .correo-headline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
 }
 
 #partida .correo-subject {
-    font-size: 16px;
-    font-weight: 900;
-    color: #f8feff;
-    letter-spacing: 0.04em;
+    font-size: 31px;
+    font-weight: 400;
+    color: #ecfdff;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#partida .correo-inbox-tag {
+    flex: 0 0 auto;
+    font-size: 12px;
+    color: #9feaff;
+    border: 1px solid rgba(0, 220, 255, 0.38);
+    border-radius: 3px;
+    background: rgba(0, 214, 255, 0.1);
+    padding: 1px 6px;
 }
 
 #partida .correo-time {
     flex: 0 0 auto;
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #8fc8d7;
-}
-
-#partida .correo-meta-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-    margin-bottom: 12px;
-}
-
-#partida .correo-meta-row {
-    background: rgba(3, 23, 43, 0.8);
-    border: 1px solid rgba(56, 189, 248, 0.18);
-    padding: 9px 10px;
-}
-
-#partida .correo-meta-row span {
-    display: block;
-    font-size: 10px;
-    letter-spacing: 0.16em;
-    color: #7fd8ea;
-    text-transform: uppercase;
-    margin-bottom: 5px;
-}
-
-#partida .correo-meta-row strong {
-    display: block;
     font-size: 13px;
-    color: #f2fdff;
-    margin-bottom: 2px;
+    color: #89c5d6;
+    border: 0;
+    padding: 0;
+    background: transparent;
 }
 
-#partida .correo-meta-row small {
+#partida .correo-sender-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin: 0 18px;
+    padding: 6px 0 14px;
+    border-bottom: 1px solid rgba(0, 220, 255, 0.2);
+}
+
+#partida .correo-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    background: linear-gradient(160deg, rgba(168, 85, 247, 0.95) 0%, rgba(56, 189, 248, 0.88) 100%);
+    color: #f8fdff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+#partida .correo-sender-meta {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+#partida .correo-sender-name {
     display: block;
-    font-size: 11px;
-    color: #9cb9c7;
+    font-size: 14px;
+    font-weight: 700;
+    color: #dff8ff;
+}
+
+#partida .correo-sender-email,
+#partida .correo-sender-to {
+    display: block;
+    font-size: 12px;
+    color: #89b4c7;
+    line-height: 1.35;
 }
 
 #partida .correo-body {
-    padding: 12px 12px 14px;
-    background: rgba(1, 10, 18, 0.55);
-    border: 1px solid rgba(0, 214, 255, 0.14);
-    border-radius: var(--radius-soft);
+    margin: 0 18px;
+    padding: 16px 0 18px 52px;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
 }
 
 #partida .correo-body p {
     margin: 0;
-    color: #d7f6ff;
+    color: #d8f4ff;
     line-height: 1.65;
     font-size: 15px;
+    white-space: pre-wrap;
 }
 
 #partida .correo-feeds {
-    margin-top: 12px;
+    margin: 12px 16px 14px;
     display: grid;
     gap: 8px;
-    padding: 10px 12px;
-    background: rgba(226, 240, 255, 0.96);
-    color: #0b2b4a;
-    border-radius: var(--radius-soft);
+    padding: 12px 14px;
+    background: linear-gradient(180deg, rgba(38, 18, 74, 0.84) 0%, rgba(24, 11, 52, 0.88) 100%);
+    color: #f1e8ff;
+    border: 1px solid rgba(180, 120, 255, 0.4);
+    border-radius: 8px;
 }
 
 #partida .correo-feeds div {
     font-size: 13px;
-    line-height: 1.45;
+    line-height: 1.5;
 }
 
 #partida .correo-feeds strong {
-    color: #132f4c;
+    color: #d9b3ff;
 }
 
 #partida .correo-footer {
-    margin-top: 12px;
+    margin: 14px 16px 0;
     display: flex;
     justify-content: space-between;
     gap: 12px;
     align-items: flex-start;
     flex-wrap: wrap;
     padding-top: 12px;
-    border-top: 1px solid rgba(0, 214, 255, 0.18);
+    border-top: 1px solid rgba(0, 220, 255, 0.2);
 }
 
 #partida .correo-signature {
-    color: #d4eef7;
+    color: #9bc4d3;
     font-size: 13px;
     line-height: 1.45;
 }
 
 #partida .correo-signature strong {
-    color: #f8feff;
+    color: #e9fcff;
     font-size: 14px;
 }
 
 #partida .correo-closing {
     max-width: 320px;
-    color: #b9d8e6;
+    color: #88b4c7;
     font-size: 13px;
     line-height: 1.5;
 }
 
 #partida .correo-actions {
-    margin-top: 12px;
+    margin: 12px 16px 16px;
     display: flex;
     justify-content: flex-end;
 }
@@ -580,9 +1178,35 @@
 #partida .correo-actions button {
     width: auto;
     margin: 0;
-    padding: 8px 12px;
+    padding: 8px 14px;
     min-width: 120px;
     text-align: center;
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(169, 35, 56, 0.96) 0%, rgba(120, 20, 38, 0.94) 100%);
+    border-color: rgba(255, 128, 154, 0.72);
+    color: #ffe9ef;
+}
+
+#partida .correo-actions button:hover {
+    background: linear-gradient(180deg, rgba(198, 46, 71, 0.98) 0%, rgba(145, 24, 46, 0.96) 100%);
+    border-color: #ffb2c6;
+}
+
+#partida .correo-gmail-compacto .correo-topbar {
+    padding: 14px 14px 10px;
+}
+
+#partida .correo-gmail-compacto .correo-subject {
+    font-size: 28px;
+}
+
+#partida .correo-gmail-compacto .correo-sender-row {
+    margin: 0 14px;
+}
+
+#partida .correo-gmail-compacto .correo-body {
+    margin: 0 14px 8px;
+    padding: 14px 0 12px 52px;
 }
 
 #partida .metrics-rings {
@@ -680,7 +1304,38 @@
 }
 
 #partida #panel-desglose-cia {
-    display: none !important;
+    display: none;
+    width: 100%;
+    max-width: 270px;
+    margin: 12px auto 0;
+    padding: 10px 12px;
+    border: 1px solid rgba(0, 239, 170, 0.46);
+    border-radius: 8px;
+    background: linear-gradient(180deg, rgba(5, 28, 35, 0.92) 0%, rgba(4, 19, 29, 0.92) 100%);
+    color: #c8fff0;
+    box-shadow: 0 0 16px rgba(0, 255, 170, 0.15), inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+#partida #panel-desglose-cia > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 3px 0;
+    border-bottom: 1px dashed rgba(100, 250, 216, 0.2);
+}
+
+#partida #panel-desglose-cia > div:last-child {
+    border-bottom: 0;
+    margin-top: 4px;
+    padding-top: 7px;
+    border-top: 1px solid rgba(100, 250, 216, 0.2);
+}
+
+#partida #panel-desglose-cia strong {
+    color: #8effd6;
+    font-weight: 800;
 }
 
 #partida .timer-box {
@@ -753,6 +1408,17 @@
     #partida .metrics-rings {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
+
+    #partida.modo-inbox-escenarios #panel-bandeja {
+        left: 10px;
+        right: 10px;
+    }
+
+    #partida.modo-inbox-escenarios .bandeja-mail-row {
+        grid-template-columns: 20px 140px minmax(200px, 1fr) minmax(140px, 1fr) 62px;
+        gap: 8px;
+        padding: 8px 10px;
+    }
 }
 
 @media (max-width: 760px) {
@@ -799,6 +1465,28 @@
 
     #partida #cronometro {
         font-size: 42px;
+    }
+
+    #partida.modo-inbox-escenarios #panel-bandeja {
+        top: auto;
+        left: auto;
+        right: auto;
+        padding: 10px;
+    }
+
+    #partida.modo-inbox-escenarios #panel-bandeja-lista {
+        max-height: 165px;
+        padding-top: 28px;
+    }
+
+    #partida.modo-inbox-escenarios .bandeja-mail-row {
+        grid-template-columns: 18px 1fr 1fr 0 58px;
+        gap: 7px;
+        font-size: 12px;
+    }
+
+    #partida.modo-inbox-escenarios .mail-row-preview {
+        display: none;
     }
 }
 

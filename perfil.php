@@ -193,71 +193,123 @@ foreach ($top5 as $escenario) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CyberGame - Perfil</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="profile.css">
 </head>
-<body>
-    <div class="container">
-        <h1 id="main-title">🛡️ CyberGame</h1>
+<body class="profile-page">
+    <div class="container profile-shell">
+        <header class="profile-topbar">
+            <div class="profile-topbar-left">↳_ CYBER_SIM // OS <span>/ PERFIL</span></div>
+            <div class="profile-topbar-right">● ENLACE SEGURO</div>
+        </header>
 
-        <div class="card">
-            <h2>Mi Perfil</h2>
+        <div class="profile-grid">
+            <aside class="profile-sidebar">
+                <div class="profile-panel profile-brand-panel">
+                    <div class="profile-kicker">MI PERFIL</div>
+                    <div class="profile-avatar" aria-hidden="true">◌</div>
+                    <h2 class="profile-user-name"><?php echo htmlspecialchars($userProfile['nombre_usuario'] ?? '-'); ?></h2>
+                    <div class="profile-user-role">Operadora de respuesta empresarial</div>
+                </div>
 
-            <!-- Mensajes de éxito/error -->
-            <?php if ($mensajeExito): ?>
-                <div style="background: #d4edda; color: #155724; padding: 12px; border-radius: 8px; margin-bottom: 20px;">
-                    ✓ <?php echo htmlspecialchars($mensajeExito); ?>
-                </div>
-            <?php endif; ?>
+                <div class="profile-panel profile-account-panel">
+                    <h3 class="profile-panel-title">Datos de Cuenta</h3>
+                    <div class="profile-data-list">
+                        <div class="profile-data-row">
+                            <span class="profile-data-icon" aria-hidden="true">◌</span>
+                            <span class="profile-data-label">Nombre de usuario</span>
+                            <strong class="profile-data-value"><?php echo htmlspecialchars($userProfile['nombre_usuario'] ?? '-'); ?></strong>
+                        </div>
+                        <div class="profile-data-row">
+                            <span class="profile-data-icon" aria-hidden="true">✉</span>
+                            <span class="profile-data-label">Correo</span>
+                            <strong class="profile-data-value"><?php echo htmlspecialchars($userProfile['email'] ?? '-'); ?></strong>
+                        </div>
+                        <div class="profile-data-row">
+                            <span class="profile-data-icon" aria-hidden="true">⌚</span>
+                            <span class="profile-data-label">Registrado desde</span>
+                            <strong class="profile-data-value">
+                                <?php 
+                                    $fecha = $userProfile['creado_en'] ?? null;
+                                    if ($fecha) {
+                                        echo htmlspecialchars(date('d/m/Y H:i', strtotime($fecha)));
+                                    } else {
+                                        echo '-';
+                                    }
+                                ?>
+                            </strong>
+                        </div>
+                    </div>
 
-            <?php if ($mensajeError): ?>
-                <div style="background: #f8d7da; color: #721c24; padding: 12px; border-radius: 8px; margin-bottom: 20px;">
-                    ✗ <?php echo htmlspecialchars($mensajeError); ?>
+                    <div class="profile-mini-grid">
+                        <div class="profile-mini-card">
+                            <span>Clearance</span>
+                            <strong>Nivel A2</strong>
+                        </div>
+                        <div class="profile-mini-card">
+                            <span>Trazabilidad</span>
+                            <strong>Verificada</strong>
+                        </div>
+                    </div>
                 </div>
-            <?php endif; ?>
+            </aside>
 
-            <!-- ============================================
-                 SECCIÓN 1: DATOS DE CUENTA
-                 ============================================ -->
-            <div style="margin-bottom: 30px; padding: 16px; background: #f5f5f5; border-radius: 8px;">
-                <h3>Datos de Cuenta</h3>
-                <div style="margin: 12px 0;">
-                    <label style="font-weight: 600; color: #333;">Nombre de usuario:</label>
-                    <p style="margin: 4px 0; color: #222; font-size: 15px;">
-                        <?php echo htmlspecialchars($userProfile['nombre_usuario'] ?? '-'); ?>
-                    </p>
-                </div>
-                <div style="margin: 12px 0;">
-                    <label style="font-weight: 600; color: #333;">Correo:</label>
-                    <p style="margin: 4px 0; color: #222; font-size: 15px;">
-                        <?php echo htmlspecialchars($userProfile['email'] ?? '-'); ?>
-                    </p>
-                </div>
-                <div style="margin: 12px 0;">
-                    <label style="font-weight: 600; color: #333;">Registrado desde:</label>
-                    <p style="margin: 4px 0; color: #222; font-size: 15px;">
-                        <?php 
-                            $fecha = $userProfile['creado_en'] ?? null;
-                            if ($fecha) {
-                                echo htmlspecialchars(date('d/m/Y H:i', strtotime($fecha)));
-                            } else {
-                                echo '-';
-                            }
-                        ?>
-                    </p>
-                </div>
-            </div>
+            <main class="profile-main">
+                <?php if ($mensajeExito): ?>
+                    <div class="profile-alert profile-alert-success">✓ <?php echo htmlspecialchars($mensajeExito); ?></div>
+                <?php endif; ?>
 
-            <!-- ============================================
-                 SECCIÓN 2: CAMBIAR CONTRASEÑA (COLLAPSIBLE)
-                 ============================================ -->
-            <div style="margin-bottom: 30px; padding: 16px; background: #f5f5f5; border-radius: 8px;">
-                <button type="button" onclick="toggleSeccion('cambiar-password')" style="width: 100%; padding: 12px; background: #8b5cf6; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 15px;">
-                    🔐 Cambiar Contraseña
-                </button>
-                
-                <div id="cambiar-password" style="display: none; margin-top: 16px;">
-                    <form method="POST" style="display: flex; flex-direction: column; gap: 12px;">
+                <?php if ($mensajeError): ?>
+                    <div class="profile-alert profile-alert-error">✗ <?php echo htmlspecialchars($mensajeError); ?></div>
+                <?php endif; ?>
+
+                <section class="profile-hero">
+                    <div class="profile-kicker profile-kicker-main">CENTRO DE IDENTIDAD</div>
+                    <h1>Controla tu cuenta, revisa tu progreso y accede a tus módulos críticos.</h1>
+                    <p>Todo tu estado operativo concentrado en un panel de acceso rápido con lectura táctica.</p>
+                    <div class="profile-hero-stats">
+                        <div class="profile-stat-card">
+                            <span>Sesiones seguras</span>
+                            <strong><?php echo str_pad((string)count($top5), 2, '0', STR_PAD_LEFT); ?></strong>
+                        </div>
+                        <div class="profile-stat-card">
+                            <span>Índice operativo</span>
+                            <strong>94%</strong>
+                        </div>
+                        <div class="profile-stat-card">
+                            <span>Alertas activas</span>
+                            <strong><?php echo (empty($top5) ? '00' : '02'); ?></strong>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="profile-panel profile-actions-panel">
+                    <h3 class="profile-panel-title">ACCIONES PRINCIPALES</h3>
+                    <div class="profile-actions-grid">
+                        <button type="button" class="profile-action-card profile-action-purple" onclick="toggleSeccion('cambiar-password')">
+                            <span class="profile-action-icon">⌂</span>
+                            <span class="profile-action-content">
+                                <strong>Cambiar Contraseña</strong>
+                                <small>Refuerza el acceso a tu cuenta</small>
+                            </span>
+                            <span class="profile-action-badge">SEGURIDAD</span>
+                        </button>
+
+                        <button type="button" class="profile-action-card profile-action-cyan" onclick="toggleSeccion('mejorar-section')">
+                            <span class="profile-action-icon">▥</span>
+                            <span class="profile-action-content">
+                                <strong>¿En qué debo mejorar?</strong>
+                                <small>Consulta recomendaciones estratégicas</small>
+                            </span>
+                            <span class="profile-action-badge">ANÁLISIS</span>
+                        </button>
+                    </div>
+                </section>
+
+                <section id="cambiar-password" class="profile-panel profile-expandable" style="display: none;">
+                    <h3 class="profile-panel-title">Cambiar Contraseña</h3>
+                    <form method="POST" class="profile-form">
                         <input type="hidden" name="accion" value="cambiar_password">
-                        
+
                         <div class="form-group">
                             <label for="password_actual">Contraseña actual:</label>
                             <input type="password" id="password_actual" name="password_actual" required>
@@ -275,88 +327,83 @@ foreach ($top5 as $escenario) {
 
                         <button type="submit" class="btn">Cambiar Contraseña</button>
                     </form>
-                </div>
-            </div>
+                </section>
 
-            <!-- ============================================
-                 SECCIÓN 3: EN QUÉ DEBO MEJORAR (COLLAPSIBLE)
-                 ============================================ -->
-            <div style="margin-bottom: 30px; padding: 16px; background: #f5f5f5; border-radius: 8px;">
-                <button type="button" onclick="toggleSeccion('mejorar-section')" style="width: 100%; padding: 12px; background: #8b5cf6; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 15px;">
-                    📈 En qué debo mejorar?
-                </button>
-                
-                <div id="mejorar-section" style="display: none; margin-top: 16px;">
+                <section id="mejorar-section" class="profile-panel profile-expandable" style="display: none;">
+                    <h3 class="profile-panel-title">En qué debo mejorar?</h3>
                     <?php if (empty($top5)): ?>
-                        <p style="color: #555; text-align: center; padding: 20px; font-size: 14px;">
-                            Aún no hay suficientes datos. Completa al menos 3 partidas finalizadas en cada escenario.
-                        </p>
+                        <p class="profile-empty-state">Aún no hay suficientes datos. Completa al menos 3 partidas finalizadas en cada escenario.</p>
                     <?php else: ?>
-                        <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <div class="profile-weakness-list">
                             <?php foreach ($top5 as $idx => $item): ?>
-                                <div style="padding: 12px; background: white; border-left: 4px solid #8b5cf6; border-radius: 4px;">
-                                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                                <article class="profile-weakness-card">
+                                    <div class="profile-weakness-head">
                                         <div>
-                                            <strong style="color: #222;">#<?php echo $idx + 1; ?> - <?php echo htmlspecialchars($item['titulo_correo']); ?></strong>
-                                            <br/>
-                                            <small style="color: #555;">Tipo: <?php echo htmlspecialchars($item['tipo_escenario']); ?></small>
-                                        </div>
-                                    </div>
-                                    
-                                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 8px 0; font-size: 12px;">
-                                        <div style="color: #333;">
-                                            <strong style="color: #222;">Veces jugado</strong>
-                                            <br/><?php echo (int)$item['veces_jugado']; ?>
-                                        </div>
-                                        <div style="color: #333;">
-                                            <strong style="color: #222;">Tasa de error</strong>
-                                            <br/><?php echo htmlspecialchars($item['tasa_error_pct']); ?>%
-                                        </div>
-                                        <div style="color: #333;">
-                                            <strong style="color: #222;">Puntos perdidos</strong>
-                                            <br/><?php echo htmlspecialchars($item['score_total']); ?>
-                                        </div>
-                                        <div style="color: #333;">
-                                            <strong style="color: #222;">Sistema más afectado</strong>
-                                            <br/>
-                                            <?php 
-                                                $patron = $patronesPorEscenario[$item['id_escenario']] ?? null;
-                                                $penCia = (float)($patron['penalizacion_cia'] ?? 0);
-                                                $penDesp = (float)($patron['penalizacion_despido'] ?? 0);
-                                                if ($penCia > $penDesp) {
-                                                    echo 'CIA ↓';
-                                                } elseif ($penDesp > $penCia) {
-                                                    echo 'Despido ↑';
-                                                } else {
-                                                    echo 'Mixto';
-                                                }
-                                            ?>
+                                            <strong>#<?php echo $idx + 1; ?> - <?php echo htmlspecialchars($item['titulo_correo']); ?></strong>
+                                            <small>Tipo: <?php echo htmlspecialchars($item['tipo_escenario']); ?></small>
                                         </div>
                                     </div>
 
-                                    <div style="margin-top: 8px; padding: 8px; background: #e8f4ff; border-radius: 4px; font-size: 13px; color: #222;">
-                                        <strong style="color: #1a5a96;">Recomendación:</strong>
-                                        <br/>
-                                        <?php echo htmlspecialchars($feedbackPorEscenario[$item['id_escenario']] ?? 'Revisa tu estrategia.'); ?>
+                                    <div class="profile-weakness-grid">
+                                        <div>
+                                            <span>Veces jugado</span>
+                                            <strong><?php echo (int)$item['veces_jugado']; ?></strong>
+                                        </div>
+                                        <div>
+                                            <span>Tasa de error</span>
+                                            <strong><?php echo htmlspecialchars($item['tasa_error_pct']); ?>%</strong>
+                                        </div>
+                                        <div>
+                                            <span>Puntos perdidos</span>
+                                            <strong><?php echo htmlspecialchars($item['score_total']); ?></strong>
+                                        </div>
+                                        <div>
+                                            <span>Sistema más afectado</span>
+                                            <strong>
+                                                <?php 
+                                                    $patron = $patronesPorEscenario[$item['id_escenario']] ?? null;
+                                                    $penCia = (float)($patron['penalizacion_cia'] ?? 0);
+                                                    $penDesp = (float)($patron['penalizacion_despido'] ?? 0);
+                                                    if ($penCia > $penDesp) {
+                                                        echo 'CIA ↓';
+                                                    } elseif ($penDesp > $penCia) {
+                                                        echo 'Despido ↑';
+                                                    } else {
+                                                        echo 'Mixto';
+                                                    }
+                                                ?>
+                                            </strong>
+                                        </div>
                                     </div>
-                                </div>
+
+                                    <div class="profile-recommendation">
+                                        <strong>Recomendación:</strong>
+                                        <p><?php echo htmlspecialchars($feedbackPorEscenario[$item['id_escenario']] ?? 'Revisa tu estrategia.'); ?></p>
+                                    </div>
+                                </article>
                             <?php endforeach; ?>
                         </div>
                     <?php endif; ?>
-                </div>
-            </div>
+                </section>
 
-            <!-- ============================================
-                 SECCIÓN 4: ACCESO RÁPIDO
-                 ============================================ -->
-            <div style="margin-bottom: 20px; padding: 16px; background: #f5f5f5; border-radius: 8px;">
-                <h3>Acceso Rápido</h3>
-                <div style="display: flex; flex-direction: column; gap: 10px;">
-                    <a href="historial.php" class="menu-btn">📊 Ver Historial Completo</a>
-                    <a href="menu.php" class="menu-btn">🏠 Volver al Menú</a>
-                    <a href="menu.php?logout=1" class="menu-btn logout-btn">🚪 Cerrar Sesión</a>
-                </div>
-            </div>
+                <section class="profile-panel profile-quick-panel">
+                    <h3 class="profile-panel-title">Acceso Rápido</h3>
+                    <div class="profile-quick-grid">
+                        <a href="historial.php" class="menu-btn profile-quick-btn">
+                            <span class="profile-quick-icon" aria-hidden="true">⌁</span>
+                            <span class="profile-quick-copy"><strong>Ver Historial</strong><small>Resultados, comparativas y desempeño</small></span>
+                        </a>
+                        <a href="menu.php" class="menu-btn profile-quick-btn">
+                            <span class="profile-quick-icon" aria-hidden="true">⌂</span>
+                            <span class="profile-quick-copy"><strong>Volver al Menú</strong><small>Regresa al centro de control principal</small></span>
+                        </a>
+                        <a href="menu.php?logout=1" class="menu-btn logout-btn profile-quick-btn">
+                            <span class="profile-quick-icon" aria-hidden="true">⇥</span>
+                            <span class="profile-quick-copy"><strong>Cerrar Sesión</strong><small>Salir del sistema de forma segura</small></span>
+                        </a>
+                    </div>
+                </section>
+            </main>
         </div>
     </div>
 
