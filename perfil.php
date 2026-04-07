@@ -266,20 +266,6 @@ foreach ($top5 as $escenario) {
                     <div class="profile-kicker profile-kicker-main">CENTRO DE IDENTIDAD</div>
                     <h1>Controla tu cuenta, revisa tu progreso y accede a tus módulos críticos.</h1>
                     <p>Todo tu estado operativo concentrado en un panel de acceso rápido con lectura táctica.</p>
-                    <div class="profile-hero-stats">
-                        <div class="profile-stat-card">
-                            <span>Sesiones seguras</span>
-                            <strong><?php echo str_pad((string)count($top5), 2, '0', STR_PAD_LEFT); ?></strong>
-                        </div>
-                        <div class="profile-stat-card">
-                            <span>Índice operativo</span>
-                            <strong>94%</strong>
-                        </div>
-                        <div class="profile-stat-card">
-                            <span>Alertas activas</span>
-                            <strong><?php echo (empty($top5) ? '00' : '02'); ?></strong>
-                        </div>
-                    </div>
                 </section>
 
                 <section class="profile-panel profile-actions-panel">

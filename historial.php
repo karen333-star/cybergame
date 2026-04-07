@@ -244,20 +244,29 @@ function es_activa(string $seccionActual, string $esperada): string {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CyberGame - Historial</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="hotorial.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
-<body class="history-body">
+<body class="history-body history-cyber">
+    <div class="history-grid-overlay" aria-hidden="true"></div>
     <div class="container history-page">
-        <h1 id="main-title">🛡️ CyberGame</h1>
+        <h1 id="main-title">CYBER_GAME</h1>
+
+        <header class="history-nav-strip">
+            <div class="history-nav-brand">CYBER_GAME</div>
+            <div class="history-nav-actions">
+                <a href="menu.php" class="menu-btn">Volver al menú</a>
+                <a href="menu.php?logout=1" class="menu-btn logout-btn">Cerrar sesión</a>
+            </div>
+        </header>
 
         <div class="card history-shell">
             <div class="history-topbar">
                 <div>
                     <h2>Historial</h2>
                     <p>Usuario: <?php echo h($nombreUsuario); ?></p>
-                </div>
-                <div class="history-actions">
-                    <a href="menu.php" class="menu-btn">Volver al menú</a>
-                    <a href="menu.php?logout=1" class="menu-btn logout-btn">Cerrar sesión</a>
                 </div>
             </div>
 
@@ -271,7 +280,8 @@ function es_activa(string $seccionActual, string $esperada): string {
             <?php if ($seccion === 'menu'): ?>
                 <div class="history-landing">
                     <div class="history-landing-card">
-                        <h3>Qué puedes ver aquí</h3>
+                        <div class="history-landing-icon">i</div>
+                        <h3>¿Qué puedes ver aquí?</h3>
                         <p>Usa los botones de arriba para navegar por cada sección del historial.</p>
                     </div>
                 </div>

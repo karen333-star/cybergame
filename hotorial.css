@@ -1,0 +1,423 @@
+/* ================================
+   HISTORIAL - CYBER CLONE
+   ================================ */
+
+body.history-cyber {
+    position: relative;
+    margin: 0;
+    min-height: 100vh;
+    padding: 0;
+    overflow-x: hidden;
+    background:
+        radial-gradient(circle at 20% 18%, rgba(141, 77, 255, 0.2), transparent 42%),
+        radial-gradient(circle at 85% 95%, rgba(51, 127, 255, 0.25), transparent 40%),
+        linear-gradient(140deg, #1a1040 0%, #0f1238 42%, #0b1d3d 100%);
+}
+
+body.history-cyber.history-body {
+    align-items: center;
+    justify-content: flex-start;
+}
+
+body.history-cyber .history-grid-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+        linear-gradient(rgba(115, 170, 255, 0.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(115, 170, 255, 0.12) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.25;
+}
+
+body.history-cyber .history-page {
+    position: relative;
+    z-index: 1;
+    width: min(1260px, calc(100vw - 28px));
+    margin: 0 auto;
+    padding: 0 14px 22px;
+    gap: 14px;
+}
+
+body.history-cyber #main-title {
+    display: none;
+}
+
+body.history-cyber .history-nav-strip {
+    margin-top: 10px;
+    min-height: 74px;
+    border: 1px solid rgba(137, 95, 246, 0.24);
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 12px 20px;
+    background: linear-gradient(180deg, rgba(48, 29, 88, 0.88) 0%, rgba(30, 20, 64, 0.9) 100%);
+    box-shadow: inset 0 -1px 0 rgba(132, 103, 236, 0.45);
+}
+
+body.history-cyber .history-nav-brand {
+    color: #ddd9ff;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 40px;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    position: fixed;
+    top: 18px;
+    left: 24px;
+    z-index: 7;
+}
+
+body.history-cyber .history-nav-brand::before {
+    content: '◬';
+    color: #9f66ff;
+    font-size: 0.86em;
+    text-shadow: 0 0 10px rgba(159, 102, 255, 0.42);
+}
+
+body.history-cyber .history-nav-actions {
+    display: flex;
+    gap: 10px;
+    position: fixed;
+    top: 20px;
+    right: 24px;
+    z-index: 6;
+}
+
+body.history-cyber .history-nav-actions .menu-btn {
+    min-height: 36px;
+    min-width: 190px;
+    padding: 6px 16px;
+    border-radius: 0;
+    border: 1px solid rgba(133, 102, 255, 0.45);
+    background: linear-gradient(180deg, rgba(31, 23, 66, 0.9) 0%, rgba(22, 17, 46, 0.95) 100%);
+    color: #f1ebff;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+body.history-cyber .history-nav-actions .menu-btn::before {
+    content: '\2190';
+    font-size: 0.95em;
+}
+
+body.history-cyber .history-nav-actions .logout-btn {
+    border-color: rgba(255, 98, 153, 0.52);
+    color: #ffd6e4;
+}
+
+body.history-cyber .history-nav-actions .logout-btn::before {
+    content: '\21AA';
+}
+
+body.history-cyber .history-shell {
+    width: 100%;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 8px 0 0;
+}
+
+body.history-cyber .history-topbar {
+    display: block;
+    margin: 0 0 16px;
+    text-align: center;
+}
+
+body.history-cyber .history-topbar h2 {
+    margin: 0;
+    color: #f3efff;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 64px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 800;
+    line-height: 1;
+}
+
+body.history-cyber .history-topbar p {
+    margin: 10px 0 0;
+    color: #3ac8ff;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 18px;
+    letter-spacing: 0.06em;
+}
+
+body.history-cyber .history-menu {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin: 0 auto 14px;
+    width: min(1120px, 100%);
+}
+
+body.history-cyber .history-menu-item {
+    min-height: 50px;
+    border-radius: 8px;
+    border: 1px solid rgba(120, 89, 215, 0.24);
+    background: linear-gradient(180deg, rgba(23, 18, 47, 0.9) 0%, rgba(19, 15, 40, 0.92) 100%);
+    color: #d7d4ef;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    padding: 9px 10px;
+    box-shadow: inset 0 -1px 0 rgba(93, 67, 182, 0.44);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    position: relative;
+    overflow: hidden;
+}
+
+body.history-cyber .history-menu-item:nth-child(1)::before {
+    content: '\229E';
+    color: #ae84ff;
+}
+
+body.history-cyber .history-menu-item:nth-child(2)::before {
+    content: '\2223\2223';
+    color: #8f82bb;
+    letter-spacing: -0.08em;
+}
+
+body.history-cyber .history-menu-item:nth-child(3)::before {
+    content: '\2318';
+    color: #8f82bb;
+}
+
+body.history-cyber .history-menu-item:nth-child(4)::before {
+    content: '\25CC';
+    color: #8f82bb;
+}
+
+body.history-cyber .history-menu-item.is-active,
+body.history-cyber .history-menu-item:hover {
+    border-color: rgba(161, 117, 255, 0.75);
+    color: #f2eaff;
+    box-shadow: 0 0 0 1px rgba(161, 117, 255, 0.45), 0 0 14px rgba(146, 87, 255, 0.28), inset 0 -1px 0 rgba(155, 106, 255, 0.65);
+}
+
+body.history-cyber .history-landing-card,
+body.history-cyber .history-panel-block,
+body.history-cyber .history-item,
+body.history-cyber .history-event,
+body.history-cyber .ranking-item {
+    position: relative;
+    background: linear-gradient(180deg, rgba(25, 15, 54, 0.9) 0%, rgba(20, 14, 43, 0.94) 100%);
+    border: 1px solid rgba(132, 90, 236, 0.42);
+    border-radius: 10px;
+    box-shadow: inset 0 0 0 1px rgba(123, 81, 227, 0.12), 0 10px 26px rgba(8, 10, 35, 0.35);
+}
+
+body.history-cyber .history-landing-card {
+    min-height: clamp(360px, 52vh, 500px);
+    width: min(1240px, 100%);
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 10px;
+}
+
+body.history-cyber .history-landing-card::before,
+body.history-cyber .history-landing-card::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(164, 119, 255, 0.75);
+    pointer-events: none;
+}
+
+body.history-cyber .history-landing-card::before {
+    top: -1px;
+    left: -1px;
+    border-right: 0;
+    border-bottom: 0;
+    border-radius: 9px 0 0 0;
+}
+
+body.history-cyber .history-landing-card::after {
+    top: -1px;
+    right: -1px;
+    border-left: 0;
+    border-bottom: 0;
+    border-radius: 0 9px 0 0;
+}
+
+body.history-cyber .history-landing {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+body.history-cyber .history-landing-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    border: 2px solid #2f9eff;
+    color: #2f9eff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    box-shadow: 0 0 12px rgba(47, 158, 255, 0.35);
+}
+
+body.history-cyber .history-landing-card h3 {
+    margin: 0;
+    color: #efeaff;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 60px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+body.history-cyber .history-landing-card p {
+    margin: 0;
+    color: #c3bfd6;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px;
+    max-width: 600px;
+    line-height: 1.4;
+}
+
+body.history-cyber .history-panel-block h3,
+body.history-cyber .history-panel-block h4 {
+    color: #f2efff;
+    font-family: 'Rajdhani', sans-serif;
+    letter-spacing: 0.03em;
+}
+
+body.history-cyber .history-summary-card,
+body.history-cyber .history-empty,
+body.history-cyber .history-detail-summary div,
+body.history-cyber .event-grid div,
+body.history-cyber .ranking-stats div,
+body.history-cyber .history-item-grid div {
+    background: rgba(13, 16, 41, 0.85);
+    border: 1px solid rgba(107, 126, 214, 0.34);
+    border-radius: 10px;
+}
+
+body.history-cyber .history-item-button {
+    background: linear-gradient(180deg, rgba(93, 57, 176, 0.95) 0%, rgba(73, 42, 144, 0.95) 100%);
+    border: 1px solid rgba(166, 120, 255, 0.62);
+    box-shadow: inset 0 -1px 0 rgba(174, 130, 255, 0.72);
+    color: #f1e9ff;
+    border-radius: 8px;
+    font-family: 'Rajdhani', sans-serif;
+    letter-spacing: 0.03em;
+    position: relative;
+    overflow: hidden;
+}
+
+body.history-cyber .status-pill {
+    border-radius: 999px;
+    border: 1px solid transparent;
+}
+
+body.history-cyber .estado-ganada {
+    background: rgba(53, 193, 132, 0.16);
+    color: #9ef5ca;
+    border-color: rgba(84, 224, 166, 0.35);
+}
+
+body.history-cyber .estado-perdida {
+    background: rgba(244, 80, 130, 0.16);
+    color: #ffc1d3;
+    border-color: rgba(255, 112, 158, 0.36);
+}
+
+body.history-cyber .estado-en-curso {
+    background: rgba(137, 159, 255, 0.16);
+    color: #d4deff;
+    border-color: rgba(137, 159, 255, 0.34);
+}
+
+@media (max-width: 1100px) {
+    body.history-cyber .history-topbar h2 {
+        font-size: 48px;
+    }
+
+    body.history-cyber .history-topbar p {
+        font-size: 16px;
+    }
+
+    body.history-cyber .history-landing-card h3 {
+        font-size: 38px;
+    }
+
+    body.history-cyber .history-landing-card p {
+        font-size: 18px;
+    }
+
+    body.history-cyber .history-menu {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 760px) {
+    body.history-cyber .history-nav-strip {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    body.history-cyber .history-nav-actions {
+        width: auto;
+        position: static;
+        flex-direction: column;
+    }
+
+    body.history-cyber .history-nav-actions .menu-btn {
+        width: 100%;
+    }
+
+    body.history-cyber .history-nav-brand {
+        position: static;
+    }
+
+    body.history-cyber .history-topbar h2 {
+        font-size: 36px;
+    }
+
+    body.history-cyber .history-menu {
+        grid-template-columns: 1fr;
+    }
+
+    body.history-cyber .history-landing-card {
+        min-height: 280px;
+        padding: 20px;
+    }
+
+    body.history-cyber .history-landing-card h3 {
+        font-size: 30px;
+    }
+
+    body.history-cyber .history-landing-card p {
+        font-size: 16px;
+    }
+}

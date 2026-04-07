@@ -1,0 +1,259 @@
+/* ================================
+   MENU PRINCIPAL - ESTILO TERMINAL
+   ================================ */
+
+body.menu-page {
+    position: relative;
+    overflow: hidden;
+    padding: 16px;
+    gap: 0;
+    background:
+        radial-gradient(circle at 22% 26%, rgba(21, 160, 185, 0.24), transparent 46%),
+        radial-gradient(circle at 86% 94%, rgba(79, 43, 166, 0.4), transparent 42%),
+        linear-gradient(115deg, #05283d 0%, #041838 40%, #05063a 100%);
+}
+
+body.menu-page .menu-grid-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(rgba(74, 194, 255, 0.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(74, 194, 255, 0.12) 1px, transparent 1px);
+    background-size: 54px 54px;
+    opacity: 0.25;
+    z-index: 0;
+}
+
+body.menu-page .menu-container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    min-height: calc(100vh - 32px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+body.menu-page .menu-card {
+    width: min(440px, 100%);
+    padding: 42px 30px 32px;
+    border-radius: 10px;
+    border: 1px solid rgba(123, 88, 255, 0.78);
+    background: linear-gradient(180deg, rgba(4, 20, 44, 0.96) 0%, rgba(4, 15, 36, 0.98) 100%);
+    box-shadow:
+        0 0 0 1px rgba(117, 195, 255, 0.1),
+        0 0 26px rgba(95, 63, 214, 0.38),
+        inset 0 0 40px rgba(6, 145, 255, 0.08);
+    color: #edf9ff;
+    position: relative;
+}
+
+body.menu-page .menu-corner {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #8058ff;
+    filter: drop-shadow(0 0 8px rgba(128, 88, 255, 0.6));
+}
+
+body.menu-page .menu-corner-tl {
+    top: -1px;
+    left: -1px;
+    border-right: none;
+    border-bottom: none;
+    border-radius: 10px 0 0 0;
+}
+
+body.menu-page .menu-corner-tr {
+    top: -1px;
+    right: -1px;
+    border-left: none;
+    border-bottom: none;
+    border-radius: 0 10px 0 0;
+}
+
+body.menu-page .menu-corner-bl {
+    left: -1px;
+    bottom: -1px;
+    border-right: none;
+    border-top: none;
+    border-radius: 0 0 0 10px;
+}
+
+body.menu-page .menu-corner-br {
+    right: -1px;
+    bottom: -1px;
+    border-left: none;
+    border-top: none;
+    border-radius: 0 0 10px 0;
+}
+
+body.menu-page .menu-title {
+    margin: 0;
+    text-align: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(36px, 5.2vw, 50px);
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    color: #d8f6ff;
+    text-shadow: 0 0 22px rgba(128, 227, 255, 0.26);
+}
+
+body.menu-page .menu-title-prefix {
+    color: #12dcff;
+    margin-right: 10px;
+}
+
+body.menu-page .menu-welcome {
+    margin: 14px 0 18px;
+    text-align: center;
+    color: #dce9f2;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 24px;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+    position: relative;
+}
+
+body.menu-page .menu-welcome::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 2px;
+    margin-top: 14px;
+    background: linear-gradient(90deg, transparent 0%, rgba(82, 123, 247, 0.78) 22%, rgba(20, 238, 255, 0.9) 50%, rgba(82, 123, 247, 0.78) 78%, transparent 100%);
+    box-shadow: 0 0 18px rgba(28, 192, 255, 0.28);
+}
+
+body.menu-page .menu-opciones {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+body.menu-page .menu-btn {
+    width: 100%;
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 7px;
+    text-decoration: none;
+    color: #d5ebf5;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(20px, 2.6vw, 28px);
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    border: 1px solid rgba(97, 133, 255, 0.62);
+    background: linear-gradient(180deg, rgba(23, 31, 78, 0.76) 0%, rgba(21, 28, 68, 0.82) 100%);
+    box-shadow: inset 0 -2px 0 rgba(120, 79, 255, 0.54);
+}
+
+body.menu-page .menu-btn .menu-icon {
+    font-size: 0.58em;
+    line-height: 1;
+    transform: translateY(-1px);
+}
+
+body.menu-page .menu-btn-primary {
+    border-color: rgba(35, 231, 255, 0.95);
+    color: #c4f4ff;
+    background: linear-gradient(180deg, rgba(17, 81, 111, 0.82) 0%, rgba(12, 65, 92, 0.82) 100%);
+    box-shadow:
+        inset 0 -2px 0 rgba(50, 215, 255, 0.78),
+        0 0 16px rgba(23, 208, 255, 0.25);
+}
+
+body.menu-page .menu-btn-secondary {
+    border-color: rgba(124, 92, 255, 0.74);
+    color: #d2e0f7;
+    background: linear-gradient(180deg, rgba(32, 35, 82, 0.8) 0%, rgba(27, 31, 71, 0.84) 100%);
+    box-shadow: inset 0 -2px 0 rgba(127, 88, 255, 0.64);
+}
+
+body.menu-page .menu-btn-danger {
+    margin-top: 10px;
+    border-color: rgba(255, 95, 145, 0.74);
+    color: #ffd0dd;
+    background: linear-gradient(180deg, rgba(55, 33, 65, 0.78) 0%, rgba(45, 28, 53, 0.84) 100%);
+    box-shadow: inset 0 -2px 0 rgba(255, 89, 149, 0.68);
+}
+
+body.menu-page .menu-btn:hover {
+    transform: translateY(-2px);
+}
+
+body.menu-page .menu-btn-primary:hover {
+    box-shadow:
+        inset 0 -2px 0 rgba(50, 215, 255, 0.82),
+        0 0 20px rgba(23, 208, 255, 0.36);
+}
+
+body.menu-page .menu-btn-secondary:hover {
+    box-shadow: inset 0 -2px 0 rgba(127, 88, 255, 0.7), 0 0 16px rgba(112, 98, 255, 0.24);
+}
+
+body.menu-page .menu-btn-danger:hover {
+    box-shadow: inset 0 -2px 0 rgba(255, 89, 149, 0.72), 0 0 18px rgba(255, 90, 140, 0.22);
+}
+
+body.menu-page .menu-status {
+    margin: 20px 0 0;
+    text-align: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    color: #18ffd4;
+    text-shadow: 0 0 12px rgba(32, 255, 220, 0.5);
+}
+
+body.menu-page .menu-status-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    margin-right: 9px;
+    background: #18ffd4;
+    box-shadow: 0 0 12px rgba(24, 255, 212, 0.88);
+    vertical-align: middle;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 900px) {
+    body.menu-page {
+        padding: 14px;
+    }
+
+    body.menu-page .menu-container {
+        min-height: calc(100vh - 28px);
+    }
+
+    body.menu-page .menu-card {
+        padding: 26px 16px 22px;
+    }
+
+    body.menu-page .menu-title {
+        font-size: clamp(26px, 7.2vw, 34px);
+    }
+
+    body.menu-page .menu-welcome {
+        font-size: 20px;
+        margin: 12px 0 16px;
+    }
+
+    body.menu-page .menu-btn {
+        font-size: clamp(16px, 4.8vw, 22px);
+        min-height: 50px;
+    }
+
+    body.menu-page .menu-status {
+        font-size: 10px;
+        letter-spacing: 0.13em;
+    }
+}

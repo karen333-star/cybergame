@@ -404,8 +404,8 @@
         padding: 16px;
         border-radius: 12px;
         background: rgba(8, 22, 40, 0.88);
-        border: 1px solid rgba(168, 85, 247, 0.2);
-        box-shadow: inset 3px 0 0 rgba(168, 85, 247, 0.95);
+        border: 1px solid rgba(241, 245, 2, 0.2);
+        box-shadow: inset 3px 0 0 rgba(236, 247, 85, 0.95);
     }
 
     body.profile-page .profile-weakness-head strong {
@@ -666,6 +666,14 @@ body.profile-page .profile-account-panel {
 body.profile-page .profile-data-row {
     position: relative;
     padding: 12px 12px 12px 54px;
+    min-width: 0;
+}
+
+body.profile-page .profile-data-value {
+    display: block;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 body.profile-page .profile-data-icon {
@@ -762,12 +770,19 @@ body.profile-page .profile-quick-panel {
 
 body.profile-page .profile-actions-grid {
     grid-template-columns: 1fr 1fr;
+    grid-auto-rows: 1fr;
+    align-items: stretch;
     gap: 12px;
 }
 
 body.profile-page .profile-action-card {
+    width: 100%;
+    height: 110px;
+    min-height: 110px;
     padding: 14px 16px;
+    border-radius: 0;
     grid-template-columns: 30px minmax(0, 1fr) auto;
+    align-items: center;
 }
 
 body.profile-page .profile-action-content strong {

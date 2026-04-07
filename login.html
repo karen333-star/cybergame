@@ -5,23 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CyberGame - Login</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="login.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
-<body>
-    <div class="container">
-        <h1 id="main-title">🛡️ CyberGame</h1>
-        
-        <div class="card">
+<body class="login-page">
+    <div class="login-grid-overlay" aria-hidden="true"></div>
+    <div class="container login-shell">
+        <h1 id="main-title"><span class="brand-shield">◬</span> CYBER_GAME</h1>
+
+        <div class="card login-card">
+            <div class="corner corner-tl" aria-hidden="true"></div>
+            <div class="corner corner-tr" aria-hidden="true"></div>
+            <div class="corner corner-bl" aria-hidden="true"></div>
+            <div class="corner corner-br" aria-hidden="true"></div>
+
             <h2>Iniciar Sesión</h2>
             
             <form id="loginForm" method="POST" action="login.php">
                 <div class="form-group">
-                    <label for="identidad">Correo o Usuario:</label>
-                    <input type="text" id="identidad" name="identidad" required>
+                    <label for="identidad">Correo o Usuario</label>
+                    <div class="input-wrap">
+                        <span class="input-icon input-icon-user" aria-hidden="true"></span>
+                        <input type="text" id="identidad" name="identidad" required placeholder="example@email.com" style="background:#000;color:#fff;-webkit-text-fill-color:#fff;caret-color:#fff;">
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Contraseña:</label>
-                    <input type="password" id="password" name="password" required>
+                    <label for="password">Contraseña</label>
+                    <div class="input-wrap">
+                        <span class="input-icon input-icon-lock" aria-hidden="true"></span>
+                        <input type="password" id="password" name="password" required placeholder="••••••••••••••••" style="background:#000;color:#fff;-webkit-text-fill-color:#fff;caret-color:#fff;">
+                    </div>
                 </div>
 
                 <button type="submit" class="btn">Iniciar Sesión</button>
