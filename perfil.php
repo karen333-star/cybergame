@@ -131,8 +131,11 @@ foreach ($top5 as $escenario) {
     
     $sqlPatron = "
         SELECT
-            SUM(GREATEST(0, CAST(ep.cia_antes AS SIGNED) - CAST(ep.cia_despues AS SIGNED))) AS penalizacion_cia,
-            SUM(GREATEST(0, CAST(ep.despido_despues AS SIGNED) - CAST(ep.despido_antes AS SIGNED))) AS penalizacion_despido
+                        SUM(GREATEST(0, CAST(ep.c_antes AS SIGNED) - CAST(ep.c_despues AS SIGNED))) AS penalizacion_c,
+                        SUM(GREATEST(0, CAST(ep.i_antes AS SIGNED) - CAST(ep.i_despues AS SIGNED))) AS penalizacion_i,
+                        SUM(GREATEST(0, CAST(ep.a_antes AS SIGNED) - CAST(ep.a_despues AS SIGNED))) AS penalizacion_a,
+                        SUM(GREATEST(0, CAST(ep.presupuesto_antes AS SIGNED) - CAST(ep.presupuesto_despues AS SIGNED))) AS penalizacion_presupuesto,
+                        SUM(GREATEST(0, CAST(ep.despido_despues AS SIGNED) - CAST(ep.despido_antes AS SIGNED))) AS penalizacion_despido
         FROM eventos_partida ep
         INNER JOIN partida_escenarios pe ON pe.id_partida_escenario = ep.id_partida_escenario
         INNER JOIN partidas p ON p.id_partida = pe.id_partida
@@ -140,7 +143,13 @@ foreach ($top5 as $escenario) {
           AND p.id_usuario = ?
           AND p.estado_partida IN ('ganada', 'perdida')
           AND ep.fue_timeout = 0
-          AND (ep.cia_antes > ep.cia_despues OR ep.despido_despues > ep.despido_antes)
+                    AND (
+                            ep.c_antes > ep.c_despues
+                            OR ep.i_antes > ep.i_despues
+                            OR ep.a_antes > ep.a_despues
+                            OR ep.presupuesto_antes > ep.presupuesto_despues
+                            OR ep.despido_despues > ep.despido_antes
+                    )
     ";
     
     $stmtPatron = $conn->prepare($sqlPatron);
@@ -208,7 +217,6 @@ foreach ($top5 as $escenario) {
                     <div class="profile-kicker">MI PERFIL</div>
                     <div class="profile-avatar" aria-hidden="true">◌</div>
                     <h2 class="profile-user-name"><?php echo htmlspecialchars($userProfile['nombre_usuario'] ?? '-'); ?></h2>
-                    <div class="profile-user-role">Operadora de respuesta empresarial</div>
                 </div>
 
                 <div class="profile-panel profile-account-panel">
@@ -240,16 +248,6 @@ foreach ($top5 as $escenario) {
                         </div>
                     </div>
 
-                    <div class="profile-mini-grid">
-                        <div class="profile-mini-card">
-                            <span>Clearance</span>
-                            <strong>Nivel A2</strong>
-                        </div>
-                        <div class="profile-mini-card">
-                            <span>Trazabilidad</span>
-                            <strong>Verificada</strong>
-                        </div>
-                    </div>
                 </div>
             </aside>
 
@@ -265,7 +263,6 @@ foreach ($top5 as $escenario) {
                 <section class="profile-hero">
                     <div class="profile-kicker profile-kicker-main">CENTRO DE IDENTIDAD</div>
                     <h1>Controla tu cuenta, revisa tu progreso y accede a tus módulos críticos.</h1>
-                    <p>Todo tu estado operativo concentrado en un panel de acceso rápido con lectura táctica.</p>
                 </section>
 
                 <section class="profile-panel profile-actions-panel">
@@ -348,12 +345,31 @@ foreach ($top5 as $escenario) {
                                             <strong>
                                                 <?php 
                                                     $patron = $patronesPorEscenario[$item['id_escenario']] ?? null;
-                                                    $penCia = (float)($patron['penalizacion_cia'] ?? 0);
-                                                    $penDesp = (float)($patron['penalizacion_despido'] ?? 0);
-                                                    if ($penCia > $penDesp) {
-                                                        echo 'CIA ↓';
-                                                    } elseif ($penDesp > $penCia) {
-                                                        echo 'Despido ↑';
+                                                    $penC = (float)($patron['penalizacion_c'] ?? 0);
+                                                    $penI = (float)($patron['penalizacion_i'] ?? 0);
+                                                    $penA = (float)($patron['penalizacion_a'] ?? 0);
+                                                    $maxPenalizacion = max($penC, $penI, $penA);
+
+                                                    if ($maxPenalizacion <= 0) {
+                                                        $penPresupuesto = (float)($patron['penalizacion_presupuesto'] ?? 0);
+                                                        $penDespido = (float)($patron['penalizacion_despido'] ?? 0);
+                                                        $maxSecundario = max($penPresupuesto, $penDespido);
+
+                                                        if ($maxSecundario <= 0) {
+                                                            echo 'Sin impacto';
+                                                        } elseif ($penDespido > $penPresupuesto) {
+                                                            echo 'Despido ↑';
+                                                        } elseif ($penPresupuesto > $penDespido) {
+                                                            echo 'Presupuesto ↓';
+                                                        } else {
+                                                            echo 'Mixto';
+                                                        }
+                                                    } elseif ($penC === $maxPenalizacion && $penC > $penI && $penC > $penA) {
+                                                        echo 'C ↓';
+                                                    } elseif ($penI === $maxPenalizacion && $penI > $penC && $penI > $penA) {
+                                                        echo 'I ↓';
+                                                    } elseif ($penA === $maxPenalizacion && $penA > $penC && $penA > $penI) {
+                                                        echo 'A ↓';
                                                     } else {
                                                         echo 'Mixto';
                                                     }
@@ -397,10 +413,18 @@ foreach ($top5 as $escenario) {
         function toggleSeccion(idSeccion) {
             const seccion = document.getElementById(idSeccion);
             if (seccion) {
-                if (seccion.style.display === 'none' || seccion.style.display === '') {
+                const secciones = ['cambiar-password', 'mejorar-section'];
+                const estabaAbierta = seccion.style.display === 'block';
+
+                secciones.forEach((id) => {
+                    const otraSeccion = document.getElementById(id);
+                    if (otraSeccion) {
+                        otraSeccion.style.display = 'none';
+                    }
+                });
+
+                if (!estabaAbierta) {
                     seccion.style.display = 'block';
-                } else {
-                    seccion.style.display = 'none';
                 }
             }
         }

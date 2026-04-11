@@ -3,10 +3,12 @@
 // Si la sesión ya está activa (p.ej. session.auto_start), no intentar reconfigurarla.
 if (session_status() !== PHP_SESSION_ACTIVE) {
     ini_set('session.gc_maxlifetime', 86400);
+    $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || ((int)($_SERVER['SERVER_PORT'] ?? 0) === 443);
     session_set_cookie_params([
         'lifetime' => 86400,
         'path' => '/',
         'httponly' => true,
+        'secure' => $isHttps,
         'samesite' => 'Lax'
     ]);
 
@@ -14,11 +16,18 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 }
 
 // Conexión a BD CYBERGAME
-$conn = new mysqli("localhost", "root", "", "CYBERGAME");
+$dbHost = getenv('CYBERGAME_DB_HOST') ?: 'localhost';
+$dbUser = getenv('CYBERGAME_DB_USER') ?: 'root';
+$dbPass = getenv('CYBERGAME_DB_PASS') ?: '';
+$dbName = getenv('CYBERGAME_DB_NAME') ?: 'CYBERGAME';
+
+$conn = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
 
 // Verificar conexión
 if ($conn->connect_error) {
-    die("Error de conexión: " . $conn->connect_error);
+    error_log('Error de conexión a BD: ' . $conn->connect_error);
+    http_response_code(500);
+    die('Error interno de conexión');
 }
 
 // Configurar charset UTF-8

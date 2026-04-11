@@ -16,13 +16,13 @@ function responder($data) {
 
 function repartir_cia_inicial(int $cia): array {
     $cia = max(0, min(100, $cia));
+    $base = intdiv($cia, 3);
+    $resto = $cia % 3;
 
-    // El valor de CIA configurado representa el nivel inicial de cada pilar.
-    // Asi, el promedio CIA inicial coincide con el valor elegido en configuracion.
     return [
-        'confidencialidad' => $cia,
-        'integridad' => $cia,
-        'accesibilidad' => $cia,
+        'confidencialidad' => $base + ($resto > 0 ? 1 : 0),
+        'integridad' => $base + ($resto > 1 ? 1 : 0),
+        'accesibilidad' => $base,
     ];
 }
 
@@ -80,6 +80,10 @@ function calcular_ajuste_trimestral_por_despido(float $despido): int {
 }
 
 function evaluar_estado_final(float $cia, float $presupuesto, float $despido): array {
+    if ($cia <= 0) {
+        return ['resultado' => 'perdida', 'motivo' => 'cia_cero'];
+    }
+
     if ($presupuesto <= 0) {
         return ['resultado' => 'perdida', 'motivo' => 'presupuesto_cero'];
     }
@@ -129,6 +133,105 @@ function cerrar_partida(mysqli $conn, int $idPartida, string $resultado, int $ci
 
     $stmtActualizar->bind_param('siiiiiii', $resultado, $ciaFinal, $confidencialidadFinal, $integridadFinal, $accesibilidadFinal, $presupuestoFinal, $despidoFinal, $idPartida);
     $stmtActualizar->execute();
+}
+
+function obtener_estado_actual_partida(mysqli $conn, int $idPartida): array {
+    $sqlPartidaGetter = "
+        SELECT
+            p.cia_inicial,
+            p.c_inicial,
+            p.i_inicial,
+            p.a_inicial,
+            p.presupuesto_inicial,
+            p.despido_inicial,
+            ep.cia_despues,
+            ep.c_despues,
+            ep.i_despues,
+            ep.a_despues,
+            ep.presupuesto_despues,
+            ep.despido_despues
+        FROM partidas p
+        LEFT JOIN partida_escenarios pe ON pe.id_partida = p.id_partida
+        LEFT JOIN eventos_partida ep ON ep.id_partida_escenario = pe.id_partida_escenario
+        WHERE p.id_partida = ?
+        ORDER BY pe.orden_en_partida DESC, ep.id_evento DESC
+        LIMIT 1
+    ";
+
+    $stmtPartidaGet = $conn->prepare($sqlPartidaGetter);
+    if (!$stmtPartidaGet) {
+        throw new RuntimeException('Error prepare estado partida: ' . $conn->error);
+    }
+
+    $stmtPartidaGet->bind_param('i', $idPartida);
+    $stmtPartidaGet->execute();
+    $estadoRes = $stmtPartidaGet->get_result()->fetch_assoc();
+
+    if (!$estadoRes) {
+        throw new RuntimeException('Estado de partida no encontrado');
+    }
+
+    $desgloseInicial = repartir_cia_inicial((int)$estadoRes['cia_inicial']);
+
+    $confActual = $estadoRes['c_despues'] !== null ? (int)$estadoRes['c_despues'] : ((int)($estadoRes['c_inicial'] ?? $desgloseInicial['confidencialidad']));
+    $inteActual = $estadoRes['i_despues'] !== null ? (int)$estadoRes['i_despues'] : ((int)($estadoRes['i_inicial'] ?? $desgloseInicial['integridad']));
+    $accActual = $estadoRes['a_despues'] !== null ? (int)$estadoRes['a_despues'] : ((int)($estadoRes['a_inicial'] ?? $desgloseInicial['accesibilidad']));
+
+    return [
+        'cia' => (int)calcular_cia_promedio($confActual, $inteActual, $accActual),
+        'confidencialidad' => $confActual,
+        'integridad' => $inteActual,
+        'accesibilidad' => $accActual,
+        'presupuesto' => (int)($estadoRes['presupuesto_despues'] !== null ? $estadoRes['presupuesto_despues'] : $estadoRes['presupuesto_inicial']),
+        'despido' => (int)round((float)($estadoRes['despido_despues'] !== null ? $estadoRes['despido_despues'] : $estadoRes['despido_inicial']))
+    ];
+}
+
+function obtener_posicion_rank_global(mysqli $conn, int $idUsuario): ?int {
+    $sqlRankingIds = "
+        SELECT u.id_usuario
+        FROM usuarios u
+        WHERE EXISTS (
+            SELECT 1
+            FROM partidas p
+            WHERE p.id_usuario = u.id_usuario
+              AND p.estado_partida IN ('ganada', 'perdida')
+        )
+        ORDER BY
+            (
+                SELECT ROUND(
+                    COALESCE(AVG(p2.cia_final), 0)
+                    + COALESCE(AVG(p2.presupuesto_final), 0)
+                    + (100 - COALESCE(AVG(p2.despido_final), 0)),
+                    2
+                )
+                FROM partidas p2
+                WHERE p2.id_usuario = u.id_usuario
+                  AND p2.estado_partida IN ('ganada', 'perdida')
+            ) DESC,
+            (
+                SELECT COUNT(*)
+                FROM partidas p3
+                WHERE p3.id_usuario = u.id_usuario
+                  AND p3.estado_partida IN ('ganada', 'perdida')
+            ) DESC,
+            u.nombre_usuario ASC
+    ";
+
+    $res = $conn->query($sqlRankingIds);
+    if (!$res) {
+        return null;
+    }
+
+    $pos = 0;
+    while ($row = $res->fetch_assoc()) {
+        $pos++;
+        if ((int)$row['id_usuario'] === $idUsuario) {
+            return $pos;
+        }
+    }
+
+    return null;
 }
 
 function obtener_escenario_random_no_repetido(mysqli $conn, int $idPartida): ?array {
@@ -314,7 +417,7 @@ try {
             responder(['ok' => false, 'error' => 'SIN_PARTIDA_ACTIVA']);
         }
 
-        $sqlValidaPartida = "SELECT id_partida, max_rondas FROM partidas WHERE id_partida = ? AND id_usuario = ? LIMIT 1";
+        $sqlValidaPartida = "SELECT id_partida, max_rondas, estado_partida FROM partidas WHERE id_partida = ? AND id_usuario = ? LIMIT 1";
         $stmtValida = $conn->prepare($sqlValidaPartida);
         if (!$stmtValida) {
             throw new RuntimeException('Error prepare validar partida: ' . $conn->error);
@@ -330,6 +433,20 @@ try {
 
         $partidaData = $resValida->fetch_assoc();
         $maxRondas = (int)$partidaData['max_rondas'];
+        $estadoPartidaActual = (string)($partidaData['estado_partida'] ?? 'en_curso');
+
+        if ($estadoPartidaActual !== 'en_curso') {
+            responder([
+                'ok' => true,
+                'accion' => 'siguiente_escenario',
+                'id_partida' => $idPartida,
+                'partida_finalizada' => true,
+                'resultado' => $estadoPartidaActual,
+                'mensaje' => $estadoPartidaActual === 'ganada'
+                    ? 'Partida finalizada por victoria.'
+                    : 'Partida finalizada por derrota.'
+            ]);
+        }
 
         // Cerrar partida al completar el máximo de escenarios configurado.
         $sqlConteo = "SELECT COUNT(*) AS total FROM partida_escenarios WHERE id_partida = ?";
@@ -342,24 +459,70 @@ try {
         $totalEscenarios = (int)$stmtConteo->get_result()->fetch_assoc()['total'];
 
         if ($totalEscenarios >= $maxRondas) {
+            $estadoActual = obtener_estado_actual_partida($conn, $idPartida);
+            $estadoFinal = evaluar_estado_final(
+                $estadoActual['cia'],
+                $estadoActual['presupuesto'],
+                $estadoActual['despido']
+            );
+            $resultadoFinal = $estadoFinal['resultado'] === 'en_curso' ? 'ganada' : $estadoFinal['resultado'];
+            $mensajeFinal = $resultadoFinal === 'perdida'
+                ? 'Partida finalizada por derrota.'
+                : 'Partida finalizada: completaste las rondas seleccionadas.';
+
+            cerrar_partida(
+                $conn,
+                $idPartida,
+                $resultadoFinal,
+                $estadoActual['cia'],
+                $estadoActual['presupuesto'],
+                $estadoActual['despido'],
+                $estadoActual['confidencialidad'],
+                $estadoActual['integridad'],
+                $estadoActual['accesibilidad']
+            );
             responder([
                 'ok' => true,
                 'accion' => 'siguiente_escenario',
                 'id_partida' => $idPartida,
                 'partida_finalizada' => true,
-                'mensaje' => 'felicidades, acabaste'
+                'resultado' => $resultadoFinal,
+                'mensaje' => $mensajeFinal
             ]);
         }
 
         $turno = obtener_escenario_random_no_repetido($conn, $idPartida);
 
         if ($turno === null) {
+            $estadoActual = obtener_estado_actual_partida($conn, $idPartida);
+            $estadoFinal = evaluar_estado_final(
+                $estadoActual['cia'],
+                $estadoActual['presupuesto'],
+                $estadoActual['despido']
+            );
+            $resultadoFinal = $estadoFinal['resultado'] === 'en_curso' ? 'ganada' : $estadoFinal['resultado'];
+            $mensajeFinal = $resultadoFinal === 'perdida'
+                ? 'Partida finalizada por derrota.'
+                : 'Partida finalizada: no hay mas escenarios disponibles en la base de datos.';
+
+            cerrar_partida(
+                $conn,
+                $idPartida,
+                $resultadoFinal,
+                $estadoActual['cia'],
+                $estadoActual['presupuesto'],
+                $estadoActual['despido'],
+                $estadoActual['confidencialidad'],
+                $estadoActual['integridad'],
+                $estadoActual['accesibilidad']
+            );
             responder([
                 'ok' => true,
                 'accion' => 'siguiente_escenario',
                 'id_partida' => $idPartida,
                 'partida_finalizada' => true,
-                'mensaje' => 'felicidades, acabaste'
+                'resultado' => $resultadoFinal,
+                'mensaje' => $mensajeFinal
             ]);
         }
 
@@ -379,12 +542,22 @@ try {
         responder(['ok' => true, 'accion' => 'guardar_sesion']);
     }
 
+    if ($accion === 'obtener_rank_global') {
+        $rankGlobal = obtener_posicion_rank_global($conn, $idUsuario);
+        responder([
+            'ok' => true,
+            'accion' => 'obtener_rank_global',
+            'rank_global' => $rankGlobal
+        ]);
+    }
+
     if ($accion === 'procesar_opcion') {
         $idOpcion = (int)($_POST['id_opcion'] ?? 0);
         $codigoOpcion = $_POST['codigo_opcion'] ?? '';
         $fueTimeout = (int)($_POST['fue_timeout'] ?? 0);
         $tiempoRespuesta = (int)($_POST['tiempo_respuesta'] ?? 0);
         $idPartida = isset($_SESSION['partida_id_actual']) ? (int)$_SESSION['partida_id_actual'] : 0;
+        $idPartidaEscenario = isset($_SESSION['partida_escenario_id_actual']) ? (int)$_SESSION['partida_escenario_id_actual'] : 0;
 
         if ($idPartida <= 0) {
             responder(['ok' => false, 'error' => 'PARAMETROS_INVALIDOS']);
@@ -395,15 +568,30 @@ try {
         }
 
         // Validar partida pertenece al usuario
-        $sqlValidaPartida = "SELECT id_partida FROM partidas WHERE id_partida = ? AND id_usuario = ? LIMIT 1";
+        $sqlValidaPartida = "SELECT id_partida, estado_partida FROM partidas WHERE id_partida = ? AND id_usuario = ? LIMIT 1";
         $stmtValida = $conn->prepare($sqlValidaPartida);
         if (!$stmtValida) {
             throw new RuntimeException('Error prepare validar partida: ' . $conn->error);
         }
         $stmtValida->bind_param('ii', $idPartida, $idUsuario);
         $stmtValida->execute();
-        if ($stmtValida->get_result()->num_rows === 0) {
+        $partidaValidada = $stmtValida->get_result()->fetch_assoc();
+        if (!$partidaValidada) {
             responder(['ok' => false, 'error' => 'PARTIDA_INVALIDA']);
+        }
+
+        $estadoPartidaActual = (string)($partidaValidada['estado_partida'] ?? 'en_curso');
+        if ($estadoPartidaActual !== 'en_curso') {
+            responder([
+                'ok' => true,
+                'accion' => 'procesar_opcion',
+                'id_partida' => $idPartida,
+                'partida_finalizada' => true,
+                'resultado' => $estadoPartidaActual,
+                'mensaje' => $estadoPartidaActual === 'ganada'
+                    ? 'Partida finalizada por victoria.'
+                    : 'Partida finalizada por derrota.'
+            ]);
         }
 
         // Si es timeout, buscar la opción 'timeout' del escenario actual
@@ -528,8 +716,27 @@ try {
         $presupuestoActual = (float)($estadoRes['presupuesto_despues'] !== null ? $estadoRes['presupuesto_despues'] : $estadoRes['presupuesto_inicial']);
         $despigoActual = (float)($estadoRes['despido_despues'] !== null ? $estadoRes['despido_despues'] : $estadoRes['despido_inicial']);
 
+        $esPhishing = false;
+        if ($idPartidaEscenario > 0) {
+            $sqlTipoEscenario = "
+                SELECT e.tipo_escenario
+                FROM partida_escenarios pe
+                INNER JOIN escenarios e ON e.id_escenario = pe.id_escenario
+                WHERE pe.id_partida_escenario = ?
+                LIMIT 1
+            ";
+            $stmtTipoEscenario = $conn->prepare($sqlTipoEscenario);
+            if (!$stmtTipoEscenario) {
+                throw new RuntimeException('Error prepare tipo escenario: ' . $conn->error);
+            }
+            $stmtTipoEscenario->bind_param('i', $idPartidaEscenario);
+            $stmtTipoEscenario->execute();
+            $tipoEscenarioRes = $stmtTipoEscenario->get_result()->fetch_assoc();
+            $esPhishing = isset($tipoEscenarioRes['tipo_escenario']) && strtolower((string)$tipoEscenarioRes['tipo_escenario']) === 'phishing';
+        }
+
         // Evitar decisiones cuyo costo base de presupuesto no puede cubrir el jugador.
-        if ($fueTimeout === 0 && $deltaPresupuestoBase < 0 && ($presupuestoActual + $deltaPresupuestoBase) < 0) {
+        if (!$esPhishing && $fueTimeout === 0 && $deltaPresupuestoBase < 0 && ($presupuestoActual + $deltaPresupuestoBase) < 0) {
             responder([
                 'ok' => false,
                 'error' => 'PRESUPUESTO_INSUFICIENTE',

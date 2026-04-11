@@ -26,33 +26,36 @@ function formatear_fecha(?string $fecha): string {
 }
 
 function formatear_desglose_cia(?array $datos): string {
-    if (!$datos) {
-        return 'Puntaje individual no disponible';
-    }
-
     $confidencialidad = $datos['confidencialidad'] ?? null;
     $integridad = $datos['integridad'] ?? null;
     $accesibilidad = $datos['accesibilidad'] ?? null;
     $cia = $datos['cia'] ?? null;
 
-    if ($confidencialidad === null || $integridad === null || $accesibilidad === null || $cia === null) {
-        return 'Puntaje individual no disponible';
-    }
+    $textoConfidencialidad = $confidencialidad !== null ? ((int)$confidencialidad . '%') : 'No disponible';
+    $textoIntegridad = $integridad !== null ? ((int)$integridad . '%') : 'No disponible';
+    $textoAccesibilidad = $accesibilidad !== null ? ((int)$accesibilidad . '%') : 'No disponible';
+    $textoCia = $cia !== null ? ((int)$cia . '%') : 'No disponible';
 
-    return 'C ' . (int)$confidencialidad . '% | I ' . (int)$integridad . '% | A ' . (int)$accesibilidad . '% | CIA ' . (int)$cia . '%';
+    return 'Confidencialidad: ' . $textoConfidencialidad
+        . ' | Integridad: ' . $textoIntegridad
+        . ' | Accesibilidad: ' . $textoAccesibilidad
+        . ' | CIA promedio: ' . $textoCia;
 }
 
 $sqlResumenUsuario = "
     SELECT
-        COUNT(*) AS partidas_finalizadas,
-        ROUND(AVG(cia_final), 2) AS promedio_cia,
-        ROUND(AVG(presupuesto_final), 2) AS promedio_presupuesto,
-        ROUND(AVG(despido_final), 2) AS promedio_despido,
+        SUM(CASE WHEN estado_partida IN ('ganada', 'perdida') THEN 1 ELSE 0 END) AS partidas_finalizadas,
+        SUM(CASE WHEN estado_partida NOT IN ('ganada', 'perdida') THEN 1 ELSE 0 END) AS partidas_no_finalizadas,
+        ROUND(AVG(CASE WHEN estado_partida IN ('ganada', 'perdida') THEN cia_final END), 2) AS promedio_cia,
+        ROUND(AVG(CASE WHEN estado_partida IN ('ganada', 'perdida') THEN c_final END), 2) AS promedio_c,
+        ROUND(AVG(CASE WHEN estado_partida IN ('ganada', 'perdida') THEN i_final END), 2) AS promedio_i,
+        ROUND(AVG(CASE WHEN estado_partida IN ('ganada', 'perdida') THEN a_final END), 2) AS promedio_a,
+        ROUND(AVG(CASE WHEN estado_partida IN ('ganada', 'perdida') THEN presupuesto_final END), 2) AS promedio_presupuesto,
+        ROUND(AVG(CASE WHEN estado_partida IN ('ganada', 'perdida') THEN despido_final END), 2) AS promedio_despido,
         SUM(CASE WHEN estado_partida = 'ganada' THEN 1 ELSE 0 END) AS partidas_ganadas,
         SUM(CASE WHEN estado_partida = 'perdida' THEN 1 ELSE 0 END) AS partidas_perdidas
     FROM partidas
     WHERE id_usuario = ?
-      AND estado_partida IN ('ganada', 'perdida')
 ";
 $stmtResumenUsuario = $conn->prepare($sqlResumenUsuario);
 if (!$stmtResumenUsuario) {
@@ -66,7 +69,7 @@ $sqlPartidas = "
     SELECT
         p.id_partida,
         p.estado_partida,
-        p.cia_inicial,
+        CAST(GREATEST(1, LEAST(100, ROUND((COALESCE(p.c_inicial, 0) + COALESCE(p.i_inicial, 0) + COALESCE(p.a_inicial, 0)) / 3, 0))) AS UNSIGNED) AS cia_inicial,
         p.c_inicial,
         p.i_inicial,
         p.a_inicial,
@@ -114,7 +117,7 @@ if ($partidaSeleccionada > 0) {
         SELECT
             p.id_partida,
             p.estado_partida,
-            p.cia_inicial,
+            CAST(GREATEST(1, LEAST(100, ROUND((COALESCE(p.c_inicial, 0) + COALESCE(p.i_inicial, 0) + COALESCE(p.a_inicial, 0)) / 3, 0))) AS UNSIGNED) AS cia_inicial,
             p.c_inicial,
             p.i_inicial,
             p.a_inicial,
@@ -200,11 +203,41 @@ $sqlRanking = "
                             AND p.estado_partida IN ('ganada', 'perdida')
                 ) AS partidas_finalizadas,
                 (
+                        SELECT COUNT(*)
+                        FROM partidas p
+                        WHERE p.id_usuario = u.id_usuario
+                            AND p.estado_partida = 'ganada'
+                ) AS partidas_ganadas,
+                (
+                        SELECT COUNT(*)
+                        FROM partidas p
+                        WHERE p.id_usuario = u.id_usuario
+                            AND p.estado_partida = 'perdida'
+                ) AS partidas_perdidas,
+                (
                         SELECT ROUND(AVG(p.cia_final), 2)
                         FROM partidas p
                         WHERE p.id_usuario = u.id_usuario
                             AND p.estado_partida IN ('ganada', 'perdida')
                 ) AS promedio_cia,
+                (
+                        SELECT ROUND(AVG(p.c_final), 2)
+                        FROM partidas p
+                        WHERE p.id_usuario = u.id_usuario
+                            AND p.estado_partida IN ('ganada', 'perdida')
+                ) AS promedio_c,
+                (
+                        SELECT ROUND(AVG(p.i_final), 2)
+                        FROM partidas p
+                        WHERE p.id_usuario = u.id_usuario
+                            AND p.estado_partida IN ('ganada', 'perdida')
+                ) AS promedio_i,
+                (
+                        SELECT ROUND(AVG(p.a_final), 2)
+                        FROM partidas p
+                        WHERE p.id_usuario = u.id_usuario
+                            AND p.estado_partida IN ('ganada', 'perdida')
+                ) AS promedio_a,
                 (
                         SELECT ROUND(AVG(p.presupuesto_final), 2)
                         FROM partidas p
@@ -216,9 +249,26 @@ $sqlRanking = "
                         FROM partidas p
                         WHERE p.id_usuario = u.id_usuario
                             AND p.estado_partida IN ('ganada', 'perdida')
-                ) AS promedio_despido
+                ) AS promedio_despido,
+                (
+                    SELECT ROUND(
+                        COALESCE(AVG(p.cia_final), 0)
+                        + COALESCE(AVG(p.presupuesto_final), 0)
+                        + (100 - COALESCE(AVG(p.despido_final), 0)),
+                        2
+                    )
+                    FROM partidas p
+                    WHERE p.id_usuario = u.id_usuario
+                        AND p.estado_partida IN ('ganada', 'perdida')
+                ) AS puntaje_ranking
         FROM usuarios u
-        ORDER BY partidas_finalizadas DESC, promedio_cia DESC, promedio_presupuesto DESC, promedio_despido ASC, u.nombre_usuario ASC
+            WHERE EXISTS (
+                SELECT 1
+                FROM partidas p
+                WHERE p.id_usuario = u.id_usuario
+                    AND p.estado_partida IN ('ganada', 'perdida')
+            )
+            ORDER BY puntaje_ranking DESC, partidas_finalizadas DESC, promedio_cia DESC, promedio_presupuesto DESC, promedio_despido ASC, u.nombre_usuario ASC
 ";
 $resultadoRanking = $conn->query($sqlRanking);
 $rankingUsuarios = $resultadoRanking ? $resultadoRanking->fetch_all(MYSQLI_ASSOC) : [];
@@ -296,8 +346,24 @@ function es_activa(string $seccionActual, string $esperada): string {
                             <strong><?php echo (int)($resumenUsuario['partidas_finalizadas'] ?? 0); ?></strong>
                         </article>
                         <article class="history-summary-card">
+                            <span>Partidas no finalizadas</span>
+                            <strong><?php echo (int)($resumenUsuario['partidas_no_finalizadas'] ?? 0); ?></strong>
+                        </article>
+                        <article class="history-summary-card">
                             <span>Promedio CIA</span>
                             <strong><?php echo $resumenUsuario['promedio_cia'] !== null ? h(number_format((float)$resumenUsuario['promedio_cia'], 2)) : '-'; ?></strong>
+                        </article>
+                        <article class="history-summary-card">
+                            <span>Promedio Confidencialidad (C)</span>
+                            <strong><?php echo $resumenUsuario['promedio_c'] !== null ? h(number_format((float)$resumenUsuario['promedio_c'], 2)) : '-'; ?></strong>
+                        </article>
+                        <article class="history-summary-card">
+                            <span>Promedio Integridad (I)</span>
+                            <strong><?php echo $resumenUsuario['promedio_i'] !== null ? h(number_format((float)$resumenUsuario['promedio_i'], 2)) : '-'; ?></strong>
+                        </article>
+                        <article class="history-summary-card">
+                            <span>Promedio Accesibilidad (A)</span>
+                            <strong><?php echo $resumenUsuario['promedio_a'] !== null ? h(number_format((float)$resumenUsuario['promedio_a'], 2)) : '-'; ?></strong>
                         </article>
                         <article class="history-summary-card">
                             <span>Promedio Presupuesto</span>
@@ -307,14 +373,14 @@ function es_activa(string $seccionActual, string $esperada): string {
                             <span>Promedio Despido</span>
                             <strong><?php echo $resumenUsuario['promedio_despido'] !== null ? h(number_format((float)$resumenUsuario['promedio_despido'], 2)) : '-'; ?></strong>
                         </article>
-                    </div>
-                    <div class="history-detail-summary">
-                        <div><span>Ganadas</span><strong><?php echo (int)($resumenUsuario['partidas_ganadas'] ?? 0); ?></strong></div>
-                        <div><span>Perdidas</span><strong><?php echo (int)($resumenUsuario['partidas_perdidas'] ?? 0); ?></strong></div>
-                        <div><span>Partidas finalizadas</span><strong><?php echo (int)($resumenUsuario['partidas_finalizadas'] ?? 0); ?></strong></div>
-                        <div><span>Promedio CIA</span><strong><?php echo $resumenUsuario['promedio_cia'] !== null ? h(number_format((float)$resumenUsuario['promedio_cia'], 2)) : '-'; ?></strong></div>
-                        <div><span>Promedio Presupuesto</span><strong><?php echo $resumenUsuario['promedio_presupuesto'] !== null ? h(number_format((float)$resumenUsuario['promedio_presupuesto'], 2)) : '-'; ?></strong></div>
-                        <div><span>Promedio Despido</span><strong><?php echo $resumenUsuario['promedio_despido'] !== null ? h(number_format((float)$resumenUsuario['promedio_despido'], 2)) : '-'; ?></strong></div>
+                        <article class="history-summary-card">
+                            <span>Partidas Ganadas</span>
+                            <strong><?php echo (int)($resumenUsuario['partidas_ganadas'] ?? 0); ?></strong>
+                        </article>
+                        <article class="history-summary-card">
+                            <span>Partidas Perdidas</span>
+                            <strong><?php echo (int)($resumenUsuario['partidas_perdidas'] ?? 0); ?></strong>
+                        </article>
                     </div>
                 </div>
             <?php endif; ?>
@@ -388,8 +454,6 @@ function es_activa(string $seccionActual, string $esperada): string {
                     <?php else: ?>
                         <h3>Detalle de la partida #<?php echo (int)$partidaDetalle['id_partida']; ?></h3>
                         <div class="history-detail-summary">
-                            <div><span>Inicio</span><strong><?php echo formatear_fecha($partidaDetalle['tiempo_inicial'] ?? null); ?></strong></div>
-                            <div><span>Fin</span><strong><?php echo formatear_fecha($partidaDetalle['tiempo_final'] ?? null); ?></strong></div>
                             <div><span>Duración</span><strong><?php echo !empty($partidaDetalle['duracion_segundos']) ? h(number_format(((float)$partidaDetalle['duracion_segundos']) / 60, 1)) . ' min' : '-'; ?></strong></div>
                             <div><span>Estado</span><strong><?php echo h($partidaDetalle['estado_partida']); ?></strong></div>
                         </div>
@@ -484,7 +548,12 @@ function es_activa(string $seccionActual, string $esperada): string {
                                         <span><?php echo (int)$usuario['partidas_finalizadas']; ?> partidas finalizadas</span>
                                     </div>
                                     <div class="ranking-stats">
+                                        <div><span>Ganadas</span><strong><?php echo (int)$usuario['partidas_ganadas']; ?></strong></div>
+                                        <div><span>Perdidas</span><strong><?php echo (int)$usuario['partidas_perdidas']; ?></strong></div>
                                         <div><span>CIA</span><strong><?php echo $usuario['promedio_cia'] !== null ? h(number_format((float)$usuario['promedio_cia'], 2)) : '-'; ?></strong></div>
+                                        <div><span>Confidencialidad</span><strong><?php echo $usuario['promedio_c'] !== null ? h(number_format((float)$usuario['promedio_c'], 2)) : '-'; ?></strong></div>
+                                        <div><span>Integridad</span><strong><?php echo $usuario['promedio_i'] !== null ? h(number_format((float)$usuario['promedio_i'], 2)) : '-'; ?></strong></div>
+                                        <div><span>Accesibilidad</span><strong><?php echo $usuario['promedio_a'] !== null ? h(number_format((float)$usuario['promedio_a'], 2)) : '-'; ?></strong></div>
                                         <div><span>Presupuesto</span><strong><?php echo $usuario['promedio_presupuesto'] !== null ? h(number_format((float)$usuario['promedio_presupuesto'], 2)) : '-'; ?></strong></div>
                                         <div><span>Despido</span><strong><?php echo $usuario['promedio_despido'] !== null ? h(number_format((float)$usuario['promedio_despido'], 2)) : '-'; ?></strong></div>
                                     </div>

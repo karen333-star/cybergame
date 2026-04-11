@@ -1,6 +1,11 @@
 /* ================================
-   CONFIGURACIÓN INICIAL
+   CONFIGURACION INICIAL (REBUILD)
    ================================ */
+
+html:has(#config:not(.hidden)),
+body:has(#config:not(.hidden)) {
+    overflow: hidden;
+}
 
 #config.config-screen {
     position: fixed;
@@ -9,9 +14,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 30px 18px 36px;
-    overflow: auto;
-    isolation: isolate;
+    padding: 12px;
+    overflow: hidden;
     background:
         radial-gradient(circle at 10% 14%, rgba(0, 240, 255, 0.16), transparent 18%),
         radial-gradient(circle at 86% 18%, rgba(255, 77, 116, 0.14), transparent 16%),
@@ -19,114 +23,52 @@
         linear-gradient(180deg, #05070c 0%, #03050a 100%);
 }
 
-#config.config-screen::before,
-#config.config-screen::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-}
-
-#config.config-screen::before {
-    background:
-        linear-gradient(rgba(0, 230, 255, 0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 230, 255, 0.08) 1px, transparent 1px);
-    background-size: 28px 28px;
-    opacity: 0.16;
-    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.8) 20%, rgba(0, 0, 0, 0.8) 80%, rgba(0, 0, 0, 0.12));
-}
-
-#config.config-screen::after {
-    background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, transparent 8%, transparent 92%, rgba(255, 255, 255, 0.02) 100%),
-        radial-gradient(circle at center, transparent 0 58%, rgba(0, 0, 0, 0.22) 100%);
-    opacity: 0.9;
-}
-
 #config.hidden {
     display: none !important;
 }
 
 #config .config-shell {
-    width: min(100%, 930px);
+    width: min(96vw, 1220px);
+    max-height: calc(100dvh - 24px);
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 8px;
+    padding: 12px 14px 14px;
     color: #edfaff;
-    padding: 16px 16px 18px;
-    position: relative;
     border: 1px solid rgba(0, 234, 255, 0.18);
     background:
-        linear-gradient(180deg, rgba(4, 12, 26, 0.82) 0%, rgba(3, 8, 16, 0.92) 100%),
+        linear-gradient(180deg, rgba(4, 12, 26, 0.86) 0%, rgba(3, 8, 16, 0.94) 100%),
         radial-gradient(circle at 50% 0%, rgba(0, 234, 255, 0.08), transparent 34%);
     box-shadow:
-        0 28px 80px rgba(0, 0, 0, 0.62),
+        0 22px 60px rgba(0, 0, 0, 0.6),
         inset 0 1px 0 rgba(255, 255, 255, 0.04),
         inset 0 0 0 1px rgba(0, 234, 255, 0.04);
-    backdrop-filter: blur(12px);
-}
-
-#config .config-shell::before,
-#config .config-shell::after {
-    content: '';
-    position: absolute;
-    pointer-events: none;
-}
-
-#config .config-shell::before {
-    inset: 10px;
-    border: 1px solid rgba(0, 234, 255, 0.08);
-    border-radius: 16px;
-}
-
-#config .config-shell::after {
-    top: 18px;
-    right: 18px;
-    width: 140px;
-    height: 140px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(0, 234, 255, 0.12) 0%, transparent 68%);
-    filter: blur(8px);
-}
-
-#config .config-kicker {
-    padding: 4px 12px;
-    border: 1px solid rgba(0, 242, 255, 0.78);
-    color: #28f4ff;
-    background: linear-gradient(180deg, rgba(5, 21, 34, 0.95) 0%, rgba(2, 12, 20, 0.95) 100%);
-    box-shadow:
-        0 0 18px rgba(0, 242, 255, 0.18),
-        inset 0 0 0 1px rgba(0, 242, 255, 0.06);
-    font-size: 8px;
-    font-weight: 800;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
+    overflow: hidden;
 }
 
 #config .config-title {
     margin: 0;
     color: #f2fdff;
     text-align: center;
-    font-size: clamp(30px, 3.8vw, 42px);
-    line-height: 0.98;
+    font-size: clamp(20px, 2.2vw, 30px);
+    line-height: 1;
     font-weight: 900;
-    letter-spacing: 0.09em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     text-shadow:
-        0 0 14px rgba(0, 242, 255, 0.95),
-        0 0 38px rgba(0, 242, 255, 0.22),
-        0 0 58px rgba(0, 242, 255, 0.1);
+        0 0 14px rgba(0, 242, 255, 0.85),
+        0 0 34px rgba(0, 242, 255, 0.2);
 }
 
 #config .config-subtitle {
-    margin: 0 0 8px;
-    padding: 5px 12px;
+    margin: 0 0 6px;
+    padding: 3px 10px;
     color: #93b9c8;
     text-align: center;
     font-size: 8px;
     font-weight: 700;
-    letter-spacing: 0.26em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     border-top: 1px solid rgba(0, 234, 255, 0.16);
     border-bottom: 1px solid rgba(0, 234, 255, 0.16);
@@ -134,17 +76,17 @@
 }
 
 #config .config-grid {
-    width: min(100%, 860px);
+    width: min(100%, 1120px);
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+    gap: 10px;
 }
 
 #config .config-card {
     --accent: #00eaff;
     position: relative;
-    min-height: 198px;
-    padding: 13px 12px 11px;
+    min-height: 150px;
+    padding: 10px 10px 8px;
     overflow: hidden;
     background:
         linear-gradient(180deg, rgba(7, 17, 38, 0.98) 0%, rgba(4, 11, 24, 0.98) 100%),
@@ -153,26 +95,15 @@
     box-shadow:
         0 0 0 1px rgba(0, 234, 255, 0.05),
         inset 0 0 0 1px rgba(255, 255, 255, 0.03),
-        0 20px 44px rgba(0, 0, 0, 0.56);
-    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
-}
-
-#config .config-card:hover {
-    transform: translateY(-2px);
-    border-color: rgba(0, 234, 255, 0.28);
-    box-shadow:
-        0 0 0 1px rgba(0, 234, 255, 0.12),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.04),
-        0 28px 58px rgba(0, 0, 0, 0.62),
-        0 0 26px rgba(0, 234, 255, 0.08);
+        0 14px 32px rgba(0, 0, 0, 0.5);
 }
 
 #config .config-card::before,
 #config .config-card::after {
     content: '';
     position: absolute;
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
     border-color: var(--accent);
     pointer-events: none;
 }
@@ -182,7 +113,6 @@
     left: 0;
     border-top: 2px solid var(--accent);
     border-left: 2px solid var(--accent);
-    box-shadow: 0 0 12px rgba(0, 234, 255, 0.16);
 }
 
 #config .config-card::after {
@@ -190,7 +120,6 @@
     bottom: 0;
     border-right: 2px solid var(--accent);
     border-bottom: 2px solid var(--accent);
-    box-shadow: 0 0 12px rgba(0, 234, 255, 0.16);
 }
 
 #config .config-card-cyan {
@@ -199,41 +128,34 @@
 
 #config .config-card-rose {
     --accent: #ff4d74;
-    box-shadow:
-        0 0 0 1px rgba(255, 77, 116, 0.18),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.02),
-        0 18px 34px rgba(0, 0, 0, 0.62);
 }
 
 #config .config-card-head {
     display: flex;
     align-items: center;
-    gap: 9px;
-    margin-bottom: 12px;
+    gap: 7px;
+    margin-bottom: 8px;
 }
 
 #config .config-chip {
-    width: 30px;
-    height: 30px;
+    width: 24px;
+    height: 24px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     border: 1px solid var(--accent);
-    background: linear-gradient(180deg, rgba(5, 18, 34, 0.96) 0%, rgba(2, 10, 18, 0.96) 100%);
     color: var(--accent);
-    font-size: 11px;
+    font-size: 9px;
     font-weight: 800;
-    box-shadow:
-        inset 0 0 0 1px rgba(255, 255, 255, 0.03),
-        0 0 18px rgba(0, 234, 255, 0.12);
-    border-radius: 8px;
+    border-radius: 6px;
+    background: linear-gradient(180deg, rgba(5, 18, 34, 0.96) 0%, rgba(2, 10, 18, 0.96) 100%);
 }
 
 #config .config-card label {
     color: #ecfbff;
-    font-size: clamp(12px, 1.2vw, 14px);
+    font-size: 12px;
     font-weight: 800;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
 }
 
@@ -241,25 +163,24 @@
     display: flex;
     align-items: baseline;
     justify-content: center;
-    gap: 8px;
-    margin-bottom: 10px;
+    gap: 6px;
+    margin-bottom: 6px;
 }
 
 #config .config-value-row input {
     width: auto;
     padding: 0;
     margin: 0;
-    margin-bottom: 0;
     border: none;
     background: transparent;
     color: #f8ffff;
     text-align: center;
-    font-size: 50px;
+    font-size: 38px;
     line-height: 1;
     font-weight: 900;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.03em;
     outline: none;
-    text-shadow: 0 0 18px rgba(0, 242, 255, 0.45), 0 0 34px rgba(0, 242, 255, 0.08);
+    text-shadow: 0 0 14px rgba(0, 242, 255, 0.35);
     appearance: textfield;
     -webkit-appearance: none;
     -moz-appearance: textfield;
@@ -272,172 +193,113 @@
 }
 
 #config .config-value-row-money input {
-    width: 124px;
+    width: 92px;
+}
+
+#config .config-value-row-rounds input {
+    width: 76px;
 }
 
 #config .config-value-row-emphasis input {
     color: #ff5a7a;
-    text-shadow: 0 0 18px rgba(255, 74, 117, 0.58);
-}
-
-#config .config-value-row-rounds input {
-    width: 106px;
+    text-shadow: 0 0 14px rgba(255, 74, 117, 0.52);
 }
 
 #config .config-bracket {
     color: rgba(0, 242, 255, 0.78);
-    font-size: 34px;
+    font-size: 22px;
     line-height: 1;
-    transform: translateY(5px);
+    transform: translateY(3px);
 }
 
 #config .config-unit {
     color: rgba(0, 242, 255, 0.78);
-    font-size: 17px;
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.04em;
-    transform: translateY(-1px);
     white-space: nowrap;
 }
 
 #config .config-unit-money {
-    font-size: 19px;
+    font-size: 12px;
 }
 
 #config .config-unit-rounds {
-    font-size: 15px;
-    transform: translateY(-4px);
+    font-size: 10px;
 }
 
 #config .config-meter {
     display: flex;
     align-items: flex-end;
-    gap: 4px;
-    height: 22px;
-    margin: 0 0 12px;
-    padding-left: 1px;
+    gap: 3px;
+    height: 16px;
+    margin: 0 0 8px;
 }
 
 #config .config-meter span {
     display: block;
     flex: 0 0 auto;
-    width: 16px;
-    height: 8px;
+    width: 12px;
+    height: 6px;
     border-radius: 999px;
     background: rgba(27, 45, 74, 0.75);
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
     transform: skewX(-18deg);
 }
 
 #config .config-meter span.is-on {
     background: linear-gradient(180deg, rgba(58, 250, 255, 0.98) 0%, rgba(0, 206, 255, 0.94) 100%);
-    box-shadow: 0 0 12px rgba(0, 234, 255, 0.55), 0 0 22px rgba(0, 234, 255, 0.18);
+    box-shadow: 0 0 10px rgba(0, 234, 255, 0.45);
 }
 
-#config .config-meter-cia span:nth-child(1) { height: 13px; }
-#config .config-meter-cia span:nth-child(2) { height: 16px; }
-#config .config-meter-cia span:nth-child(3) { height: 18px; }
-#config .config-meter-cia span:nth-child(4) { height: 16px; }
-#config .config-meter-cia span:nth-child(5) { height: 19px; }
-
 #config .config-meter-money {
-    gap: 7px;
-    align-items: flex-end;
-    height: 22px;
+    gap: 5px;
+    height: 16px;
 }
 
 #config .config-meter-money span {
-    width: 10px;
+    width: 8px;
     border-radius: 1px;
     transform: none;
 }
 
-#config .config-meter-money span:nth-child(1) { height: 13px; }
-#config .config-meter-money span:nth-child(2) { height: 17px; }
-#config .config-meter-money span:nth-child(3) { height: 23px; }
-#config .config-meter-money span:nth-child(4) { height: 19px; }
-#config .config-meter-money span:nth-child(5) { height: 26px; }
-
-#config .config-meter-rose span:nth-child(1) { height: 13px; }
-#config .config-meter-rose span:nth-child(2) { height: 15px; }
-
 #config .config-meter-rose span.is-on {
     background: linear-gradient(180deg, rgba(255, 102, 132, 0.98) 0%, rgba(255, 61, 108, 0.95) 100%);
-    box-shadow: 0 0 12px rgba(255, 77, 116, 0.6);
 }
 
 #config .config-meter-rounds {
-    position: relative;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0;
-    height: 28px;
-    padding: 0 2px;
-    margin-bottom: 12px;
-}
-
-#config .config-meter-rounds::before {
-    content: '';
-    position: absolute;
-    left: 8px;
-    right: 8px;
-    top: 50%;
-    height: 4px;
-    transform: translateY(-50%);
-    background: linear-gradient(90deg, rgba(0, 242, 255, 0.92) 0 30%, rgba(13, 29, 49, 0.92) 30% 100%);
-    box-shadow: 0 0 10px rgba(0, 242, 255, 0.35);
-}
-
-#config .config-meter-rounds span {
-    width: 11px;
-    height: 11px;
-    border-radius: 50%;
-    transform: none;
-    background: rgba(28, 50, 79, 0.95);
-    box-shadow: none;
-    position: relative;
-    z-index: 1;
-}
-
-#config .config-meter-rounds span.is-on {
-    background: #24eaff;
-    box-shadow: 0 0 10px rgba(36, 234, 255, 0.8);
+    gap: 5px;
+    height: 16px;
 }
 
 #config .config-adjust {
     display: flex;
     align-items: center;
-    gap: 10px;
-    min-height: 42px;
-    padding: 5px 9px;
+    gap: 8px;
+    min-height: 30px;
+    padding: 3px 6px;
     background: linear-gradient(180deg, rgba(17, 26, 44, 0.84) 0%, rgba(7, 13, 25, 0.92) 100%);
     border: 1px solid rgba(255, 255, 255, 0.05);
-    box-shadow: inset 0 0 0 1px rgba(0, 234, 255, 0.04);
 }
 
 #config .config-adjust span {
     flex: 1;
     text-align: center;
     color: #8eb7c8;
-    font-size: 10px;
+    font-size: 8px;
     font-weight: 800;
-    letter-spacing: 0.34em;
+    letter-spacing: 0.16em;
 }
 
 #config .config-adjust button {
-    width: 40px;
-    height: 30px;
+    width: 28px;
+    height: 22px;
     padding: 0;
     border: 1px solid rgba(25, 233, 255, 0.28);
     border-radius: 4px;
     background: linear-gradient(180deg, #07101f 0%, #040a13 100%);
     color: #19e9ff;
-    font-size: 16px;
+    font-size: 11px;
     font-weight: 800;
     line-height: 1;
-    box-shadow:
-        inset 0 0 0 1px rgba(0, 0, 0, 0.34),
-        0 0 12px rgba(0, 234, 255, 0.08);
 }
 
 #config .config-card-rose .config-adjust button {
@@ -445,326 +307,96 @@
     color: #ff5578;
 }
 
+#config .config-actions {
+    width: min(100%, 760px);
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
 #config .config-start-btn {
-    width: min(280px, 76%);
-    margin-top: 14px;
-    padding: 10px 20px;
+    width: 48%;
+    margin-top: 0;
+    padding: 8px 12px;
     border: none;
     clip-path: polygon(8% 0, 100% 0, 100% 76%, 92% 100%, 0 100%, 0 24%);
     background:
         linear-gradient(180deg, #52fbff 0%, #00d9ff 100%),
         radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.42), transparent 46%);
     color: #00171d;
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 900;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.13em;
     text-transform: uppercase;
-    box-shadow:
-        0 0 18px rgba(0, 242, 255, 0.95),
-        0 0 44px rgba(0, 242, 255, 0.24),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.22);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+    gap: 6px;
+    box-shadow:
+        0 0 16px rgba(0, 242, 255, 0.9),
+        0 0 34px rgba(0, 242, 255, 0.2),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.22);
 }
 
 #config .config-start-btn:hover {
     filter: brightness(1.08);
-    transform: translateY(-1px);
-    box-shadow:
-        0 0 22px rgba(0, 242, 255, 0.98),
-        0 0 58px rgba(0, 242, 255, 0.28),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.26);
-}
-
-#config .config-start-btn:focus-visible,
-#config .config-adjust button:focus-visible {
-    outline: 2px solid rgba(0, 242, 255, 0.65);
-    outline-offset: 2px;
 }
 
 #config .config-start-icon {
-    font-size: 11px;
+    font-size: 9px;
     line-height: 1;
-}
-
-@media (max-width: 760px) {
-    #config.config-screen {
-        padding: 10px 10px 16px;
-    }
-
-    #config .config-grid {
-        grid-template-columns: 1fr;
-        width: min(100%, 320px);
-        gap: 10px;
-    }
-
-    #config .config-card {
-        min-height: 160px;
-        padding: 12px 10px 10px;
-    }
-
-    #config .config-card label {
-        font-size: 13px;
-    }
-
-    #config .config-value-row input {
-        font-size: 32px;
-    }
-
-    #config .config-value-row-money input {
-        width: 80px;
-    }
-
-    #config .config-value-row-rounds input {
-        width: 70px;
-    }
-
-    #config .config-bracket {
-        font-size: 20px;
-    }
-
-    #config .config-unit {
-        font-size: 11px;
-    }
-
-    #config .config-unit-money {
-        font-size: 13px;
-    }
-
-    #config .config-unit-rounds {
-        font-size: 10px;
-    }
-
-    #config .config-meter {
-        gap: 3px;
-        height: 16px;
-        margin-bottom: 8px;
-    }
-
-    #config .config-meter span {
-        width: 12px;
-        height: 6px;
-    }
-
-    #config .config-meter-money span {
-        width: 7px;
-    }
-
-    #config .config-adjust {
-        min-height: 32px;
-        padding: 4px 6px;
-        gap: 6px;
-    }
-
-    #config .config-adjust span {
-        font-size: 9px;
-        letter-spacing: 0.15em;
-    }
-
-    #config .config-adjust button {
-        width: 28px;
-        height: 22px;
-        font-size: 10px;
-        border-radius: 3px;
-    }
-
-    #config .config-start-btn {
-        width: min(260px, 90%);
-        margin-top: 10px;
-        padding: 8px 16px;
-        font-size: 10px;
-        gap: 6px;
-        letter-spacing: 0.15em;
-    }
-
-    #config .config-title {
-        font-size: clamp(16px, 5vw, 24px);
-        letter-spacing: 0.06em;
-    }
-
-    #config .config-subtitle {
-        letter-spacing: 0.2em;
-        padding: 3px 8px;
-        margin-bottom: 4px;
-        font-size: 7px;
-    }
-
-    #config .config-kicker {
-        font-size: 8px;
-        padding: 3px 10px;
-    }
-
-    #config .config-shell {
-        padding: 10px 10px 12px;
-        gap: 6px;
-    }
-
-    #config .config-card-head {
-        margin-bottom: 8px;
-        gap: 6px;
-    }
-
-    #config .config-chip {
-        width: 26px;
-        height: 26px;
-        font-size: 10px;
-    }
-
-    #config .config-start-icon {
-        font-size: 8px;
-    }
 }
 
 @media (max-width: 1024px) {
     #config .config-shell {
-        padding: 12px 12px 14px;
+        width: min(96vw, 980px);
+        padding: 10px 10px 12px;
     }
 
     #config .config-grid {
-        gap: 10px;
-    }
-
-    #config .config-card {
-        min-height: 165px;
-        padding: 10px 10px 8px;
-    }
-
-    #config .config-card label {
-        font-size: 13px;
-    }
-
-    #config .config-value-row input {
-        font-size: 24px;
+        width: min(100%, 920px);
+        gap: 8px;
     }
 }
 
 @media (max-width: 760px) {
     #config.config-screen {
-        padding: 10px 10px 16px;
+        padding: 8px;
+    }
+
+    #config .config-shell {
+        width: min(96vw, 700px);
+        max-height: calc(100dvh - 16px);
+        padding: 8px;
+        gap: 6px;
     }
 
     #config .config-grid {
         grid-template-columns: 1fr;
-        width: min(100%, 300px);
+        width: min(100%, 420px);
         gap: 8px;
     }
 
     #config .config-card {
-        min-height: 140px;
-        padding: 10px 9px 8px;
-    }
-
-    #config .config-card label {
-        font-size: 12px;
+        min-height: 124px;
+        padding: 8px 8px 7px;
     }
 
     #config .config-value-row input {
-        font-size: 24px;
+        font-size: 30px;
     }
 
-    #config .config-value-row-money input {
-        width: 65px;
-    }
-
-    #config .config-value-row-rounds input {
-        width: 55px;
-    }
-
-    #config .config-bracket {
-        font-size: 16px;
-    }
-
-    #config .config-unit {
-        font-size: 9px;
-    }
-
-    #config .config-unit-money {
-        font-size: 10px;
-    }
-
-    #config .config-unit-rounds {
-        font-size: 8px;
-    }
-
-    #config .config-meter {
-        gap: 2px;
-        height: 14px;
-        margin-bottom: 6px;
-    }
-
-    #config .config-meter span {
-        width: 10px;
-        height: 5px;
-    }
-
-    #config .config-meter-money span {
-        width: 6px;
-    }
-
-    #config .config-adjust {
-        min-height: 28px;
-        padding: 3px 5px;
-        gap: 5px;
-    }
-
-    #config .config-adjust span {
-        font-size: 8px;
-        letter-spacing: 0.12em;
-    }
-
-    #config .config-adjust button {
-        width: 24px;
-        height: 20px;
-        font-size: 9px;
-        border-radius: 2px;
+    #config .config-actions {
+        width: min(100%, 420px);
+        gap: 8px;
     }
 
     #config .config-start-btn {
-        width: min(240px, 88%);
-        margin-top: 8px;
-        padding: 7px 14px;
+        width: 48%;
         font-size: 9px;
-        gap: 5px;
-        letter-spacing: 0.12em;
-    }
-
-    #config .config-title {
-        font-size: clamp(14px, 4.5vw, 20px);
-        letter-spacing: 0.05em;
-    }
-
-    #config .config-subtitle {
-        letter-spacing: 0.18em;
-        padding: 2px 6px;
-        margin-bottom: 3px;
-        font-size: 6px;
-    }
-
-    #config .config-kicker {
-        font-size: 7px;
-        padding: 2px 8px;
-    }
-
-    #config .config-shell {
-        padding: 8px 8px 10px;
-        gap: 5px;
-    }
-
-    #config .config-card-head {
-        margin-bottom: 6px;
-        gap: 5px;
-    }
-
-    #config .config-chip {
-        width: 24px;
-        height: 24px;
-        font-size: 9px;
-    }
-
-    #config .config-start-icon {
-        font-size: 7px;
+        letter-spacing: 0.1em;
+        padding: 7px 10px;
     }
 }

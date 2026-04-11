@@ -77,8 +77,10 @@ if (formLogin) {
         .then(response => response.text())
         .then(data => {
             console.log("Respuesta servidor (login):", data);
-            if (data.indexOf("LOGIN_OK|") === 0) {
-                const nombreUsuario = data.split("|").slice(1).join("|").trim();
+            if (data === "LOGIN_OK" || data.indexOf("LOGIN_OK|") === 0) {
+                const nombreUsuario = data.indexOf("LOGIN_OK|") === 0
+                    ? data.split("|").slice(1).join("|").trim()
+                    : '';
                 if (nombreUsuario) {
                     localStorage.setItem('cybergame_nombre_usuario', nombreUsuario);
                 }

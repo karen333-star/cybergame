@@ -23,7 +23,8 @@
     grid-template-columns: 240px minmax(0, 1fr) 320px;
     gap: 16px;
     padding: 18px;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
     color: var(--text-main);
     background:
         radial-gradient(circle at 78% 14%, rgba(255, 47, 132, 0.14), transparent 36%),
@@ -203,6 +204,40 @@
     display: flex;
     flex-direction: column;
     gap: 14px;
+}
+
+#partida .center-metrics-panel {
+    padding: 16px;
+}
+
+#partida .center-metrics-grid {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+#partida .center-metric-card {
+    border: 1px solid rgba(0, 220, 255, 0.34);
+    background: linear-gradient(180deg, rgba(7, 37, 61, 0.9) 0%, rgba(4, 27, 45, 0.95) 100%);
+    border-radius: 8px;
+    padding: 14px;
+}
+
+#partida .center-metric-card span {
+    display: block;
+    color: #8bc4d8;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+#partida .center-metric-card strong {
+    display: block;
+    margin-top: 8px;
+    color: #f0fbff;
+    font-size: 30px;
+    line-height: 1;
 }
 
 #partida.modo-inbox-escenarios .scenario-panel {
@@ -639,7 +674,10 @@
     font-size: 17px;
     border-radius: var(--radius-hard);
     position: relative;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
+    word-break: break-word;
+    overflow-wrap: anywhere;
 }
 
 #partida .scenario-content::before {
@@ -727,6 +765,10 @@
 #partida #sin-opciones-msg button {
     width: auto;
     min-width: 220px;
+}
+
+#partida #sin-opciones-msg p {
+    color: #ffffff !important;
 }
 
 #partida #btn-responder-escenario {
@@ -995,8 +1037,11 @@
     background: transparent;
     border: 0;
     border-radius: 0;
-    overflow: visible;
+    overflow-x: hidden;
+    overflow-y: visible;
     color: #d6f5ff;
+    word-break: break-word;
+    overflow-wrap: anywhere;
 }
 
 #partida .correo-gmail::before {
@@ -1026,6 +1071,7 @@
 #partida .correo-headline {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 10px;
     min-width: 0;
 }
@@ -1035,9 +1081,12 @@
     font-weight: 400;
     color: #ecfdff;
     line-height: 1.2;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 #partida .correo-inbox-tag {
@@ -1102,6 +1151,8 @@
     font-size: 12px;
     color: #89b4c7;
     line-height: 1.35;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 #partida .correo-body {
@@ -1110,6 +1161,7 @@
     background: transparent;
     border: 0;
     border-radius: 0;
+    min-width: 0;
 }
 
 #partida .correo-body p {
@@ -1118,6 +1170,121 @@
     line-height: 1.65;
     font-size: 15px;
     white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    max-width: 100%;
+}
+
+#partida .partida-result-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(1, 10, 20, 0.7);
+    backdrop-filter: blur(3px);
+}
+
+#partida .partida-result-card {
+    width: min(560px, 100%);
+    border: 2px solid rgba(255, 104, 132, 0.72);
+    border-radius: 14px;
+    background: linear-gradient(180deg, rgba(75, 13, 31, 0.95) 0%, rgba(45, 9, 21, 0.98) 100%);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+}
+
+#partida .partida-result-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top right, rgba(0, 240, 255, 0.12), transparent 38%), radial-gradient(circle at bottom left, rgba(255, 47, 132, 0.14), transparent 42%);
+    pointer-events: none;
+}
+
+#partida .partida-result-card.is-victory {
+    border-color: rgba(34, 197, 94, 0.8);
+    background: linear-gradient(180deg, rgba(8, 62, 42, 0.95) 0%, rgba(6, 38, 26, 0.98) 100%);
+}
+
+#partida .partida-result-card.is-defeat {
+    border-color: rgba(239, 68, 68, 0.8);
+    background: linear-gradient(180deg, rgba(75, 13, 31, 0.95) 0%, rgba(45, 9, 21, 0.98) 100%);
+}
+
+#partida .partida-result-card.is-neutral {
+    border-color: rgba(125, 241, 255, 0.72);
+    background: linear-gradient(180deg, rgba(9, 43, 68, 0.95) 0%, rgba(5, 24, 39, 0.98) 100%);
+}
+
+#partida .partida-result-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(125, 241, 255, 0.5);
+    background: rgba(0, 214, 255, 0.1);
+    color: #9deeff;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+#partida .partida-result-card.is-victory .partida-result-badge {
+    border-color: rgba(110, 231, 183, 0.7);
+    background: rgba(16, 185, 129, 0.12);
+    color: #a7f3d0;
+}
+
+#partida .partida-result-card.is-defeat .partida-result-badge {
+    border-color: rgba(248, 113, 113, 0.7);
+    background: rgba(239, 68, 68, 0.12);
+    color: #fecaca;
+}
+
+#partida .partida-result-card.is-neutral .partida-result-badge {
+    border-color: rgba(125, 241, 255, 0.7);
+    background: rgba(0, 214, 255, 0.12);
+    color: #d7f7ff;
+}
+
+#partida .partida-result-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #f8fdff;
+    margin-bottom: 10px;
+}
+
+#partida .partida-result-card.is-neutral .partida-result-title {
+    color: #ecfdff;
+}
+
+#partida .partida-result-message {
+    color: #d9f4ff;
+    font-size: 16px;
+    line-height: 1.55;
+    margin-bottom: 16px;
+}
+
+#partida .partida-result-btn {
+    width: auto;
+    min-width: 180px;
+    padding: 10px 14px;
+    border: 1px solid rgba(125, 241, 255, 0.7);
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(8, 64, 108, 0.95) 0%, rgba(5, 41, 74, 0.9) 100%);
+    color: #ecfafe;
+    font-size: 14px;
+    font-weight: 700;
+    position: relative;
+    z-index: 1;
 }
 
 #partida .correo-feeds {
@@ -1192,12 +1359,37 @@
     border-color: #ffb2c6;
 }
 
+#partida.modo-finalizacion-bloqueo .soc-nav-btn,
+#partida.modo-finalizacion-bloqueo #mailbox-controls button,
+#partida.modo-finalizacion-bloqueo .bandeja-panel-close,
+#partida.modo-finalizacion-bloqueo #btn-responder-escenario,
+#partida.modo-finalizacion-bloqueo #opciones-lista button,
+#partida.modo-finalizacion-bloqueo #sin-opciones-msg button,
+#partida.modo-finalizacion-bloqueo .partida-link-legacy {
+    pointer-events: none;
+    opacity: 0.4;
+}
+
+#partida.modo-finalizacion-bloqueo #correo-repercusion .correo-actions button {
+    pointer-events: auto;
+    opacity: 1;
+    background: linear-gradient(180deg, rgba(6, 94, 64, 0.96) 0%, rgba(4, 66, 44, 0.94) 100%);
+    border-color: rgba(110, 231, 183, 0.78);
+    color: #dcfce7;
+}
+
+#partida.modo-finalizacion-bloqueo #correo-repercusion .correo-actions button:hover {
+    background: linear-gradient(180deg, rgba(8, 120, 80, 0.98) 0%, rgba(6, 82, 56, 0.96) 100%);
+    border-color: rgba(167, 243, 208, 0.92);
+}
+
 #partida .correo-gmail-compacto .correo-topbar {
     padding: 14px 14px 10px;
 }
 
 #partida .correo-gmail-compacto .correo-subject {
     font-size: 28px;
+    white-space: normal;
 }
 
 #partida .correo-gmail-compacto .correo-sender-row {

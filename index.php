@@ -89,10 +89,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $row = $result->fetch_assoc();
 
             if (password_verify($password, $row["password_hash"])) {
+                session_regenerate_id(true);
                 $_SESSION["usuario_id"] = $row["id_usuario"];
                 $_SESSION["nombre_usuario"] = $row["nombre_usuario"];
                 $_SESSION["email"] = $row["email"];
-                echo "LOGIN_OK|" . $row["nombre_usuario"];
+                echo "LOGIN_OK";
             } else {
                 echo "PASS_INCORRECTA";
             }

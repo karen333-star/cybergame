@@ -714,6 +714,10 @@ body.profile-page .profile-hero p {
 
 body.profile-page .profile-kicker-main {
     margin-bottom: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-self: stretch;
 }
 
 body.profile-page .profile-hero h1 {

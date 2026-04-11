@@ -8,12 +8,24 @@ function ocultarPantallas() {
     });
 }
 
+function aplicarZoomConfiguracion(activo) {
+    const zoomValor = activo ? '90%' : '';
+    const overflowValor = activo ? 'hidden' : '';
+
+    document.documentElement.style.zoom = zoomValor;
+    document.documentElement.style.overflow = overflowValor;
+    document.body.style.zoom = zoomValor;
+    document.body.style.overflow = overflowValor;
+}
+
 function mostrarConfig() {
     ocultarPantallas();
     const config = document.getElementById('config');
     if (config) {
         config.classList.remove('hidden');
     }
+    aplicarZoomConfiguracion(true);
+    actualizarMedidoresConfiguracion();
 }
 
 function mostrarPartida() {
@@ -22,6 +34,42 @@ function mostrarPartida() {
     if (partida) {
         partida.classList.remove('hidden');
     }
+    aplicarZoomConfiguracion(false);
+}
+
+function actualizarMedidorConfiguracion(id) {
+    const input = document.getElementById(id);
+    if (!input) return;
+
+    const card = input.closest('.config-card');
+    if (!card) return;
+
+    const meter = card.querySelector('.config-meter');
+    if (!meter) return;
+
+    const barras = Array.from(meter.querySelectorAll('span'));
+    if (barras.length === 0) return;
+
+    const valor = Math.max(0, Number(input.value) || 0);
+    let activas = Math.min(barras.length, Math.ceil(valor / 10));
+
+    if (id === 'maxRondas') {
+        const min = Number(input.getAttribute('min') || 0);
+        const max = Number(input.getAttribute('max') || 100);
+        const rango = Math.max(1, max - min);
+        const normalizado = Math.max(0, Math.min(1, (valor - min) / rango));
+        activas = Math.max(1, Math.min(barras.length, Math.ceil(normalizado * barras.length)));
+    }
+
+    barras.forEach(function(barra, indice) {
+        barra.classList.toggle('is-on', indice < activas);
+    });
+}
+
+function actualizarMedidoresConfiguracion() {
+    ['cia', 'presupuesto', 'despido', 'maxRondas'].forEach(function(id) {
+        actualizarMedidorConfiguracion(id);
+    });
 }
 
 function actualizarNombreUsuarioPerfil() {
@@ -73,7 +121,10 @@ window.estadoPartida = {
     escenario_mail_activo_id: null,
     timeout_escenario_pendiente: null,
     finalizacionPendiente: null,
+    bloqueo_final_activo: false,
     partida_finalizada: false,
+    ronda_actual: 0,
+    rank_global: null,
     mailbox_seq: 1,
     panel_bandeja_abierto: false,
     mailbox: {
@@ -81,6 +132,65 @@ window.estadoPartida = {
         effects: { pending: [], history: [] }
     }
 };
+
+function actualizarPerfilOperativo() {
+    const rondaEl = document.getElementById('profile-ronda');
+    const rankEl = document.getElementById('profile-rank');
+
+    if (rondaEl) {
+        const rondaActual = Number(window.estadoPartida.ronda_actual) || 0;
+        rondaEl.textContent = 'RONDA: ' + String(rondaActual);
+    }
+
+    if (rankEl) {
+        const rank = window.estadoPartida.rank_global;
+        rankEl.textContent = 'RANK GLOBAL: ' + (rank ? ('#' + String(rank)) : 'N/D');
+    }
+}
+
+function solicitarRankGlobalUsuario() {
+    const body = new URLSearchParams({ accion: 'obtener_rank_global' });
+
+    fetch('partida_api.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: body.toString()
+    })
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+            if (!data || !data.ok) {
+                return;
+            }
+            window.estadoPartida.rank_global = data.rank_global || null;
+            actualizarPerfilOperativo();
+        })
+        .catch(function() {
+            // Ignorar para no afectar flujo de juego.
+        });
+}
+
+function alternarVistaCentroSinCorreo(mostrar) {
+    const panelResumen = document.getElementById('panel-resumen-centro');
+    const panelEscenario = document.querySelector('#partida .scenario-panel');
+    const panelRespuesta = document.getElementById('respuesta-panel');
+    const botonResponder = document.getElementById('btn-responder-escenario');
+
+    if (panelResumen) {
+        panelResumen.style.display = mostrar ? 'block' : 'none';
+    }
+
+    if (panelEscenario) {
+        panelEscenario.style.display = mostrar ? 'none' : 'block';
+    }
+
+    if (mostrar && panelRespuesta) {
+        panelRespuesta.style.display = 'none';
+    }
+
+    if (mostrar && botonResponder) {
+        botonResponder.style.display = 'none';
+    }
+}
 
 function escaparHtml(valor) {
     return String(valor)
@@ -271,8 +381,14 @@ function ocultarCorreoRepercusion() {
 }
 
 function cerrarCorreoRepercusion() {
+    if (window.estadoPartida.bloqueo_final_activo) {
+        return;
+    }
+
     ocultarCorreoRepercusion();
+    establecerVistaCorreoActiva('escenario');
     activarModoVisualCorreo(false);
+    alternarVistaCentroSinCorreo(true);
     if (window.estadoPartida.finalizacionPendiente) {
         const msg = window.estadoPartida.finalizacionPendiente.mensaje || 'Partida finalizada';
         const resultado = window.estadoPartida.finalizacionPendiente.resultado || 'finalizada';
@@ -354,6 +470,10 @@ function actualizarBandejasUI() {
 }
 
 function cerrarPanelBandeja() {
+    if (window.estadoPartida.bloqueo_final_activo) {
+        return;
+    }
+
     const panel = document.getElementById('panel-bandeja');
     if (panel) {
         panel.style.display = 'none';
@@ -366,7 +486,7 @@ function cerrarPanelBandeja() {
 }
 
 function abrirPanelBandeja(titulo, correos, tipo) {
-    if (window.estadoPartida.partida_finalizada) {
+    if (window.estadoPartida.partida_finalizada && tipo !== 'effects') {
         return;
     }
 
@@ -460,6 +580,34 @@ function agregarCorreoBandeja(tipo, correoData) {
     actualizarBandejasUI();
 }
 
+function guardarCorreoFinalizacionEnHistorial(mensaje, resultado, asunto) {
+    const mbox = window.estadoPartida.mailbox.effects;
+    if (!mbox) return;
+
+    const yaExiste = mbox.history.some(function(correo) {
+        return correo && correo.payload && correo.payload.tipo === 'finalizacion';
+    });
+
+    if (yaExiste) {
+        return;
+    }
+
+    mbox.history.unshift({
+        id: siguienteIdCorreo(),
+        pending: false,
+        createdAt: Date.now(),
+        subject: asunto || 'Notificacion oficial de cierre',
+        category: 'effects',
+        payload: {
+            tipo: 'finalizacion',
+            mensaje: mensaje || 'Partida finalizada',
+            resultado: resultado === 'ganada' ? 'ganada' : 'perdida'
+        }
+    });
+
+    actualizarBandejasUI();
+}
+
 function pausarInterEventos() {
     if (!window.estadoPartida.ticker_inter_eventos) return;
     window.estadoPartida.inter_evento_pausado = true;
@@ -482,6 +630,46 @@ function limpiarVistaCorreoEscenario() {
     if (contenidoEl) contenidoEl.textContent = '-';
 }
 
+function establecerVistaCorreoActiva(tipo) {
+    const escenarioTextoEl = document.getElementById('esc-texto');
+    const repercusionEl = document.getElementById('correo-repercusion');
+
+    if (escenarioTextoEl) {
+        escenarioTextoEl.style.display = (tipo === 'escenario') ? 'block' : 'none';
+    }
+
+    if (repercusionEl) {
+        repercusionEl.style.display = (tipo === 'efecto') ? 'block' : 'none';
+        if (tipo !== 'efecto') {
+            repercusionEl.innerHTML = '';
+        }
+    }
+}
+
+function mostrarModalFinPartida(titulo, mensaje, esVictoria) {
+    const overlay = document.getElementById('modal-fin-partida');
+    const card = document.getElementById('modal-fin-card');
+    const tituloEl = document.getElementById('modal-fin-titulo');
+    const mensajeEl = document.getElementById('modal-fin-mensaje');
+    const estadoEl = document.getElementById('modal-fin-estado');
+
+    if (!overlay || !card || !tituloEl || !mensajeEl || !estadoEl) {
+        return;
+    }
+
+    const esNeutral = esVictoria !== true && esVictoria !== false;
+    const esDerrota = esVictoria === false;
+
+    overlay.style.display = 'flex';
+    overlay.setAttribute('aria-hidden', 'false');
+    card.classList.toggle('is-victory', !!esVictoria);
+    card.classList.toggle('is-defeat', esDerrota);
+    card.classList.toggle('is-neutral', esNeutral);
+    estadoEl.textContent = esVictoria === true ? 'VICTORIA' : (esDerrota ? 'DERROTA' : 'NEUTRAL');
+    tituloEl.textContent = titulo || 'Partida finalizada';
+    mensajeEl.textContent = mensaje || 'La partida terminó.';
+}
+
 function cerrarCorreoEscenarioVista() {
     const opcionesContainer = document.getElementById('opciones-container');
     const sinOpcionesMsg = document.getElementById('sin-opciones-msg');
@@ -495,11 +683,16 @@ function cerrarCorreoEscenarioVista() {
 
     limpiarVistaCorreoEscenario();
     activarModoVisualCorreo(false);
+    alternarVistaCentroSinCorreo(true);
 
     window.estadoPartida.escenario_abierto_accionable = false;
 }
 
 function alternarOpcionesEscenario(mostrar) {
+    if (!window.estadoPartida.escenario_abierto_accionable) {
+        return;
+    }
+
     const respuestaPanel = document.getElementById('respuesta-panel');
     const opcionesContainer = document.getElementById('opciones-container');
     const sinOpcionesMsg = document.getElementById('sin-opciones-msg');
@@ -534,8 +727,69 @@ function activarModoVisualCorreo(activo) {
     panelEscenario.classList.toggle('gmail-open', !!activo);
 }
 
+function activarBloqueoFinalizacion(activo) {
+    window.estadoPartida.bloqueo_final_activo = !!activo;
+    const partidaEl = document.getElementById('partida');
+    if (!partidaEl) {
+        return;
+    }
+    partidaEl.classList.toggle('modo-finalizacion-bloqueo', !!activo);
+}
+
+function cerrarCorreosAbiertosSilencioso() {
+    const opcionesContainer = document.getElementById('opciones-container');
+    const sinOpcionesMsg = document.getElementById('sin-opciones-msg');
+    const respuestaPanel = document.getElementById('respuesta-panel');
+    const botonResponder = document.getElementById('btn-responder-escenario');
+
+    ocultarCorreoRepercusion();
+    limpiarVistaCorreoEscenario();
+    activarModoVisualCorreo(false);
+    window.estadoPartida.escenario_abierto_accionable = false;
+
+    if (opcionesContainer) opcionesContainer.style.display = 'none';
+    if (sinOpcionesMsg) {
+        sinOpcionesMsg.style.display = 'none';
+        sinOpcionesMsg.innerHTML = '';
+    }
+    if (respuestaPanel) respuestaPanel.style.display = 'none';
+    if (botonResponder) botonResponder.style.display = 'none';
+
+    alternarVistaCentroSinCorreo(true);
+}
+
+function hayCorreoAbiertoEnCentro() {
+    const escTexto = document.getElementById('esc-texto');
+    const repercusion = document.getElementById('correo-repercusion');
+
+    const escenarioVisible = !!(
+        escTexto &&
+        escTexto.style.display !== 'none' &&
+        String(escTexto.innerHTML || '').trim() !== '' &&
+        String(escTexto.textContent || '').trim() !== '-'
+    );
+
+    const efectoVisible = !!(
+        repercusion &&
+        repercusion.style.display !== 'none' &&
+        String(repercusion.innerHTML || '').trim() !== ''
+    );
+
+    return escenarioVisible || efectoVisible;
+}
+
 function abrirBandeja(tipo) {
     if (tipo !== 'scenarios' && tipo !== 'effects') return;
+
+    if (window.estadoPartida.bloqueo_final_activo) {
+        return;
+    }
+
+    if (window.estadoPartida.partida_finalizada && tipo !== 'effects') {
+        return;
+    }
+
+    cerrarCorreosAbiertosSilencioso();
 
     const pendientes = window.estadoPartida.mailbox[tipo].pending;
     const historial = window.estadoPartida.mailbox[tipo].history;
@@ -552,7 +806,11 @@ function abrirBandeja(tipo) {
 }
 
 function abrirCorreoDesdeBandeja(tipo, correoId) {
-    if (window.estadoPartida.partida_finalizada) {
+    if (window.estadoPartida.bloqueo_final_activo) {
+        return;
+    }
+
+    if (window.estadoPartida.partida_finalizada && tipo !== 'effects') {
         return;
     }
 
@@ -566,6 +824,7 @@ function abrirCorreoDesdeBandeja(tipo, correoId) {
     if (!correo) return;
 
     cerrarPanelBandeja();
+    alternarVistaCentroSinCorreo(false);
     const partidaEl = document.getElementById('partida');
     if (partidaEl) {
         partidaEl.classList.remove('modo-inbox-escenarios');
@@ -573,6 +832,28 @@ function abrirCorreoDesdeBandeja(tipo, correoId) {
     actualizarBandejasUI();
 
     if (tipo === 'effects') {
+        window.estadoPartida.escenario_abierto_accionable = false;
+        const botonResponder = document.getElementById('btn-responder-escenario');
+        const respuestaPanel = document.getElementById('respuesta-panel');
+        const opcionesContainer = document.getElementById('opciones-container');
+        const sinOpcionesMsg = document.getElementById('sin-opciones-msg');
+        if (botonResponder) botonResponder.style.display = 'none';
+        if (respuestaPanel) respuestaPanel.style.display = 'none';
+        if (opcionesContainer) opcionesContainer.style.display = 'none';
+        if (sinOpcionesMsg) {
+            sinOpcionesMsg.style.display = 'none';
+            sinOpcionesMsg.innerHTML = '';
+        }
+
+        if (correo.payload && correo.payload.tipo === 'finalizacion') {
+            mostrarCorreoFinalizacion(
+                correo.payload.mensaje || 'Partida finalizada',
+                correo.payload.resultado || 'perdida',
+                { bloqueante: false }
+            );
+            return;
+        }
+
         if (correo.payload && correo.payload.tipo === 'ajuste_trimestral') {
             mostrarCorreoAjusteTrimestral(correo.payload, true);
             return;
@@ -648,10 +929,9 @@ function avanzarDesdeCorreoInformativo() {
         return;
     }
 
-    // Evitar múltiples avances manuales mientras ya corre el tiempo entre eventos.
-    if (window.estadoPartida.ticker_inter_eventos) {
-        return;
-    }
+    // Evita estado residual de timers que deja el boton sin efecto.
+    limpiarTemporizadoresEspera();
+    actualizarEstadoEspera('');
 
     resolverEscenarioActivo('informativo', 'Correo informativo leido');
 
@@ -671,6 +951,7 @@ function avanzarDesdeCorreoInformativo() {
     };
 
     cerrarCorreoEscenarioVista();
+    establecerVistaCorreoActiva('escenario');
     iniciarFlujoEntreEscenarios(respuestaSintetica, {
         fueTimeout: false,
         motivo: 'informativo',
@@ -869,8 +1150,22 @@ function mostrarCorreoAjusteTrimestral(payload, mostrarCerrar) {
         mostrarCerrar: !!mostrarCerrar
     });
 
+    window.estadoPartida.escenario_abierto_accionable = false;
+    const botonResponder = document.getElementById('btn-responder-escenario');
+    const respuestaPanel = document.getElementById('respuesta-panel');
+    const opcionesContainer = document.getElementById('opciones-container');
+    const sinOpcionesMsg = document.getElementById('sin-opciones-msg');
+    if (botonResponder) botonResponder.style.display = 'none';
+    if (respuestaPanel) respuestaPanel.style.display = 'none';
+    if (opcionesContainer) opcionesContainer.style.display = 'none';
+    if (sinOpcionesMsg) {
+        sinOpcionesMsg.style.display = 'none';
+        sinOpcionesMsg.innerHTML = '';
+    }
+
+    alternarVistaCentroSinCorreo(false);
+    establecerVistaCorreoActiva('efecto');
     activarModoVisualCorreo(true);
-    correoEl.style.display = 'block';
 }
 
 function obtenerFirmaCorreo() {
@@ -1074,8 +1369,126 @@ function mostrarCorreoRepercusion(respuesta, contexto, mostrarCerrar) {
         mostrarCerrar: !!mostrarCerrar
     });
 
+    window.estadoPartida.escenario_abierto_accionable = false;
+    const botonResponder = document.getElementById('btn-responder-escenario');
+    const respuestaPanel = document.getElementById('respuesta-panel');
+    const opcionesContainer = document.getElementById('opciones-container');
+    const sinOpcionesMsg = document.getElementById('sin-opciones-msg');
+    if (botonResponder) botonResponder.style.display = 'none';
+    if (respuestaPanel) respuestaPanel.style.display = 'none';
+    if (opcionesContainer) opcionesContainer.style.display = 'none';
+    if (sinOpcionesMsg) {
+        sinOpcionesMsg.style.display = 'none';
+        sinOpcionesMsg.innerHTML = '';
+    }
+
+    alternarVistaCentroSinCorreo(false);
+    establecerVistaCorreoActiva('efecto');
     activarModoVisualCorreo(true);
-    correoEl.style.display = 'block';
+}
+
+function construirCorreoFinalizacion(mensaje, resultado) {
+    const esVictoria = resultado === 'ganada';
+    const asunto = esVictoria
+        ? 'Notificacion oficial - Proceso de jubilacion'
+        : 'Notificacion oficial - Terminacion laboral';
+
+    const cuerpo = esVictoria
+        ? 'Direccion y RRHH confirman tu salida por jubilacion tras cerrar con exito tu ciclo como CISO. Tu gestion logro los objetivos y se aprueba el cierre de etapa.'
+        : 'Direccion y RRHH informan la finalizacion inmediata de tu contrato como CISO por el resultado acumulado de riesgo operativo.';
+
+    return {
+        asunto: asunto,
+        cuerpo: cuerpo,
+        mensaje: mensaje || (esVictoria ? 'Has finalizado la partida con victoria.' : 'Has finalizado la partida con derrota.'),
+        firmaNombre: 'Recursos Humanos',
+        firmaCargo: 'Direccion de Talento',
+        firmaCorreo: 'rrhh@empresa.local'
+    };
+}
+
+function aceptarFinalizacionPartida() {
+    const payload = window.estadoPartida.finalizacionPendiente;
+    window.estadoPartida.finalizacionPendiente = null;
+    activarBloqueoFinalizacion(false);
+
+    if (!payload) {
+        mostrarFinPartida('Partida finalizada', 'perdida');
+        return;
+    }
+
+    mostrarFinPartida(payload.mensaje || 'Partida finalizada', payload.resultado || 'perdida');
+}
+
+function mostrarCorreoFinalizacion(mensaje, resultado, opciones) {
+    const opts = opciones || {};
+    const bloqueante = opts.bloqueante !== false;
+    const resultadoNormalizado = resultado === 'ganada' ? 'ganada' : 'perdida';
+    const correoEl = document.getElementById('correo-repercusion');
+    if (!correoEl) {
+        mostrarFinPartida(mensaje || 'Partida finalizada', resultadoNormalizado);
+        return;
+    }
+
+    const correo = construirCorreoFinalizacion(mensaje, resultadoNormalizado);
+
+    window.estadoPartida.partida_finalizada = true;
+    window.estadoPartida.finalizacionPendiente = bloqueante ? {
+        mensaje: correo.mensaje,
+        resultado: resultadoNormalizado
+    } : null;
+
+    detenerCronometro();
+    limpiarTemporizadoresEspera();
+    limpiarTimerEscenarioPendiente();
+    actualizarEstadoEspera('');
+    cerrarPanelBandeja();
+    activarBloqueoFinalizacion(bloqueante);
+
+    guardarCorreoFinalizacionEnHistorial(correo.mensaje, resultadoNormalizado, correo.asunto);
+
+    correoEl.innerHTML = renderCorreoGmail({
+        asunto: correo.asunto,
+        deNombre: correo.firmaNombre,
+        deCorreo: correo.firmaCorreo,
+        paraNombre: 'Jefe de Seguridad',
+        paraCorreo: 'jefe.seguridad@empresa.local',
+        cuerpo: correo.cuerpo,
+        feedbackEscenario: 'Cierre oficial de partida.',
+        feedbackRespuesta: correo.mensaje,
+        detalleCIA: formatearDesgloseCIA(obtenerDesgloseCIAActual()),
+        firmaNombre: correo.firmaNombre,
+        firmaCargo: correo.firmaCargo,
+        firmaCorreo: correo.firmaCorreo,
+        cierre: bloqueante ? 'Confirma para finalizar la partida.' : 'Correo de cierre disponible en historial.',
+        colorEtiqueta: resultadoNormalizado === 'ganada' ? '#10b981' : '#ef4444',
+        ocultarFooter: true,
+        mostrarCerrar: !bloqueante
+    });
+
+    if (bloqueante) {
+        correoEl.innerHTML +=
+            '<div class="correo-actions">' +
+                '<button type="button" onclick="aceptarFinalizacionPartida()">Aceptar y finalizar partida</button>' +
+            '</div>';
+    }
+
+    window.estadoPartida.escenario_abierto_accionable = false;
+    const botonResponder = document.getElementById('btn-responder-escenario');
+    const respuestaPanel = document.getElementById('respuesta-panel');
+    const opcionesContainer = document.getElementById('opciones-container');
+    const sinOpcionesMsg = document.getElementById('sin-opciones-msg');
+    if (botonResponder) botonResponder.style.display = 'none';
+    if (respuestaPanel) respuestaPanel.style.display = 'none';
+    if (opcionesContainer) opcionesContainer.style.display = 'none';
+    if (sinOpcionesMsg) {
+        sinOpcionesMsg.style.display = 'none';
+        sinOpcionesMsg.innerHTML = '';
+    }
+
+    alternarVistaCentroSinCorreo(false);
+    establecerVistaCorreoActiva('efecto');
+    activarModoVisualCorreo(true);
 }
 
 function iniciarFlujoEntreEscenarios(respuesta, contexto) {
@@ -1089,6 +1502,9 @@ function iniciarFlujoEntreEscenarios(respuesta, contexto) {
     const mitadMs = Math.round(esperaMs / 2);
 
     ocultarCorreoRepercusion();
+    establecerVistaCorreoActiva('escenario');
+    alternarVistaCentroSinCorreo(true);
+    window.estadoPartida.escenario_abierto_accionable = false;
     actualizarEstadoEspera('Espera a siguiente escenario... ' + Math.ceil(esperaSegundos) + 's');
 
     const opcionesContainer = document.getElementById('opciones-container');
@@ -1137,16 +1553,6 @@ function iniciarFlujoEntreEscenarios(respuesta, contexto) {
                         }
                     });
                 }
-
-                if (window.estadoPartida.inter_evento_contexto.respuesta && window.estadoPartida.inter_evento_contexto.respuesta.partida_finalizada) {
-                    window.estadoPartida.finalizacionPendiente = {
-                        mensaje: window.estadoPartida.inter_evento_contexto.respuesta.mensaje || 'Partida finalizada',
-                        resultado: window.estadoPartida.inter_evento_contexto.respuesta.resultado || 'finalizada'
-                    };
-                    limpiarTemporizadoresEspera();
-                    actualizarEstadoEspera('Partida finalizada. Abre el correo de Efectos para ver la repercusion final.');
-                    return;
-                }
             }
         }
 
@@ -1157,8 +1563,21 @@ function iniciarFlujoEntreEscenarios(respuesta, contexto) {
         }
 
         if (window.estadoPartida.inter_evento_transcurrido_ms >= window.estadoPartida.inter_evento_total_ms) {
+            const respuestaFinal = window.estadoPartida.inter_evento_contexto
+                ? window.estadoPartida.inter_evento_contexto.respuesta
+                : null;
+
             limpiarTemporizadoresEspera();
             actualizarEstadoEspera('');
+
+            if (respuestaFinal && respuestaFinal.partida_finalizada) {
+                mostrarCorreoFinalizacion(
+                    respuestaFinal.mensaje || 'Partida finalizada',
+                    respuestaFinal.resultado || 'perdida'
+                );
+                return;
+            }
+
             cargarSiguienteEscenario();
         }
     }, tickMs);
@@ -1168,10 +1587,19 @@ function actualizarContadores() {
     document.getElementById('stat-cia').textContent = String(Math.round(window.estadoPartida.cia));
     document.getElementById('stat-presupuesto').textContent = String(Math.round(window.estadoPartida.presupuesto));
     document.getElementById('stat-despido').textContent = String(Math.round(window.estadoPartida.despido));
+
+    const statCiaCentro = document.getElementById('stat-cia-centro');
+    const statPresupuestoCentro = document.getElementById('stat-presupuesto-centro');
+    const statDespidoCentro = document.getElementById('stat-despido-centro');
+    if (statCiaCentro) statCiaCentro.textContent = String(Math.round(window.estadoPartida.cia));
+    if (statPresupuestoCentro) statPresupuestoCentro.textContent = String(Math.round(window.estadoPartida.presupuesto));
+    if (statDespidoCentro) statDespidoCentro.textContent = String(Math.round(window.estadoPartida.despido));
+
     const maxRondasEl = document.getElementById('stat-max-rondas');
     if (maxRondasEl) {
         maxRondasEl.textContent = String(Math.round(window.estadoPartida.maxRondas));
     }
+    actualizarPerfilOperativo();
     actualizarPanelDesgloseCIA();
 }
 
@@ -1288,7 +1716,15 @@ function obtenerDeltaPresupuestoBase(opcion) {
     return Number.isFinite(delta) ? delta : 0;
 }
 
+function esEscenarioPhishingActual() {
+    return String(window.estadoPartida.tipo_actual || '').toLowerCase() === 'phishing';
+}
+
 function puedeCostearOpcion(opcion, presupuestoActual) {
+    if (esEscenarioPhishingActual()) {
+        return true;
+    }
+
     const deltaPresupuesto = obtenerDeltaPresupuestoBase(opcion);
     if (deltaPresupuesto >= 0) {
         return true;
@@ -1298,12 +1734,18 @@ function puedeCostearOpcion(opcion, presupuestoActual) {
 
 function mostrarFinPartida(mensaje, resultado) {
     const resultadoFinal = resultado || 'finalizada';
+    const esVictoria = resultadoFinal === 'ganada';
+    const esDerrota = resultadoFinal === 'perdida';
+    const esNeutral = !esVictoria && !esDerrota;
+    const titulo = esVictoria ? 'Victoria' : (esDerrota ? 'Derrota' : 'Cierre de partida');
     window.estadoPartida.partida_finalizada = true;
+    activarBloqueoFinalizacion(false);
     detenerCronometro();
     limpiarTemporizadoresEspera();
     limpiarTimerEscenarioPendiente();
     actualizarEstadoEspera('');
     ocultarCorreoRepercusion();
+    establecerVistaCorreoActiva('escenario');
     deshabilitarOpciones();
 
     const opcionesContainer = document.getElementById('opciones-container');
@@ -1315,18 +1757,23 @@ function mostrarFinPartida(mensaje, resultado) {
 
     if (sinOpcionesMsg) {
         sinOpcionesMsg.style.display = 'block';
-        const esVictoria = resultadoFinal === 'ganada';
-        const titulo = esVictoria ? 'Victoria' : 'Derrota';
-        const colorFondo = esVictoria ? '#ecfdf5' : '#fef2f2';
-        const colorBorde = esVictoria ? '#10b981' : '#ef4444';
-        const colorTexto = esVictoria ? '#065f46' : '#991b1b';
+        const colorFondo = esVictoria ? '#ecfdf5' : (esDerrota ? '#fef2f2' : '#effafe');
+        const colorBorde = esVictoria ? '#10b981' : (esDerrota ? '#ef4444' : '#0ea5e9');
+        const colorTexto = esVictoria ? '#065f46' : (esDerrota ? '#991b1b' : '#0c4a6e');
         sinOpcionesMsg.innerHTML =
             '<div style="max-width: 720px; margin: 0 auto; padding: 18px 20px; border: 2px solid ' + colorBorde + '; border-radius: 14px; background: ' + colorFondo + '; color: ' + colorTexto + '; box-shadow: 0 8px 24px rgba(0,0,0,0.08);">' +
                 '<div style="font-size: 1.15rem; font-weight: 800; margin-bottom: 8px;">' + titulo + '</div>' +
                 '<div style="margin-bottom: 14px; line-height: 1.45;">' + escaparHtml(mensaje || 'Partida finalizada') + '</div>' +
                 '<button type="button" onclick="window.location.href=\'menu.php\'">Volver al Menú</button>' +
             '</div>';
+
     }
+
+    mostrarModalFinPartida(
+        esVictoria ? 'Ganaste la partida' : (esDerrota ? 'Perdiste la partida' : 'Cierre de partida'),
+        mensaje || 'Partida finalizada',
+        esNeutral ? null : esVictoria
+    );
 }
 
 function cambiarValor(id, delta) {
@@ -1343,6 +1790,7 @@ function cambiarValor(id, delta) {
     if (max !== null && valor > max) valor = max;
 
     input.value = valor;
+    actualizarMedidorConfiguracion(id);
 }
 
 function procesarOpcion(idOpcion, codigoOpcion, deltaPresupuestoBase) {
@@ -1351,7 +1799,7 @@ function procesarOpcion(idOpcion, codigoOpcion, deltaPresupuestoBase) {
     }
 
     const deltaPresupuesto = Number(deltaPresupuestoBase || 0);
-    if (deltaPresupuesto < 0 && (window.estadoPartida.presupuesto + deltaPresupuesto) < 0) {
+    if (!esEscenarioPhishingActual() && deltaPresupuesto < 0 && (window.estadoPartida.presupuesto + deltaPresupuesto) < 0) {
         alert('No te alcanza para tomar esta desicion, elige otra');
 
         const hayOpcionCosteable = (window.estadoPartida.opciones_actuales || []).some(function(opcion) {
@@ -1413,6 +1861,8 @@ function mostrarEscenarioEnVista(data, accionable) {
 
     const turno = data.turno;
     const escenario = turno.escenario;
+    window.estadoPartida.ronda_actual = Number(turno.orden_en_partida) || window.estadoPartida.ronda_actual;
+    actualizarPerfilOperativo();
     const remitenteNombre = escenario.remitente_nombre || 'Sin nombre';
     const remitenteCorreo = escenario.remitente_correo || 'sin-correo';
     const respuestaPanelDestinatario = document.getElementById('respuesta-panel-destinatario');
@@ -1426,7 +1876,9 @@ function mostrarEscenarioEnVista(data, accionable) {
     window.estadoPartida.remitente_correo_actual = remitenteCorreo;
     window.estadoPartida.feedback_general_actual = escenario.feedback_general || '';
     window.estadoPartida.escenario_abierto_accionable = !!accionable;
+    alternarVistaCentroSinCorreo(false);
     activarModoVisualCorreo(true);
+    establecerVistaCorreoActiva('escenario');
 
     // Guardar id_partida_escenario en sesión vía fetch silencioso
     fetch('partida_api.php', {
@@ -1496,10 +1948,22 @@ function mostrarEscenarioEnVista(data, accionable) {
             sinOpcionesMsg.style.display = 'block';
             const respuestaHist = (data && data.turno && data.turno.escenario && data.turno.escenario.respuesta_historial) || null;
             const textoResp = respuestaHist && respuestaHist.texto ? respuestaHist.texto : 'Sin respuesta registrada.';
+            const correoRespuestaHistorial = renderCorreoGmail({
+                asunto: 'Respuesta seleccionada',
+                deNombre: 'Sistema de historial',
+                deCorreo: 'historial@cybergame.local',
+                paraNombre: 'Jefe de Seguridad',
+                paraCorreo: 'jefe.seguridad@empresa.local',
+                cuerpo: textoResp,
+                firmaNombre: 'Historial de partida',
+                firmaCargo: 'Registro',
+                firmaCorreo: 'historial@cybergame.local',
+                colorEtiqueta: '#44d18f',
+                compacto: true
+            });
             sinOpcionesMsg.innerHTML =
                 '<p style="margin: 0 0 8px 0; color: #4b5563;"><strong>Correo de historial</strong></p>' +
-                '<p style="margin: 0 0 8px 0; color: #111827;"><strong>Enunciado:</strong> ' + escaparHtml(escenario.texto_correo || '-') + '</p>' +
-                '<p style="margin: 0 0 8px 0; color: #111827;"><strong>Respuesta seleccionada:</strong> ' + escaparHtml(textoResp) + '</p>' +
+                '<div style="margin: 0 0 10px 0;">' + correoRespuestaHistorial + '</div>' +
                 '<button type="button" onclick="cerrarCorreoEscenarioVista()">Cerrar correo</button>';
         }
         return;
@@ -1512,7 +1976,7 @@ function mostrarEscenarioEnVista(data, accionable) {
         if (sinOpcionesMsg) {
             sinOpcionesMsg.style.display = 'block';
             sinOpcionesMsg.innerHTML =
-                '<p style="margin: 0 0 8px 0; color: #4b5563;">Este es un correo informativo. No requiere decision.</p>' +
+                '<p style="margin: 0 0 8px 0; color: #ffffff;">Este es un correo informativo. No requiere decision.</p>' +
                 '<button type="button" onclick="avanzarDesdeCorreoInformativo()">Cerrar correo y continuar</button>';
         }
         detenerCronometro();
@@ -1564,8 +2028,8 @@ function renderTurno(data) {
     }
 
     if (data && data.partida_finalizada) {
-        const resultado = data.resultado || ((data.mensaje || '').toLowerCase().includes('felic') ? 'ganada' : 'finalizada');
-        mostrarFinPartida(data.mensaje || 'felicidades, acabaste', resultado);
+        const resultado = data.resultado || ((data.mensaje || '').toLowerCase().includes('felic') ? 'ganada' : 'perdida');
+        mostrarCorreoFinalizacion(data.mensaje || 'Partida finalizada', resultado);
         return;
     }
 
@@ -1578,6 +2042,9 @@ function renderTurno(data) {
         alert('No hay escenario disponible.');
         return;
     }
+
+    window.estadoPartida.ronda_actual = Number(data.turno.orden_en_partida) || window.estadoPartida.ronda_actual;
+    actualizarPerfilOperativo();
 
     const subject = 'Escenario - ' + (data.turno.escenario.titulo_correo || 'Sin asunto');
     agregarCorreoBandeja('scenarios', {
@@ -1597,6 +2064,20 @@ function renderTurno(data) {
         respuestaPanel.style.display = 'none';
     }
 
+    const opcionesContainer = document.getElementById('opciones-container');
+    const sinOpcionesMsg = document.getElementById('sin-opciones-msg');
+    if (opcionesContainer) opcionesContainer.style.display = 'none';
+    if (sinOpcionesMsg) {
+        sinOpcionesMsg.style.display = 'none';
+        sinOpcionesMsg.innerHTML = '';
+    }
+
+    limpiarVistaCorreoEscenario();
+    ocultarCorreoRepercusion();
+    alternarVistaCentroSinCorreo(true);
+    activarModoVisualCorreo(false);
+    window.estadoPartida.escenario_abierto_accionable = false;
+
     iniciarTimerEscenarioPendiente();
 
     actualizarEstadoEspera('');
@@ -1614,6 +2095,10 @@ function renderTurno(data) {
 
 // Evalúa si las condiciones iniciales generan victoria o derrota automática
 function evaluarCondicionesIniciales(cia, presupuesto, despido) {
+    if (cia <= 0) {
+        return { resultado: 'perdida', motivo: 'cia_cero' };
+    }
+
     // Validar presupuesto <= 0 (immediate loss)
     if (presupuesto <= 0) {
         return { resultado: 'perdida', motivo: 'presupuesto_cero' };
@@ -1678,15 +2163,25 @@ function iniciarPartida() {
     window.estadoPartida.escenario_mail_activo_id = null;
     window.estadoPartida.escenario_abierto_accionable = false;
     window.estadoPartida.finalizacionPendiente = null;
+    window.estadoPartida.bloqueo_final_activo = false;
     window.estadoPartida.partida_finalizada = false;
+    window.estadoPartida.ronda_actual = 0;
+    const modalFin = document.getElementById('modal-fin-partida');
+    if (modalFin) {
+        modalFin.style.display = 'none';
+        modalFin.setAttribute('aria-hidden', 'true');
+    }
     limpiarTemporizadoresEspera();
     limpiarTimerEscenarioPendiente();
     cerrarPanelBandeja();
+    activarBloqueoFinalizacion(false);
     ocultarCorreoRepercusion();
     cerrarCorreoEscenarioVista();
     actualizarEstadoEspera('');
     actualizarBandejasUI();
     actualizarContadores();
+    alternarVistaCentroSinCorreo(true);
+    solicitarRankGlobalUsuario();
 
     const body = new URLSearchParams({
         accion: 'iniciar_partida',
@@ -1754,8 +2249,8 @@ function cargarSiguienteEscenario() {
             }
 
             if (data.partida_finalizada) {
-                const resultado = data.resultado || ((data.mensaje || '').toLowerCase().includes('felic') ? 'ganada' : 'finalizada');
-                mostrarFinPartida(data.mensaje || 'felicidades, acabaste', resultado);
+                const resultado = data.resultado || ((data.mensaje || '').toLowerCase().includes('felic') ? 'ganada' : 'perdida');
+                mostrarCorreoFinalizacion(data.mensaje || 'Partida finalizada', resultado);
                 return;
             }
 
@@ -1774,10 +2269,29 @@ function cargarSiguienteEscenario() {
 document.addEventListener('DOMContentLoaded', function() {
     actualizarBandejasUI();
     actualizarNombreUsuarioPerfil();
+    actualizarPerfilOperativo();
+    solicitarRankGlobalUsuario();
+
+    ['cia', 'presupuesto', 'despido', 'maxRondas'].forEach(function(id) {
+        const input = document.getElementById(id);
+        if (!input) return;
+
+        input.addEventListener('input', function() {
+            actualizarMedidorConfiguracion(id);
+        });
+
+        input.addEventListener('change', function() {
+            actualizarMedidorConfiguracion(id);
+        });
+    });
+
+    actualizarMedidoresConfiguracion();
 
     const params = new URLSearchParams(window.location.search);
     if (params.get('view') === 'config') {
         mostrarConfig();
+    } else {
+        aplicarZoomConfiguracion(false);
     }
 });
 
