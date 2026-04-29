@@ -15,14 +15,16 @@ function responder($data) {
 }
 
 function repartir_cia_inicial(int $cia): array {
+    // Instead of distributing the CIA value unevenly between C/I/A,
+    // set each component equal to the configured CIA so that
+    // CIA is always the arithmetic mean of Confidentiality, Integrity and Availability.
     $cia = max(0, min(100, $cia));
-    $base = intdiv($cia, 3);
-    $resto = $cia % 3;
+    $val = (int)round($cia);
 
     return [
-        'confidencialidad' => $base + ($resto > 0 ? 1 : 0),
-        'integridad' => $base + ($resto > 1 ? 1 : 0),
-        'accesibilidad' => $base,
+        'confidencialidad' => $val,
+        'integridad' => $val,
+        'accesibilidad' => $val,
     ];
 }
 
@@ -359,7 +361,7 @@ try {
             (float)$desgloseInicial['accesibilidad']
         );
 
-        if ($cia < 0 || $cia > 100 || $presupuesto < 5 || $presupuesto > 100 || $despido < 0 || $despido > 100 || $maxRondas < 15 || $maxRondas > 40) {
+        if ($cia < 0 || $cia > 100 || $presupuesto < 5 || $presupuesto > 100 || $despido < 0 || $despido > 100 || $maxRondas < 7 || $maxRondas > 25) {
             responder(['ok' => false, 'error' => 'PARAMETROS_INVALIDOS']);
         }
 
@@ -397,7 +399,8 @@ try {
             'accion' => 'iniciar_partida',
             'id_partida' => $idPartida,
             'estado' => [
-                'cia' => $ciaInicialPromedio,
+                // Return the original CIA input as the overall CIA value so the UI reflects the selected config
+                'cia' => $cia,
                 'confidencialidad' => $desgloseInicial['confidencialidad'],
                 'integridad' => $desgloseInicial['integridad'],
                 'accesibilidad' => $desgloseInicial['accesibilidad'],

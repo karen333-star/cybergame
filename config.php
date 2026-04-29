@@ -17,9 +17,9 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
 // Conexión a BD CYBERGAME
 $dbHost = getenv('CYBERGAME_DB_HOST') ?: 'localhost';
-$dbUser = getenv('CYBERGAME_DB_USER') ?: 'root';
-$dbPass = getenv('CYBERGAME_DB_PASS') ?: '';
-$dbName = getenv('CYBERGAME_DB_NAME') ?: 'CYBERGAME';
+$dbUser = getenv('CYBERGAME_DB_USER') ?: 'u592438158_Toska';
+$dbPass = getenv('CYBERGAME_DB_PASS') ?: 'LauraHermosa.117';
+$dbName = getenv('CYBERGAME_DB_NAME') ?: 'u592438158_cybergame';
 
 $conn = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
 
@@ -55,3 +55,4 @@ function validar_sesion() {
     }
 }
 ?>
+

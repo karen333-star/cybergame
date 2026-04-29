@@ -2137,7 +2137,7 @@ function iniciarPartida() {
     const despido = Number(document.getElementById('despido').value);
     const maxRondas = Number(document.getElementById('maxRondas').value);
 
-    if (cia < 30 || cia > 80 || despido < 5 || despido > 80 || presupuesto < 10 || presupuesto > 80 || maxRondas < 15 || maxRondas > 40) {
+    if (cia < 30 || cia > 80 || despido < 5 || despido > 80 || presupuesto < 10 || presupuesto > 80 || maxRondas < 7 || maxRondas > 25) {
         alert('Valores invalidos en la configuracion');
         return;
     }
