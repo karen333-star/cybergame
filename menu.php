@@ -36,7 +36,7 @@ $usuario_param = urlencode($nombre_usuario);
             <div class="menu-corner menu-corner-bl" aria-hidden="true"></div>
             <div class="menu-corner menu-corner-br" aria-hidden="true"></div>
 
-            <h1 id="main-title" class="menu-title"><span class="menu-title-prefix">&gt;_</span> CYBER_GAME</h1>
+            <h1 id="main-title" class="menu-title"><span class="brand-shield">◬</span> CYBER_GAME_M2K</h1>
             <h2 class="menu-welcome">Bienvenido, <?php echo htmlspecialchars($nombre_usuario); ?>!</h2>
 
             <div class="menu-opciones">

@@ -1,0 +1,2 @@
+patching multiple CSS files: style.css, history.css, hotorial.css, menu.css, register.css, profile.css, config.css
+backgrounds replaced with login.css background and overlay settings; partida.css and juego.css left unchanged.

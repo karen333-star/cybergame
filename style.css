@@ -6,13 +6,17 @@
 body {
     margin: 0;
     min-height: 100vh;
-    background: linear-gradient(135deg, #2d1b69, #4c1d95, #7c3aed);
+    padding: 20px;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 20px;
-    padding: 20px;
+    background:
+        radial-gradient(circle at 16% 20%, rgba(122, 68, 255, 0.22), transparent 44%),
+        radial-gradient(circle at 82% 84%, rgba(0, 173, 255, 0.18), transparent 38%),
+        linear-gradient(140deg, #1a1040 0%, #090b35 50%, #051a3a 100%);
 }
 
 #main-title {
@@ -63,20 +67,24 @@ input::placeholder {
 }
 
 button {
-    width: 100%;
-    padding: 12px;
-    border: none;
+    width: min(240px, 100%);
+    min-height: 44px;
+    padding: 10px 14px;
+    border: 1px solid rgba(139, 92, 246, 0.62);
     border-radius: 8px;
-    background: #8b5cf6;
+    background: linear-gradient(180deg, rgba(139, 92, 246, 0.28), rgba(124, 58, 237, 0.28));
     color: white;
     font-size: 15px;
     font-weight: bold;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.18), 0 0 18px rgba(139, 92, 246, 0.22);
 }
 
 button:hover {
-    background: #7c3aed;
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.28), 0 0 22px rgba(139, 92, 246, 0.32);
 }
 
 .link {
@@ -233,33 +241,33 @@ input[type=number]::-moz-focus-inner {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    width: 100%;
-    padding: 14px;
-    border: none;
+    width: min(240px, 100%);
+    min-height: 44px;
+    padding: 10px 14px;
+    border: 1px solid rgba(139, 92, 246, 0.62);
     border-radius: 8px;
-    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    background: linear-gradient(180deg, rgba(139, 92, 246, 0.28), rgba(124, 58, 237, 0.28));
     color: white;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.18), 0 0 18px rgba(139, 92, 246, 0.22);
 }
 
 .menu-btn:hover {
-    background: linear-gradient(135deg, #9d70f9, #8b5cf6);
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(139, 92, 246, 0.5);
+    box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.28), 0 0 22px rgba(139, 92, 246, 0.32);
 }
 
 .logout-btn {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    border-color: rgba(239, 68, 68, 0.62);
+    background: linear-gradient(180deg, rgba(239, 68, 68, 0.28), rgba(220, 38, 38, 0.28));
+    box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.18), 0 0 18px rgba(239, 68, 68, 0.22);
 }
 
 .logout-btn:hover {
-    background: linear-gradient(135deg, #f87171, #ef4444);
-    box-shadow: 0 6px 16px rgba(239, 68, 68, 0.5);
+    box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.28), 0 0 22px rgba(239, 68, 68, 0.32);
 }
 
 .menu-btn span {
@@ -377,6 +385,7 @@ input[type=number]::-moz-focus-inner {
 
 .history-actions .menu-btn {
     text-decoration: none;
+    width: min(240px, 100%);
 }
 
 .history-menu {
@@ -589,18 +598,21 @@ input[type=number]::-moz-focus-inner {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    min-width: 240px;
+    min-height: 44px;
     padding: 10px 14px;
     border-radius: 10px;
-    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    background: linear-gradient(180deg, rgba(139, 92, 246, 0.28), rgba(124, 58, 237, 0.28));
     color: #ffffff;
     text-decoration: none;
     font-weight: 700;
-    border: none;
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+    border: 1px solid rgba(139, 92, 246, 0.62);
+    box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.18), 0 0 18px rgba(139, 92, 246, 0.22);
 }
 
 .history-item-button:hover {
-    background: linear-gradient(135deg, #9d70f9, #8b5cf6);
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.28), 0 0 22px rgba(139, 92, 246, 0.32);
 }
 
 .history-item.is-active,

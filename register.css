@@ -11,9 +11,9 @@ body.register-page {
     align-items: center;
     justify-content: center;
     background:
-        radial-gradient(circle at 16% 20%, rgba(122, 68, 255, 0.2), transparent 42%),
-        radial-gradient(circle at 84% 84%, rgba(0, 170, 255, 0.16), transparent 38%),
-        linear-gradient(145deg, #1a1040 0%, #090b35 50%, #051a39 100%);
+        radial-gradient(circle at 16% 20%, rgba(122, 68, 255, 0.22), transparent 44%),
+        radial-gradient(circle at 82% 84%, rgba(0, 173, 255, 0.18), transparent 38%),
+        linear-gradient(140deg, #1a1040 0%, #090b35 50%, #051a3a 100%);
 }
 
 body.register-page .register-grid-overlay {
@@ -21,12 +21,12 @@ body.register-page .register-grid-overlay {
     inset: 0;
     pointer-events: none;
     background:
-        linear-gradient(rgba(119, 171, 255, 0.16) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(119, 171, 255, 0.16) 1px, transparent 1px),
-        linear-gradient(rgba(79, 121, 207, 0.12) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(79, 121, 207, 0.12) 1px, transparent 1px);
-    background-size: 52px 52px, 52px 52px, 26px 26px, 26px 26px;
-    opacity: 0.42;
+        linear-gradient(rgba(131, 184, 255, 0.26) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(131, 184, 255, 0.26) 1px, transparent 1px),
+        linear-gradient(rgba(95, 139, 232, 0.14) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(95, 139, 232, 0.14) 1px, transparent 1px);
+    background-size: 54px 54px, 54px 54px, 27px 27px, 27px 27px;
+    opacity: 0.3;
 }
 
 body.register-page .register-shell {
@@ -325,23 +325,35 @@ body.register-page .input-ok {
 }
 
 body.register-page .btn {
-    width: 100%;
-    min-height: 38px;
+    width: min(240px, 100%);
+    min-height: 44px;
     margin-top: 6px;
     border: 1px solid rgba(183, 118, 255, 0.62);
     border-radius: 4px;
-    background: linear-gradient(180deg, #a84dff 0%, #872ef2 100%);
+    background: linear-gradient(180deg, rgba(168, 77, 255, 0.28), rgba(135, 46, 242, 0.28));
     color: #fff6ff;
     font-family: 'Rajdhani', sans-serif;
     font-size: 14px;
     letter-spacing: 0.08em;
     font-weight: 800;
     text-transform: uppercase;
-    box-shadow: inset 0 -1px 0 rgba(243, 198, 255, 0.4), 0 0 14px rgba(157, 68, 255, 0.5);
+    box-shadow: 0 0 0 1px rgba(183, 118, 255, 0.18), 0 0 18px rgba(183, 118, 255, 0.22);
+    transition: transform 140ms ease, box-shadow 140ms ease;
+    position: relative;
+    padding-right: 28px;
+    align-self: center;
+}
+
+body.register-page .btn::before {
+    content: '\u2192';
+    position: absolute;
+    right: 12px;
+    font-size: 0.9em;
 }
 
 body.register-page .btn:hover {
-    background: linear-gradient(180deg, #b45eff 0%, #9542ff 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 1px rgba(183, 118, 255, 0.28), 0 0 22px rgba(183, 118, 255, 0.32);
 }
 
 body.register-page #passwordHelp {

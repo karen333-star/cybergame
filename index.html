@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>CYBERGAME - Login</title>
     <link rel="stylesheet" href="config.css?v=20260404">
-    <link rel="stylesheet" href="partida.css?v=20260420">
+    <link rel="stylesheet" href="partida.css?v=20260429">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="juego.css">
     <link rel="stylesheet" href="profile.css"> 
@@ -17,7 +17,7 @@
     <!-- LOGIN -->
     <div id="login">
         <div class="title">CYBERGAME</div>
-        <div class="subtitle">Iniciar Sesión</div>
+        <div class="subtitle">Iniciar Sesiiiiiiiiiiiiión</div>
 
         <form id="formLogin" action="index.php" method="post">
             <input type="hidden" name="accion" value="login">
@@ -388,6 +388,12 @@
                         EFECTOS <span id="badge-effects" style="display: none;">0</span>
                     </button>
                 </div>
+                <!-- Visual effect: concentric radar below EFECTOS -->
+                <div class="effects-visual" aria-hidden="true">
+                    <div class="effects-radar" role="img" aria-label="Visual efectos">
+                        <span class="ping"></span>
+                    </div>
+                </div>
             </section>
         </aside>
 
@@ -412,6 +418,25 @@
                         <span>DESPIDO</span>
                         <strong id="stat-despido-centro">10</strong>
                     </div>
+                </div>
+            </section>
+
+            <section id="panel-grafica-cia" class="soc-panel cia-chart-panel">
+                <div class="cia-chart-head">
+                    <div>
+                        <h3>EVOLUCION CIA // CANDLE GRAPH</h3>
+                        <p>Grafica basada en el CIA inicial configurado por el usuario.</p>
+                    </div>
+                    <div class="cia-chart-legend" aria-hidden="true">
+                        <span class="legend-up">ALZA</span>
+                        <span class="legend-down">BAJA</span>
+                    </div>
+                </div>
+
+                <div class="cia-chart-frame">
+                    <canvas id="cia-candlestick-canvas" width="1200" height="280" aria-label="Grafica de velas CIA"></canvas>
+                    <div id="cia-candlestick-layer" class="cia-candlestick-layer" aria-hidden="true"></div>
+                    <div id="panel-desglose-cia-compact" class="panel-desglose-cia-compact" aria-hidden="false"></div>
                 </div>
             </section>
 
@@ -509,6 +534,6 @@
 </div>
 
 <script src="script.js?v=20260402"></script>
-<script src="confi.js?v=20260408"></script>
+<script src="confi.js?v=20260429"></script>
 </body>
 </html>             

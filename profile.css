@@ -9,9 +9,9 @@
         justify-content: flex-start;
         padding: 18px;
         background:
-            radial-gradient(circle at 15% 15%, rgba(0, 230, 255, 0.12), transparent 22%),
-            radial-gradient(circle at 86% 10%, rgba(168, 85, 247, 0.14), transparent 18%),
-            linear-gradient(180deg, #030712 0%, #06111f 55%, #02060c 100%);
+            radial-gradient(circle at 5% 50%, rgba(122, 68, 255, 0.32), transparent 40%),
+            radial-gradient(circle at 95% 50%, rgba(0, 173, 255, 0.32), transparent 40%),
+            linear-gradient(180deg, #000000 0%, #000000 100%);
     }
 
     body.profile-page .container.profile-shell {
@@ -477,23 +477,41 @@
     }
 
     body.profile-page .profile-quick-panel .menu-btn {
-        width: 100%;
-        padding: 14px 16px;
-        border-radius: 12px;
-        background: rgba(8, 22, 40, 0.88);
-        border: 1px solid rgba(0, 214, 255, 0.14);
-        box-shadow: none;
-        color: #eafcff;
-        justify-content: flex-start;
+        width: min(240px, 100%);
+        min-height: 44px;
+        padding: 10px 14px 10px 30px;
+        border: 1px solid rgba(0, 214, 255, 0.28);
+        border-radius: 8px;
+        background: linear-gradient(180deg, rgba(8, 22, 40, 0.28), rgba(8, 22, 40, 0.28));
+        box-shadow: 0 0 0 1px rgba(0, 214, 255, 0.18), 0 0 18px rgba(0, 214, 255, 0.22);
+        color: #ffffff;
+        justify-content: center;
+        position: relative;
+        font-family: 'Rajdhani', sans-serif;
+        font-weight: 400;
+        letter-spacing: 0.06em;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    body.profile-page .profile-quick-panel .menu-btn::before {
+        position: absolute;
+        left: 12px;
+        font-size: 0.9em;
     }
 
     body.profile-page .profile-quick-panel .menu-btn:hover {
         transform: translateY(-2px);
-        border-color: rgba(0, 214, 255, 0.28);
+        box-shadow: 0 0 0 1px rgba(0, 214, 255, 0.28), 0 0 22px rgba(0, 214, 255, 0.32);
     }
 
     body.profile-page .profile-quick-panel .logout-btn {
         border-color: rgba(239, 68, 68, 0.34);
+        box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.18), 0 0 18px rgba(239, 68, 68, 0.22);
+        color: #ffffff;
+    }
+
+    body.profile-page .profile-quick-panel .logout-btn::before {
+        color: rgba(239, 68, 68, 0.34);
     }
 
     @media (max-width: 1100px) {

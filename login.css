@@ -2,21 +2,21 @@
    LOGIN - CYBER CLONE
    ================================ */
 
+/* ================================
+   FONDO LOGIN - ESTILO CYBER_GAME
+   ================================ */
 body.login-page {
-    margin: 0;
-    min-height: 100vh;
-    padding: 0;
+    position: relative;
     overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: 16px;
     background:
-        radial-gradient(circle at 16% 20%, rgba(122, 68, 255, 0.22), transparent 44%),
-        radial-gradient(circle at 82% 84%, rgba(0, 173, 255, 0.18), transparent 38%),
-        linear-gradient(140deg, #1a1040 0%, #090b35 50%, #051a3a 100%);
+        radial-gradient(circle at 5% 50%, rgba(122, 68, 255, 0.32), transparent 40%),
+        radial-gradient(circle at 95% 50%, rgba(0, 173, 255, 0.32), transparent 40%),
+        linear-gradient(180deg, #000000 0%, #000000 100%);
 }
 
-body.login-page .login-grid-overlay {
+body.login-page::before {
+    content: '';
     position: fixed;
     inset: 0;
     pointer-events: none;
@@ -27,7 +27,9 @@ body.login-page .login-grid-overlay {
         linear-gradient(90deg, rgba(95, 139, 232, 0.14) 1px, transparent 1px);
     background-size: 54px 54px, 54px 54px, 27px 27px, 27px 27px;
     opacity: 0.3;
+    z-index: 0;
 }
+
 
 body.login-page .login-shell {
     position: relative;
@@ -42,17 +44,17 @@ body.login-page .login-shell {
 
 body.login-page #main-title {
     margin: 0;
-    width: min(760px, calc(100vw - 24px));
+    width: min(500px, calc(100vw - 24px));
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 5px;
     color: #ddd8ff;
     font-family: 'Share Tech Mono', monospace;
-    font-size: clamp(28px, 4vw, 36px);
+    font-size: clamp(50px, 3vw, 30px);
     letter-spacing: 0.08em;
     font-weight: 700;
-    text-shadow: 0 0 16px rgba(168, 130, 255, 0.34);
+    text-shadow: 0 0 25px rgba(168, 130, 255, 0.34);
     position: fixed;
     top: 12px;
     left: 50%;
@@ -90,6 +92,47 @@ body.login-page .login-card {
         0 0 18px rgba(110, 66, 235, 0.35),
         0 18px 36px rgba(2, 4, 16, 0.4);
     color: #f4eeff;
+}
+
+body.login-page .login-card:hover {
+    transform: translateY(-8px);
+    box-shadow:
+        inset 0 0 0 1px rgba(160, 110, 255, 0.12),
+        0 0 40px rgba(140, 80, 255, 0.32),
+        0 36px 68px rgba(2, 4, 16, 0.55);
+}
+
+body.login-page .login-card::before {
+    content: '';
+    position: absolute;
+    left: -2px;
+    top: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 14px;
+    padding: 2px;
+    background: linear-gradient(90deg, rgba(140,90,255,0.12), rgba(80,160,255,0.08));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    filter: blur(6px) saturate(120%);
+    opacity: 0.9;
+}
+
+body.login-page .login-card::after {
+    content: '';
+    position: absolute;
+    left: 14px;
+    top: 14px;
+    width: 48px;
+    height: 6px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, rgba(201,140,255,0.9), rgba(106,146,255,0.75));
+    filter: blur(8px);
+    opacity: 0.12;
+    pointer-events: none;
 }
 
 body.login-page .corner {
@@ -229,20 +272,21 @@ body.login-page .input-icon-lock::after {
 
 body.login-page .input-wrap input {
     width: 100%;
-    min-height: 36px;
+    min-height: 44px;
     margin: 0;
-    padding: 7px 10px 7px 34px;
-    border-radius: 5px;
+    padding: 10px 12px 10px 40px;
+    border-radius: 8px;
     border: 1px solid rgba(112, 86, 192, 0.48);
-    background: #000000 !important;
+    background: linear-gradient(180deg, #000000 0%, rgba(8,8,12,0.6) 100%) !important;
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff;
     caret-color: #ffffff;
     font-family: 'Rajdhani', sans-serif;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     letter-spacing: 0.01em;
     outline: none;
+    transition: box-shadow 160ms ease, border-color 160ms ease;
 }
 
 body.login-page .input-wrap input:-webkit-autofill,
@@ -266,23 +310,34 @@ body.login-page .input-wrap input:focus {
 }
 
 body.login-page .btn {
-    width: 100%;
-    min-height: 40px;
-    margin-top: 6px;
+    width: min(240px, 100%);
+    min-height: 44px;
+    margin-top: 8px;
     border: 1px solid rgba(183, 118, 255, 0.62);
-    border-radius: 5px;
-    background: linear-gradient(180deg, #7a2fd1 0%, #5d1fa8 100%);
+    border-radius: 8px;
+    background: linear-gradient(180deg, rgba(138, 63, 224, 0.28) 0%, rgba(93, 31, 168, 0.28) 100%);
     color: #fff6ff;
     font-family: 'Rajdhani', sans-serif;
     font-size: 14px;
     letter-spacing: 0.08em;
     font-weight: 800;
     text-transform: uppercase;
-    box-shadow: inset 0 -1px 0 rgba(243, 198, 255, 0.4), 0 0 14px rgba(157, 68, 255, 0.5);
+    box-shadow: 0 0 0 1px rgba(183, 118, 255, 0.18), 0 0 18px rgba(183, 118, 255, 0.22);
+    transition: transform 140ms ease, box-shadow 140ms ease;
+    position: relative;
+    align-self: center;
+}
+
+body.login-page .btn::before {
+    content: '→';
+    position: absolute;
+    right: 14px;
+    font-size: 0.9em;
 }
 
 body.login-page .btn:hover {
-    background: linear-gradient(180deg, #8640db 0%, #6828b7 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 1px rgba(183, 118, 255, 0.28), 0 0 22px rgba(183, 118, 255, 0.32);
 }
 
 body.login-page .toggle-text {
@@ -308,13 +363,13 @@ body.login-page #error-message {
 
 @media (max-width: 560px) {
     body.login-page .login-shell {
-        width: calc(100vw - 20px);
+        width: calc(800px - 20px);
         gap: 18px;
         padding-top: 112px;
     }
 
     body.login-page #main-title {
-        font-size: 24px;
+        font-size: 32px;
         padding-bottom: 12px;
         top: 10px;
     }
@@ -323,3 +378,5 @@ body.login-page #error-message {
         font-size: 38px;
     }
 }
+
+
