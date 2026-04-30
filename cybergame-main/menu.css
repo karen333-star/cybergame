@@ -1,0 +1,1002 @@
+/* ================================
+   MENU PRINCIPAL - ESTILO TERMINAL
+   ================================ */
+
+body.menu-page {
+    position: relative;
+    overflow: hidden;
+    padding: 16px;
+    gap: 0;
+    background:
+        radial-gradient(circle at 5% 50%, rgba(122, 68, 255, 0.32), transparent 40%),
+        radial-gradient(circle at 95% 50%, rgba(0, 173, 255, 0.32), transparent 40%),
+        linear-gradient(180deg, #000000 0%, #000000 100%);
+}
+
+body.menu-page .menu-grid-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(rgba(131, 184, 255, 0.26) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(131, 184, 255, 0.26) 1px, transparent 1px),
+        linear-gradient(rgba(95, 139, 232, 0.14) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(95, 139, 232, 0.14) 1px, transparent 1px);
+    background-size: 54px 54px, 54px 54px, 27px 27px, 27px 27px;
+    opacity: 0.3;
+    z-index: 0;
+}
+
+body.menu-page .menu-container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    min-height: calc(100vh - 32px);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 112px;
+}
+
+body.menu-page .menu-card {
+    width: min(560px, 96%);
+    padding: 32px 18px 22px;
+    border-radius: 10px;
+    border: 1px solid rgba(123, 88, 255, 0.78);
+    background: linear-gradient(180deg, rgba(4, 20, 44, 0.96) 0%, rgba(4, 15, 36, 0.98) 100%);
+    box-shadow:
+        0 0 0 1px rgba(117, 195, 255, 0.1),
+        0 0 26px rgba(95, 63, 214, 0.38),
+        inset 0 0 40px rgba(6, 145, 255, 0.08);
+    color: #edf9ff;
+    position: relative;
+    margin-top: 0;
+}
+
+body.menu-page .menu-corner {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #8058ff;
+    filter: drop-shadow(0 0 8px rgba(128, 88, 255, 0.6));
+}
+
+body.menu-page .menu-corner-tl {
+    top: -1px;
+    left: -1px;
+    border-right: none;
+    border-bottom: none;
+    border-radius: 10px 0 0 0;
+}
+
+body.menu-page .menu-corner-tr {
+    top: -1px;
+    right: -1px;
+    border-left: none;
+    border-bottom: none;
+    border-radius: 0 10px 0 0;
+}
+
+body.menu-page .menu-corner-bl {
+    left: -1px;
+    bottom: -1px;
+    border-right: none;
+    border-top: none;
+    border-radius: 0 0 0 10px;
+}
+
+body.menu-page .menu-corner-br {
+    right: -1px;
+    bottom: -1px;
+    border-left: none;
+    border-top: none;
+    border-radius: 0 0 10px 0;
+}
+
+body.menu-page #main-title,
+body.menu-page .menu-title {
+    margin: 0;
+    width: min(760px, calc(100vw - 24px));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #ddd8ff;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(40px, 6vw, 72px);
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    text-shadow: 0 0 16px rgba(168, 130, 255, 0.34);
+    position: fixed;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    padding-bottom: 16px;
+    line-height: 1;
+}
+
+body.menu-page #main-title::after,
+body.menu-page .menu-title::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    width: min(1200px, calc(100vw - 20px));
+    transform: translateX(-50%);
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(141, 102, 255, 0.55) 20%, rgba(106, 146, 255, 0.5) 80%, transparent 100%);
+}
+
+body.menu-page .brand-shield {
+    color: #9b5dff;
+    font-size: 0.9em;
+}
+
+body.menu-page .menu-welcome {
+    margin: 14px 0 18px;
+    text-align: center;
+    color: #dce9f2;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 24px;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+    position: relative;
+}
+
+body.menu-page .menu-welcome::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 2px;
+    margin-top: 14px;
+    background: linear-gradient(90deg, transparent 0%, rgba(82, 123, 247, 0.78) 22%, rgba(20, 238, 255, 0.9) 50%, rgba(82, 123, 247, 0.78) 78%, transparent 100%);
+    box-shadow: 0 0 18px rgba(28, 192, 255, 0.28);
+}
+
+body.menu-page .menu-opciones {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+body.menu-page .menu-btn {
+    width: min(240px, 100%);
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 10px 14px 10px 30px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #d5ebf5;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(18px, 2.2vw, 24px);
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    border: 1px solid rgba(97, 133, 255, 0.62);
+    background: linear-gradient(180deg, rgba(23, 31, 78, 0.28) 0%, rgba(21, 28, 68, 0.28) 100%);
+    box-shadow: 0 0 0 1px rgba(97, 133, 255, 0.18), 0 0 18px rgba(97, 133, 255, 0.22);
+    position: relative;
+}
+
+body.menu-page .menu-btn::before {
+    content: '←';
+    position: absolute;
+    left: 12px;
+    font-size: 0.8em;
+}
+
+body.menu-page .menu-btn::after {
+    content: '';
+}
+
+body.menu-page .menu-btn .menu-icon {
+    font-size: 0.58em;
+    line-height: 1;
+    transform: translateY(-1px);
+}
+
+body.menu-page .menu-btn-primary {
+    border-color: rgba(35, 231, 255, 0.95);
+    color: #c4f4ff;
+    background: linear-gradient(180deg, rgba(17, 81, 111, 0.28) 0%, rgba(12, 65, 92, 0.28) 100%);
+    box-shadow: 0 0 0 1px rgba(35, 231, 255, 0.18), 0 0 18px rgba(35, 231, 255, 0.22);
+}
+
+body.menu-page .menu-btn-primary::before {
+    content: '←';
+    color: rgba(35, 231, 255, 0.95);
+}
+
+body.menu-page .menu-btn-secondary {
+    border-color: rgba(124, 92, 255, 0.74);
+    color: #d2e0f7;
+    background: linear-gradient(180deg, rgba(32, 35, 82, 0.28) 0%, rgba(27, 31, 71, 0.28) 100%);
+    box-shadow: 0 0 0 1px rgba(124, 92, 255, 0.18), 0 0 18px rgba(124, 92, 255, 0.22);
+}
+
+body.menu-page .menu-btn-secondary::before {
+    content: '';
+}
+
+body.menu-page .menu-btn-danger {
+    margin-top: 10px;
+    border-color: rgba(255, 95, 145, 0.74);
+    color: #ffd0dd;
+    background: linear-gradient(180deg, rgba(55, 33, 65, 0.28) 0%, rgba(45, 28, 53, 0.28) 100%);
+    box-shadow: 0 0 0 1px rgba(255, 95, 145, 0.18), 0 0 18px rgba(255, 95, 145, 0.22);
+}
+
+body.menu-page .menu-btn-danger::before {
+    content: '⊕';
+    color: rgba(255, 95, 145, 0.74);
+}
+
+body.menu-page .menu-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 1px rgba(97, 133, 255, 0.28), 0 0 22px rgba(97, 133, 255, 0.32);
+}
+
+body.menu-page .menu-btn-primary:hover {
+    box-shadow: 0 0 0 1px rgba(35, 231, 255, 0.28), 0 0 22px rgba(35, 231, 255, 0.32);
+}
+
+body.menu-page .menu-btn-secondary:hover {
+    box-shadow: 0 0 0 1px rgba(124, 92, 255, 0.28), 0 0 22px rgba(124, 92, 255, 0.32);
+}
+
+body.menu-page .menu-btn-danger:hover {
+    box-shadow: 0 0 0 1px rgba(255, 95, 145, 0.28), 0 0 22px rgba(255, 95, 145, 0.32);
+}
+
+body.menu-page .menu-status {
+    margin: 20px 0 0;
+    text-align: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    color: #18ffd4;
+    text-shadow: 0 0 12px rgba(32, 255, 220, 0.5);
+}
+
+body.menu-page .menu-status-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    margin-right: 9px;
+    background: #18ffd4;
+    box-shadow: 0 0 12px rgba(24, 255, 212, 0.88);
+    vertical-align: middle;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 900px) {
+    body.menu-page {
+        padding: 14px;
+    }
+
+    body.menu-page .menu-container {
+        min-height: calc(100vh - 28px);
+        padding-top: 96px;
+    }
+
+    body.menu-page .menu-card {
+        padding: 26px 16px 22px;
+    }
+
+    body.menu-page #main-title,
+    body.menu-page .menu-title {
+        font-size: 32px;
+        padding-bottom: 12px;
+        top: 10px;
+    }
+
+    body.menu-page .menu-welcome {
+        font-size: 20px;
+        margin: 12px 0 16px;
+    }
+
+    body.menu-page .menu-btn {
+        font-size: clamp(16px, 4.8vw, 22px);
+        min-height: 50px;
+    }
+
+    body.menu-page .menu-status {
+        font-size: 10px;
+        letter-spacing: 0.13em;
+    }
+}
+
+/* Tutorial modal styles */
+.tutorial-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(2,6,12,0.65);
+    backdrop-filter: blur(6px) contrast(0.95);
+    z-index: 9999;
+    padding: 24px;
+}
+
+.tutorial-modal {
+    width: min(1100px, 96%);
+    max-height: 90vh;
+    overflow: auto;
+    background: linear-gradient(180deg, rgba(6,12,24,0.98), rgba(2,8,20,0.98));
+    border: 1px solid rgba(120,160,255,0.12);
+    box-shadow: 0 12px 40px rgba(6,18,36,0.7), inset 0 0 40px rgba(10,120,180,0.04);
+    border-radius: 10px;
+    padding: 22px;
+    color: #e6f8ff;
+    position: relative;
+}
+
+.tutorial-close {
+    position: absolute;
+    right: 12px;
+    top: 10px;
+    background: transparent;
+    border: none;
+    color: #cfefff;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.tutorial-title {
+    margin: 4px 0 12px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.08em;
+    color: #bff6ff;
+}
+
+
+.tutorial-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    width: 100%;
+}
+
+.tutorial-image-wrap {
+    background: rgba(3,12,20,0.4);
+    border-radius: 8px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tutorial-image-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.tutorial-image-wrap img {
+    width: 100%;
+    max-width: 950px;
+    height: auto;
+    max-height: 72vh;
+    object-fit: contain;
+    border-radius: 6px;
+    box-shadow: 0 0 24px #0ff3, 0 2px 32px #000a;
+    display: block;
+    margin: 0 auto;
+}
+
+.tutorial-text-scroll {
+    width: 100%;
+    max-width: 900px;
+    max-height: 180px;
+    overflow-y: auto;
+    margin: 0 auto;
+    background: rgba(10,30,40,0.32);
+    border-radius: 8px;
+    box-shadow: 0 2px 16px #0004;
+    padding: 0;
+}
+
+.tutorial-text {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px;
+    line-height: 1.5;
+    color: #d9f6ff;
+    padding: 12px 18px 10px 18px;
+    text-align: center;
+    margin: 0;
+    width: 100%;
+    display: block;
+}
+
+.tutorial-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 14px;
+}
+
+.tutorial-btn {
+    padding: 10px 16px;
+    border-radius: 8px;
+    background: linear-gradient(180deg, rgba(12,40,60,0.9), rgba(8,24,40,0.9));
+    border: 1px solid rgba(100,160,255,0.14);
+    color: #dff9ff;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.tutorial-step-indicator {
+    color: #bfeaff;
+    font-family: 'Share Tech Mono', monospace;
+}
+
+@media (max-width: 900px) {
+    .tutorial-body { grid-template-columns: 1fr; }
+    .tutorial-text { order: 2; }
+}
+/* ================================
+   AJUSTE BOTONES MENÚ VERTICALES
+   ================================ */
+
+body.menu-page .menu-opciones {
+    display: flex;
+    flex-direction: column;   /* botones en columna */
+    align-items: center;      /* centrados horizontalmente */
+    justify-content: center;  /* centrados verticalmente */
+    gap: 18px;                /* espacio uniforme entre botones */
+    width: 100%;              /* ocupar todo el ancho */
+    margin-top: 20px;
+}
+/* Effects radar visual under the EFECTOS button */
+.effects-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 10px 26px;
+    box-sizing: border-box;
+    margin-top: 10px;
+    min-height: 152px;
+    width: 100%;
+}
+
+.soc-panel.nav-panel { overflow: visible; }
+
+.effects-radar {
+    width: 132px;
+    height: 132px;
+    position: relative;
+    border-radius: 50%;
+    display: inline-block;
+    background:
+        radial-gradient(circle at 50% 50%, rgba(0, 215, 255, 0.2) 0 14%, transparent 15%),
+        radial-gradient(circle at 50% 50%, rgba(0,200,255,0.12) 0%, transparent 40%);
+    border: 1px solid rgba(117, 236, 255, 0.55);
+    z-index: 6;
+    pointer-events: none;
+    box-shadow:
+        0 0 0 1px rgba(117, 236, 255, 0.12),
+        0 0 22px rgba(0, 200, 255, 0.2),
+        inset 0 0 24px rgba(0, 200, 255, 0.18);
+}
+
+.effects-radar::before {
+    /* concentric rings */
+    content: '';
+    position: absolute;
+    inset: 11px;
+    border-radius: 50%;
+    background: repeating-radial-gradient(circle at 50% 50%, rgba(0, 225, 255, 0.2) 0 7px, transparent 7px 15px);
+    opacity: 0.95;
+    box-shadow: inset 0 0 24px rgba(0, 200, 255, 0.18);
+}
+
+.effects-radar::after {
+    /* central ping and needle */
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 38%;
+    border-radius: 4px;
+    background: linear-gradient(180deg, rgba(95,220,255,0), rgba(95,220,255,0.92), rgba(95,220,255,0));
+    box-shadow: 0 0 18px rgba(95,220,255,0.35);
+    transform-origin: center top;
+    animation: effects-radar-sweep 2.6s linear infinite;
+}
+
+.effects-radar .ping {
+    position: absolute;
+    left: 50%;
+    top: 54%;
+    transform: translate(-50%, -50%);
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+    background: radial-gradient(circle, #ffffff 0%, #93f7ff 30%, #00b8d9 70%);
+    box-shadow:
+        0 0 0 4px rgba(0, 200, 255, 0.09),
+        0 0 30px rgba(0,200,255,0.5),
+        0 0 60px rgba(0,200,255,0.18);
+}
+
+@media (max-width: 900px) {
+    .effects-visual { min-height: 122px; }
+    .effects-radar {
+        width: 108px;
+        height: 108px;
+    }
+}
+
+@keyframes effects-radar-sweep {
+    0% { transform: translateX(-50%) rotate(0deg); }
+    100% { transform: translateX(-50%) rotate(360deg); }
+}
+ 
+
+body.menu-page .menu-btn {
+    width: 100%;              /* cada botón ocupa todo el ancho disponible */
+    max-width: 600px;         /* ancho máximo para que se vean largos y proporcionados */
+    min-height: 70px;         /* altura uniforme */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #ffffff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Botón 1: estilo cyan */
+body.menu-page .menu-btn-primary {
+    border-color: #00ffff;
+    background: linear-gradient(180deg, rgba(0, 255, 255, 0.12), rgba(0, 255, 255, 0.08));
+    box-shadow: 0 0 12px rgba(0, 255, 255, 0.4);
+    text-shadow: 0 0 2px #ffffff, 0 0 8px rgba(0, 255, 255, 0.6);
+}
+
+/* Botón 2: estilo púrpura */
+body.menu-page .menu-btn-secondary {
+    border-color: #9448ff;
+    background: linear-gradient(180deg, rgba(148, 72, 255, 0.12), rgba(148, 72, 255, 0.08));
+    box-shadow: 0 0 12px rgba(148, 72, 255, 0.4);
+    text-shadow: 0 0 2px #ffffff, 0 0 8px rgba(148, 72, 255, 0.6);
+}
+
+/* Botón 3: estilo rojo */
+body.menu-page .menu-btn-danger {
+    border-color: #ff4c80;
+    background: linear-gradient(180deg, rgba(255, 76, 128, 0.12), rgba(255, 76, 128, 0.08));
+    box-shadow: 0 0 12px rgba(255, 76, 128, 0.4);
+    text-shadow: 0 0 2px #ffffff, 0 0 8px rgba(255, 76, 128, 0.6);
+}
+
+/* Hover uniforme */
+body.menu-page .menu-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px currentColor;
+}
+/* ================================
+   AJUSTE PANEL MENÚ MÁS CORTO
+   ================================ */
+
+/* Contenedor principal del menú */
+body.menu-page .menu-container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    min-height: auto;             /* ya no fuerza altura completa */
+    display: flex;
+    align-items: flex-start;      /* recuadro más arriba */
+    justify-content: center;
+    padding: 40px 0;              /* espacio arriba y abajo */
+}
+
+/* Recuadro del menú más corto */
+body.menu-page .menu-card {
+    width: min(600px, 90%);       /* ancho igual, no más delgado */
+    max-height: 500px;            /* límite de altura para hacerlo más corto */
+    padding: 24px 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(123, 88, 255, 0.78);
+    background: linear-gradient(180deg, rgba(4, 20, 44, 0.96), rgba(4, 15, 36, 0.98));
+    box-shadow: 0 0 20px rgba(95, 63, 214, 0.38), inset 0 0 30px rgba(6, 145, 255, 0.08);
+    color: #edf9ff;
+    position: relative;
+    overflow-y: auto;             /* si hay muchos botones, se activa scroll */
+}
+
+/* Título CYBER_GAME fuera del recuadro */
+body.menu-page .menu-title-global {
+    text-align: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(40px, 6vw, 60px);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #12dcff;
+    text-shadow: 0 0 24px rgba(18, 220, 255, 0.6);
+    margin-bottom: 20px;          /* espacio entre título y recuadro */
+}
+
+/* Botones verticales largos y centrados */
+body.menu-page .menu-opciones {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+}
+
+body.menu-page .menu-btn {
+    width: 100%;
+    max-width: 500px;             /* ancho uniforme */
+    min-height: 65px;             /* altura de cada botón */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: 10px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* ================================
+   ELIMINAR LÍNEA DE ESTADO INFERIOR
+   ================================ */
+
+body.menu-page .menu-status,
+body.menu-page .menu-status-dot {
+    display: none !important;
+}
+
+/* ================================
+   ELIMINAR BARRAS Y ESTADO INFERIOR
+   ================================ */
+
+/* Quitar la barra de estado inferior */
+body.menu-page .menu-status,
+body.menu-page .menu-status-dot {
+    display: none !important;
+}
+
+/* Quitar esquinas decorativas del recuadro */
+body.menu-page .menu-corner,
+body.menu-page .menu-corner-tl,
+body.menu-page .menu-corner-tr,
+body.menu-page .menu-corner-bl,
+body.menu-page .menu-corner-br {
+    display: none !important;
+}
+
+/* Ajustar el recuadro para ocupar toda la pantalla */
+body.menu-page .menu-container {
+    min-height: 100vh;          /* ocupa toda la altura de la pantalla */
+    padding: 0;                 /* sin márgenes extra */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+body.menu-page .menu-card {
+    width: 100%;                /* ocupa todo el ancho */
+    max-width: 100%;            /* sin límite de ancho */
+    min-height: 100vh;          /* ocupa toda la altura */
+    border-radius: 0;           /* sin bordes redondeados */
+    margin: 0;
+}
+
+
+/* ================================
+   ELIMINAR RECUADRO Y BARRAS DEL MENÚ
+   ================================ */
+
+/* Quitar el recuadro externo */
+body.menu-page .menu-card {
+    background: none !important;   /* sin fondo */
+    border: none !important;       /* sin borde */
+    box-shadow: none !important;   /* sin sombra */
+    padding: 0 !important;         /* sin relleno extra */
+    width: 100% !important;        /* ocupa todo el ancho */
+    min-height: auto !important;   /* altura automática */
+    margin: 0 !important;
+}
+
+/* Quitar esquinas decorativas */
+body.menu-page .menu-corner,
+body.menu-page .menu-corner-tl,
+body.menu-page .menu-corner-tr,
+body.menu-page .menu-corner-bl,
+body.menu-page .menu-corner-br {
+    display: none !important;
+}
+
+/* Ajustar el contenedor para ocupar toda la pantalla */
+body.menu-page .menu-container {
+    min-height: 100vh;             /* ocupa toda la altura */
+    display: flex;
+    flex-direction: column;        /* título arriba, botones debajo */
+    align-items: center;
+    justify-content: center;
+    gap: 24px;                     /* espacio entre título y botones */
+    padding: 40px 0;
+}
+
+/* Título global */
+body.menu-page .menu-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(40px, 6vw, 60px);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #12dcff;
+    text-shadow: 0 0 24px rgba(18, 220, 255, 0.6);
+    margin-bottom: 20px;
+}
+
+/* Botones verticales largos y centrados */
+body.menu-page .menu-opciones {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    width: 100%;
+}
+
+body.menu-page .menu-btn {
+    width: 100%;
+    max-width: 500px;              /* ancho uniforme */
+    min-height: 70px;              /* altura uniforme */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: 10px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* ================================
+   AJUSTE MENÚ SUPERIOR SIN SCROLL
+   ================================ */
+
+/* Contenedor principal */
+body.menu-page .menu-container {
+    min-height: auto;             /* no fuerza altura completa */
+    height: auto;                 /* se adapta al contenido */
+    display: flex;
+    flex-direction: column;       /* título arriba, botones debajo */
+    align-items: center;
+    justify-content: flex-start;  /* todo hacia la parte superior */
+    padding: 40px 0 20px;         /* espacio arriba y abajo */
+}
+
+/* Recuadro del menú reducido */
+body.menu-page .menu-card {
+    width: min(600px, 90%);       /* ancho uniforme */
+    height: auto;                 /* altura automática */
+    max-height: none;             /* sin límite de altura */
+    padding: 20px;
+    background: none;             /* sin fondo */
+    border: none;                 /* sin borde */
+    box-shadow: none;             /* sin sombra */
+    margin: 0;
+}
+
+/* Título global */
+body.menu-page .menu-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(40px, 6vw, 60px);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #12dcff;
+    text-shadow: 0 0 24px rgba(18, 220, 255, 0.6);
+    margin-bottom: 20px;
+}
+
+/* Botones verticales largos y centrados */
+body.menu-page .menu-opciones {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+}
+
+body.menu-page .menu-btn {
+    width: 100%;
+    max-width: 500px;             /* ancho uniforme */
+    min-height: 65px;             /* altura uniforme */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: 10px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* ================================
+   MENÚ COMPLETO SIN SCROLL
+   ================================ */
+
+/* Contenedor principal */
+body.menu-page .menu-container {
+    min-height: 100vh;             /* ocupa toda la pantalla */
+    height: auto;                  /* se adapta al contenido */
+    display: flex;
+    flex-direction: column;        /* título arriba, botones debajo */
+    align-items: center;
+    justify-content: flex-start;   /* todo hacia arriba */
+    padding: 40px 0;               /* espacio arriba y abajo */
+    overflow: hidden;              /* evita scroll */
+}
+
+/* Eliminar recuadro externo */
+body.menu-page .menu-card {
+    background: none !important;   /* sin fondo */
+    border: none !important;       /* sin borde */
+    box-shadow: none !important;   /* sin sombra */
+    padding: 0 !important;         /* sin relleno extra */
+    width: 100% !important;        /* ocupa todo el ancho */
+    height: auto !important;       /* altura automática */
+    max-height: none !important;   /* sin límite de altura */
+    margin: 0 !important;
+    overflow: visible !important;  /* muestra todo el contenido */
+}
+
+/* Título */
+body.menu-page .menu-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(40px, 6vw, 60px);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #12dcff;
+    text-shadow: 0 0 24px rgba(18, 220, 255, 0.6);
+    margin-bottom: 20px;
+}
+
+/* Botones verticales largos y centrados */
+body.menu-page .menu-opciones {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    width: 100%;
+}
+
+body.menu-page .menu-btn {
+    width: 100%;
+    max-width: 500px;              /* ancho uniforme */
+    min-height: 70px;              /* altura uniforme */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: 10px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+
+/* ================================
+   QUITAR PREFIJO >_ DEL TÍTULO
+   ================================ */
+
+body.menu-page .menu-title-prefix {
+    display: none !important;   /* oculta el prefijo */
+    content: none !important;   /* asegura que no se muestre nada */
+}
+
+/* ================================
+   AJUSTE FINAL DE ENCABEZADO DEL MENÚ
+   ================================ */
+
+body.menu-page .menu-container {
+    min-height: calc(100vh - 32px) !important;
+    padding-top: 120px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    overflow: hidden !important;
+}
+
+body.menu-page .menu-card {
+    width: min(560px, 96%) !important;
+    padding: 18px 18px 22px !important;
+    margin: 0 !important;
+    background: linear-gradient(180deg, rgba(4, 20, 44, 0.96) 0%, rgba(4, 15, 36, 0.98) 100%) !important;
+    border: 1px solid rgba(123, 88, 255, 0.78) !important;
+    border-radius: 10px !important;
+    box-shadow:
+        0 0 0 1px rgba(117, 195, 255, 0.1),
+        0 0 26px rgba(95, 63, 214, 0.38),
+        inset 0 0 40px rgba(6, 145, 255, 0.08) !important;
+    overflow: visible !important;
+}
+
+body.menu-page #main-title,
+body.menu-page .menu-title {
+    font-size: clamp(30px, 4vw, 46px) !important;
+    top: 10px !important;
+    padding-bottom: 0 !important;
+    line-height: 1 !important;
+}
+
+body.menu-page #main-title::after,
+body.menu-page .menu-title::after {
+    content: none !important;
+    display: none !important;
+}
+
+body.menu-page .menu-welcome {
+    margin: 8px 0 16px !important;
+    font-size: 18px !important;
+    line-height: 1.1 !important;
+}
+
+body.menu-page .menu-opciones {
+    gap: 14px !important;
+}
+
+@media (max-width: 900px) {
+    body.menu-page .menu-container {
+        padding-top: 104px !important;
+    }
+
+    body.menu-page #main-title,
+    body.menu-page .menu-title {
+        font-size: clamp(26px, 6vw, 34px) !important;
+    }
+
+    body.menu-page .menu-welcome {
+        font-size: 16px !important;
+        margin: 6px 0 14px !important;
+    }
+}
+
+/* ================================
+   SOMBRAS DE BOTONES POR COLOR
+   ================================ */
+
+body.menu-page .menu-btn {
+    --btn-glow: rgba(97, 133, 255, 0.30) !important;
+    box-shadow: 0 0 0 1px var(--btn-glow), 0 0 18px var(--btn-glow) !important;
+}
+
+body.menu-page .menu-btn-primary {
+    --btn-glow: rgba(35, 231, 255, 0.36) !important;
+}
+
+body.menu-page .menu-btn-secondary {
+    --btn-glow: rgba(124, 92, 255, 0.36) !important;
+}
+
+body.menu-page .menu-btn-danger {
+    --btn-glow: rgba(255, 95, 145, 0.36) !important;
+}
+
+body.menu-page .menu-btn:hover {
+    box-shadow: 0 0 0 1px var(--btn-glow), 0 0 24px var(--btn-glow) !important;
+}

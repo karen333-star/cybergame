@@ -1,0 +1,401 @@
+/* ================================
+   REGISTER - CYBER CLONE
+   ================================ */
+
+body.register-page {
+    margin: 0;
+    min-height: 100vh;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+        radial-gradient(circle at 16% 20%, rgba(122, 68, 255, 0.22), transparent 44%),
+        radial-gradient(circle at 82% 84%, rgba(0, 173, 255, 0.18), transparent 38%),
+        linear-gradient(140deg, #1a1040 0%, #090b35 50%, #051a3a 100%);
+}
+
+body.register-page .register-grid-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(rgba(131, 184, 255, 0.26) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(131, 184, 255, 0.26) 1px, transparent 1px),
+        linear-gradient(rgba(95, 139, 232, 0.14) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(95, 139, 232, 0.14) 1px, transparent 1px);
+    background-size: 54px 54px, 54px 54px, 27px 27px, 27px 27px;
+    opacity: 0.3;
+}
+
+body.register-page .register-shell {
+    position: relative;
+    z-index: 1;
+    width: min(470px, calc(100vw - 26px));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding-top: 112px;
+}
+
+body.register-page #main-title {
+    margin: 0;
+    width: min(760px, calc(100vw - 24px));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #ddd8ff;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(26px, 3.4vw, 34px);
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    text-shadow: 0 0 16px rgba(168, 130, 255, 0.34);
+    position: fixed;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    padding-bottom: 14px;
+}
+
+body.register-page #main-title::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    width: min(1200px, calc(100vw - 18px));
+    transform: translateX(-50%);
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(141, 102, 255, 0.55) 20%, rgba(106, 146, 255, 0.5) 80%, transparent 100%);
+}
+
+body.register-page .brand-shield {
+    color: #9b5dff;
+    font-size: 0.9em;
+}
+
+body.register-page .register-card {
+    width: 100%;
+    max-width: 360px;
+    position: relative;
+    padding: 24px 14px 14px;
+    border-radius: 8px;
+    background: linear-gradient(180deg, rgba(17, 16, 53, 0.9) 0%, rgba(11, 18, 47, 0.96) 100%);
+    border: 1px solid rgba(132, 89, 240, 0.5);
+    box-shadow:
+        inset 0 0 0 1px rgba(127, 82, 232, 0.12),
+        0 0 16px rgba(110, 66, 235, 0.34),
+        0 18px 36px rgba(2, 4, 16, 0.4);
+    color: #f4eeff;
+}
+
+body.register-page .corner {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border: 2px solid rgba(162, 116, 255, 0.84);
+}
+
+body.register-page .corner-tl {
+    top: -1px;
+    left: -1px;
+    border-right: 0;
+    border-bottom: 0;
+    border-radius: 8px 0 0 0;
+}
+
+body.register-page .corner-tr {
+    top: -1px;
+    right: -1px;
+    border-left: 0;
+    border-bottom: 0;
+    border-radius: 0 8px 0 0;
+}
+
+body.register-page .corner-bl {
+    left: -1px;
+    bottom: -1px;
+    border-right: 0;
+    border-top: 0;
+    border-radius: 0 0 0 8px;
+}
+
+body.register-page .corner-br {
+    right: -1px;
+    bottom: -1px;
+    border-left: 0;
+    border-top: 0;
+    border-radius: 0 0 8px 0;
+}
+
+body.register-page .register-card h2 {
+    margin: 0 0 14px;
+    text-align: center;
+    color: #dcb8ff;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-shadow:
+        0 0 6px rgba(201, 140, 255, 0.65),
+        0 0 14px rgba(153, 86, 255, 0.45);
+}
+
+body.register-page #registerForm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+body.register-page .form-group {
+    margin: 0;
+}
+
+body.register-page .form-group label {
+    display: block;
+    margin-bottom: 6px;
+    color: #9eb4d8;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+}
+
+body.register-page .input-wrap {
+    position: relative;
+}
+
+body.register-page .input-icon {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    color: #a66eff;
+    pointer-events: none;
+}
+
+body.register-page .input-icon-mail::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 2px;
+    width: 12px;
+    height: 8px;
+    border: 1.6px solid currentColor;
+    border-radius: 2px;
+}
+
+body.register-page .input-icon-mail::after {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 4px;
+    width: 8px;
+    height: 1.6px;
+    background: currentColor;
+    transform: rotate(-28deg);
+}
+
+body.register-page .input-icon-user::before {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 0;
+    width: 6px;
+    height: 6px;
+    border: 1.6px solid currentColor;
+    border-radius: 999px;
+}
+
+body.register-page .input-icon-user::after {
+    content: '';
+    position: absolute;
+    left: 1px;
+    bottom: 0;
+    width: 10px;
+    height: 5px;
+    border: 1.6px solid currentColor;
+    border-top: 0;
+    border-radius: 0 0 7px 7px;
+}
+
+body.register-page .input-icon-lock::before {
+    content: '';
+    position: absolute;
+    left: 1px;
+    bottom: 0;
+    width: 10px;
+    height: 7px;
+    border: 1.6px solid currentColor;
+    border-radius: 2px;
+}
+
+body.register-page .input-icon-lock::after {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: -2px;
+    width: 6px;
+    height: 5px;
+    border: 1.6px solid currentColor;
+    border-bottom: 0;
+    border-radius: 6px 6px 0 0;
+}
+
+body.register-page .input-icon-check::before {
+    content: '';
+    position: absolute;
+    left: 1px;
+    top: 1px;
+    width: 10px;
+    height: 10px;
+    border: 1.6px solid #28de75;
+    border-radius: 999px;
+}
+
+body.register-page .input-icon-check::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    width: 4px;
+    height: 2px;
+    border-left: 1.6px solid #28de75;
+    border-bottom: 1.6px solid #28de75;
+    transform: rotate(-45deg);
+}
+
+body.register-page .input-wrap input {
+    width: 100%;
+    min-height: 35px;
+    margin: 0;
+    padding: 7px 10px 7px 32px;
+    border-radius: 4px;
+    border: 1px solid rgba(110, 84, 194, 0.44);
+    background: #11142f;
+    color: #ffffff;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    outline: none;
+}
+
+body.register-page .input-wrap input::placeholder {
+    color: #ffffff;
+    opacity: 0.8;
+}
+
+body.register-page .input-wrap input:focus {
+    border-color: #ab6cff;
+    box-shadow: 0 0 0 1px rgba(171, 108, 255, 0.28), 0 0 12px rgba(145, 89, 255, 0.24);
+}
+
+body.register-page .input-wrap-success input {
+    border-color: rgba(45, 217, 116, 0.82);
+    box-shadow: 0 0 0 1px rgba(45, 217, 116, 0.22), 0 0 12px rgba(45, 217, 116, 0.2);
+}
+
+body.register-page .input-trail {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 26px;
+    height: 4px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #28df74 0%, #2de57a 100%);
+    box-shadow: 0 0 8px rgba(45, 229, 122, 0.5);
+}
+
+body.register-page .input-ok {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    border: 1.6px solid #28de75;
+    border-radius: 999px;
+}
+
+body.register-page .btn {
+    width: min(240px, 100%);
+    min-height: 44px;
+    margin-top: 6px;
+    border: 1px solid rgba(183, 118, 255, 0.62);
+    border-radius: 4px;
+    background: linear-gradient(180deg, rgba(168, 77, 255, 0.28), rgba(135, 46, 242, 0.28));
+    color: #fff6ff;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    font-weight: 800;
+    text-transform: uppercase;
+    box-shadow: 0 0 0 1px rgba(183, 118, 255, 0.18), 0 0 18px rgba(183, 118, 255, 0.22);
+    transition: transform 140ms ease, box-shadow 140ms ease;
+    position: relative;
+    padding-right: 28px;
+    align-self: center;
+}
+
+body.register-page .btn::before {
+    content: '\u2192';
+    position: absolute;
+    right: 12px;
+    font-size: 0.9em;
+}
+
+body.register-page .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 1px rgba(183, 118, 255, 0.28), 0 0 22px rgba(183, 118, 255, 0.32);
+}
+
+body.register-page #passwordHelp {
+    color: #9caad3;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 10px;
+    min-height: 14px;
+}
+
+body.register-page .toggle-text {
+    margin: 10px 0 0;
+    text-align: center;
+    color: #98a6cc;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+}
+
+body.register-page .toggle-text a {
+    color: #c4b7ff;
+    text-decoration: underline;
+    font-weight: 700;
+}
+
+body.register-page #errorDiv {
+    margin-top: 10px !important;
+    color: #ff9eb3 !important;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px;
+}
+
+@media (max-width: 560px) {
+    body.register-page .register-shell {
+        width: calc(100vw - 18px);
+        gap: 16px;
+        padding-top: 100px;
+    }
+
+    body.register-page #main-title {
+        font-size: 22px;
+    }
+
+    body.register-page .register-card {
+        max-width: 100%;
+    }
+}

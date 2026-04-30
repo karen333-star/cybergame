@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>CYBERGAME - Login</title>
+    <link rel="stylesheet" href="config.css?v=20260404">
+    <link rel="stylesheet" href="partida.css?v=20260429">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="juego.css">
+    <link rel="stylesheet" href="profile.css"> 
+    <link rel="stylesheet" href="menu.css"> 
+</head>
+<body>
+
+<div class="card">
+
+    <!-- LOGIN -->
+    <div id="login">
+        <div class="title">CYBERGAME</div>
+        <div class="subtitle">Iniciar Sesiiiiiiiiiiiiión</div>
+
+        <form id="formLogin" action="index.php" method="post">
+            <input type="hidden" name="accion" value="login">
+            <input type="text" name="identidad" required placeholder="Correo o nombre de usuario">
+            <input type="password" name="password" required placeholder="Contraseña">
+            <button type="submit">Iniciar Sesión</button>
+        </form>
+
+        <div class="link" onclick="mostrarForgot()">¿Olvidaste tu contraseña?</div>
+        <div class="link" onclick="mostrarRegistro()">Registrarse</div>
+    </div>
+
+    <!-- REGISTRO -->
+    <div id="register" class="hidden">
+        <div class="title">CYBERGAME</div>
+        <div class="subtitle">Crear Cuenta</div>
+
+        <form id="formRegister" action="index.php" method="post">
+            <input type="hidden" name="accion" value="registro">
+            <input type="email" name="email" required placeholder="Correo electrónico">
+            <input type="text" name="nombre_usuario" required placeholder="Nombre de usuario">
+            <input type="password" name="password" required placeholder="Contraseña (7+ chars, 1 mayús, 1 número)">
+            <input type="password" name="password_confirm" required placeholder="Confirmar contraseña">
+            <button type="submit">Registrarse</button>
+        </form>
+
+        <div class="link" onclick="mostrarLogin()">Volver a Iniciar Sesión</div>
+    </div>
+
+
+
+    <!-- RECUPERAR CONTRASEÑA -->
+    <div id="forgot" class="hidden">
+        <div class="title">CYBERGAME</div>
+        <div class="subtitle">Recuperar Contraseña</div>
+
+        <form id="formForgot" onsubmit="return false;">
+            <label for="correoForgot">Correo electrónico</label>
+            <input type="email" id="correoForgot" required placeholder="Ingresa tu correo">
+            <button type="button" onclick="enviarCodigoRecuperacion()">Enviar Código</button>
+        </form>
+
+        <div class="link" onclick="mostrarLogin()">Volver a Iniciar Sesión</div>
+    </div>
+
+
+    <!-- VERIFICAR CÓDIGO RECUPERACIÓN -->
+    <div id="verificarCodigo" class="hidden">
+        <div class="title">CYBERGAME</div>
+        <div class="subtitle">Verifica tu código</div>
+
+        <form id="formVerificar" onsubmit="return false;">
+            <label for="codigo">Código de recuperación</label>
+            <input type="text" id="codigo" required placeholder="Ingresa el código recibido">
+            <button type="button" onclick="verificarCodigoRecuperacion()">Verificar Código</button>
+        </form>
+
+        <div class="link" onclick="mostrarForgot()">Volver a recuperar</div>
+    </div>
+
+    <!-- CONFIGURACIÓN INICIAL PARTIDA -->
+    <div id="config" class="hidden config-screen">
+        <style>
+            #config.config-screen {
+                padding: 10px !important;
+                overflow: hidden !important;
+            }
+
+            #config .config-shell {
+                width: min(100vw, 1460px) !important;
+                max-height: calc(100dvh - 4px) !important;
+                padding: 18px 16px 20px !important;
+                gap: 13px !important;
+                transform: translateY(-90px) scale(1.18, 1.28);
+                transform-origin: center top;
+            }
+
+            #config .config-title {
+                font-size: 25px !important;
+                line-height: 1 !important;
+            }
+
+            #config .config-subtitle {
+                font-size: 10px !important;
+                margin-bottom: 8px !important;
+                padding: 5px 11px !important;
+            }
+
+            #config .config-grid {
+                width: min(100%, 1260px) !important;
+                gap: 11px !important;
+            }
+
+            #config .config-card {
+                min-height: 180px !important;
+                padding: 14px 12px 14px !important;
+            }
+
+            #config .config-card-head {
+                gap: 9px !important;
+                margin-bottom: 11px !important;
+            }
+
+            #config .config-chip {
+                width: 26px !important;
+                height: 26px !important;
+                font-size: 10px !important;
+            }
+
+            #config .config-card label {
+                font-size: 14px !important;
+                letter-spacing: 0.1em !important;
+            }
+
+            #config .config-value-row {
+                gap: 9px !important;
+                margin-bottom: 11px !important;
+            }
+
+            #config .config-value-row input {
+                font-size: 31px !important;
+            }
+
+            #config .config-value-row-money input {
+                width: 84px !important;
+            }
+
+            #config .config-value-row-rounds input {
+                width: 72px !important;
+            }
+
+            #config .config-bracket {
+                font-size: 20px !important;
+                transform: translateY(3px) !important;
+            }
+
+            #config .config-unit,
+            #config .config-unit-money,
+            #config .config-unit-rounds {
+                font-size: 12px !important;
+            }
+
+            #config .config-meter {
+                height: 15px !important;
+                margin-bottom: 10px !important;
+                gap: 6px !important;
+            }
+
+            #config .config-meter span {
+                width: 12px !important;
+                height: 5px !important;
+            }
+
+            #config .config-meter-money {
+                height: 15px !important;
+                gap: 6px !important;
+            }
+
+            #config .config-meter-money span {
+                width: 10px !important;
+            }
+
+            #config .config-meter-rounds {
+                height: 15px !important;
+                gap: 6px !important;
+            }
+
+            #config .config-adjust {
+                min-height: 32px !important;
+                padding: 6px 9px !important;
+                gap: 8px !important;
+            }
+
+            #config .config-adjust span {
+                font-size: 11px !important;
+                letter-spacing: 0.14em !important;
+            }
+
+            #config .config-adjust button {
+                width: 30px !important;
+                height: 24px !important;
+                font-size: 12px !important;
+            }
+
+            #config .config-actions {
+                width: min(100%, 1000px) !important;
+                margin-top: 11px !important;
+                gap: 9px !important;
+            }
+
+            #config .config-start-btn {
+                padding: 11px 14px !important;
+                font-size: 12px !important;
+                gap: 7px !important;
+            }
+
+            #config .config-start-icon {
+                font-size: 11px !important;
+            }
+        </style>
+        <div class="config-shell">
+            <h1 class="config-title">CONFIGURACIÓN INICIAL</h1>
+            <div class="config-subtitle">ESTO AFECTARÁ LA DIFICULTAD INICIAL DE TU PARTIDA</div>
+
+            <form id="formConfig" onsubmit="return false;" class="config-grid">
+                <section class="config-card config-card-cyan">
+                    <div class="config-card-head">
+                        <span class="config-chip">0</span>
+                        <label for="cia">CIA INICIAL</label>
+                    </div>
+
+                    <div class="config-value-row">
+                        <span class="config-bracket">[</span>
+                        <input type="number" id="cia" min="30" max="80" placeholder="30-80">
+                        <span class="config-unit">%</span>
+                        <span class="config-bracket">]</span>
+                    </div>
+
+                    <div class="config-meter config-meter-cia" aria-hidden="true">
+                        <span class="is-on"></span>
+                        <span class="is-on"></span>
+                        <span class="is-on"></span>
+                        <span class="is-on"></span>
+                        <span class="is-on"></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <div class="config-adjust">
+                        <button type="button" onclick="cambiarValor('cia', -1)">▼</button>
+                        <span>AJUSTAR</span>
+                        <button type="button" onclick="cambiarValor('cia', 1)">▲</button>
+                    </div>
+                </section>
+
+                <section class="config-card config-card-cyan">
+                    <div class="config-card-head">
+                        <span class="config-chip">9</span>
+                        <label for="presupuesto">PRESUPUESTO INICIAL</label>
+                    </div>
+
+                    <div class="config-value-row config-value-row-money">
+                        <span class="config-bracket">[</span>
+                        <input type="number" id="presupuesto" min="10" max="80" placeholder="10-80">
+                        <span class="config-unit config-unit-money">M COP</span>
+                        <span class="config-bracket">]</span>
+                    </div>
+
+                    <div class="config-meter config-meter-money" aria-hidden="true">
+                        <span class="is-on"></span>
+                        <span class="is-on"></span>
+                        <span class="is-on"></span>
+                        <span class="is-on"></span>
+                        <span class="is-on"></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <div class="config-adjust">
+                        <button type="button" onclick="cambiarValor('presupuesto', -1)">▼</button>
+                        <span>AJUSTAR</span>
+                        <button type="button" onclick="cambiarValor('presupuesto', 1)">▲</button>
+                    </div>
+                </section>
+
+                <section class="config-card config-card-rose">
+                    <div class="config-card-head">
+                        <span class="config-chip">△</span>
+                        <label for="despido">PROBABILIDAD DE DESPIDO</label>
+                    </div>
+
+                    <div class="config-value-row config-value-row-emphasis">
+                        <span class="config-bracket">[</span>
+                        <input type="number" id="despido" min="5" max="80" placeholder="5-80">
+                        <span class="config-unit">%</span>
+                        <span class="config-bracket">]</span>
+                    </div>
+
+                    <div class="config-meter config-meter-rose" aria-hidden="true">
+                        <span class="is-on"></span>
+                        <span class="is-on"></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <div class="config-adjust">
+                        <button type="button" onclick="cambiarValor('despido', -1)">▼</button>
+                        <span>AJUSTAR</span>
+                        <button type="button" onclick="cambiarValor('despido', 1)">▲</button>
+                    </div>
+                </section>
+
+                <section class="config-card config-card-cyan">
+                    <div class="config-card-head">
+                        <span class="config-chip">□</span>
+                        <label for="maxRondas">MÁXIMO DE RONDAS</label>
+                    </div>
+
+                    <div class="config-value-row config-value-row-rounds">
+                        <span class="config-bracket">[</span>
+                        <input type="number" id="maxRondas" min="7" max="25" placeholder="7-25">
+                        <span class="config-unit config-unit-rounds">RONDAS</span>
+                        <span class="config-bracket">]</span>
+                    </div>
+
+                    <div class="config-meter config-meter-money config-meter-rounds" aria-hidden="true">
+                        <span class="is-on"></span>
+                        <span class="is-on"></span>
+                        <span class="is-on"></span>
+                        <span class="is-on"></span>
+                        <span class="is-on"></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <div class="config-adjust">
+                        <button type="button" onclick="cambiarValor('maxRondas', -1)">▼</button>
+                        <span>AJUSTAR</span>
+                        <button type="button" onclick="cambiarValor('maxRondas', 1)">▲</button>
+                    </div>
+                </section>
+            </form>
+
+            <div class="config-actions" style="width:min(620px,96%);margin-top:14px;display:flex;justify-content:space-between;align-items:center;gap:12px;">
+                <button type="button" class="config-start-btn" style="width:48%;margin-top:0;" onclick="window.location.href='menu.php'">
+                    <span class="config-start-icon">⏻</span>
+                    VOLVER AL MENU
+                </button>
+
+                <button type="button" class="config-start-btn" style="width:48%;margin-top:0;" onclick="iniciarPartida()">
+                    <span class="config-start-icon">⏻</span>
+                    INICIAR PARTIDA
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="partida" class="hidden partida-screen">
+        <aside class="soc-left-col">
+            <section class="soc-panel profile-panel">
+                <h3>OPERATIVE_PROFILE</h3>
+                <div class="profile-name" id="profile-usuario">AGENT_K9</div>
+                <div class="profile-status" id="profile-ronda">RONDA: 0</div>
+                <div class="profile-role" id="profile-rank">RANK GLOBAL: N/D</div>
+            </section>
+
+            <section class="soc-panel nav-panel">
+                <h3>SYSTEM_NAV</h3>
+                <button type="button" class="soc-nav-btn" onclick="window.location.href='menu.php'">VOLVER AL MENU</button>
+                <button type="button" class="soc-nav-btn" onclick="mostrarConfig()">VOLVER A CONFIGURACION</button>
+
+                <div id="mailbox-controls" class="soc-mailbox-controls">
+                    <button type="button" id="btn-bandeja-escenarios" onclick="abrirBandeja('scenarios')">
+                        ESCENARIOS <span id="badge-scenarios" style="display: none;">0</span>
+                    </button>
+                    <button type="button" id="btn-bandeja-efectos" onclick="abrirBandeja('effects')">
+                        EFECTOS <span id="badge-effects" style="display: none;">0</span>
+                    </button>
+                </div>
+                <!-- Visual effect: concentric radar below EFECTOS -->
+                <div class="effects-visual" aria-hidden="true">
+                    <div class="effects-radar" role="img" aria-label="Visual efectos">
+                        <span class="ping"></span>
+                    </div>
+                </div>
+            </section>
+        </aside>
+
+        <main class="soc-center-col">
+            <div class="soc-headline">
+                <div class="title">SOC_COMMAND_CENTER</div>
+                <div class="subtitle">THREAT_ANALYSIS // LIVE SESSION</div>
+            </div>
+
+            <section id="panel-resumen-centro" class="soc-panel center-metrics-panel">
+                <h3>RESUMEN OPERATIVO</h3>
+                <div class="center-metrics-grid">
+                    <div class="center-metric-card">
+                        <span>CIA</span>
+                        <strong id="stat-cia-centro">50</strong>
+                    </div>
+                    <div class="center-metric-card">
+                        <span>PRESUPUESTO</span>
+                        <strong id="stat-presupuesto-centro">50</strong>
+                    </div>
+                    <div class="center-metric-card">
+                        <span>DESPIDO</span>
+                        <strong id="stat-despido-centro">10</strong>
+                    </div>
+                </div>
+            </section>
+
+            <section id="panel-grafica-cia" class="soc-panel cia-chart-panel">
+                <div class="cia-chart-head">
+                    <div>
+                        <h3>EVOLUCION CIA // CANDLE GRAPH</h3>
+                        <p>Grafica basada en el CIA inicial configurado por el usuario.</p>
+                    </div>
+                    <div class="cia-chart-legend" aria-hidden="true">
+                        <span class="legend-up">ALZA</span>
+                        <span class="legend-down">BAJA</span>
+                    </div>
+                </div>
+
+                <div class="cia-chart-frame">
+                    <canvas id="cia-candlestick-canvas" width="1200" height="280" aria-label="Grafica de velas CIA"></canvas>
+                    <div id="cia-candlestick-layer" class="cia-candlestick-layer" aria-hidden="true"></div>
+                    <div id="panel-desglose-cia-compact" class="panel-desglose-cia-compact" aria-hidden="false"></div>
+                </div>
+            </section>
+
+            <section class="soc-panel scenario-panel">
+                <div class="scenario-type">THREAT_ANALYSIS // <span id="esc-tipo">-</span></div>
+                <div class="scenario-subject"><strong>Asunto:</strong> <span id="esc-titulo">-</span></div>
+                <div class="scenario-meta">
+                    <span><strong>Partida:</strong> <span id="partida-id">-</span></span>
+                    <span><strong>Turno:</strong> <span id="turno-orden">-</span></span>
+                    <span><strong>Remitente:</strong> <span id="esc-remitente">-</span></span>
+                </div>
+
+                <div class="scenario-content" id="esc-texto">-</div>
+
+                <div id="correo-repercusion" style="display: none;"></div>
+
+                <div id="estado-espera" style="display: none;"></div>
+            </section>
+
+            <button type="button" id="btn-responder-escenario" class="btn-responder-escenario" style="display: none;" onclick="alternarOpcionesEscenario()">Responder</button>
+
+            <div id="respuesta-panel" class="respuesta-panel" style="display: none;">
+                <div class="respuesta-panel-compose">
+                    <div class="respuesta-panel-top">
+                        <div class="respuesta-panel-avatar" id="respuesta-panel-avatar" aria-hidden="true">R</div>
+                        <div class="respuesta-panel-recipient-line">
+                            <span class="respuesta-panel-back" aria-hidden="true">↶</span>
+                            <span class="respuesta-panel-recipient" id="respuesta-panel-destinatario">Jefe de Seguridad</span>
+                        </div>
+                        <div class="respuesta-panel-expand" aria-hidden="true">▣</div>
+                    </div>
+
+                    <div class="respuesta-panel-body">
+                        <div id="opciones-container" style="display: none;">
+                            <div id="opciones-lista"></div>
+                        </div>
+
+                        <div id="sin-opciones-msg">
+                            <button type="button" onclick="cargarSiguienteEscenario()">Siguiente Escenario</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="panel-bandeja" style="display: none;">
+                <button type="button" class="bandeja-panel-close" onclick="cerrarPanelBandeja()" aria-label="Cerrar escenarios">×</button>
+                <div id="panel-bandeja-lista"></div>
+            </div>
+
+            <div id="modal-fin-partida" class="partida-result-modal" style="display: none;" aria-hidden="true">
+                <div id="modal-fin-card" class="partida-result-card">
+                    <div id="modal-fin-estado" class="partida-result-badge">ESTADO</div>
+                    <div id="modal-fin-titulo" class="partida-result-title">Resultado de partida</div>
+                    <div id="modal-fin-mensaje" class="partida-result-message">La partida terminó.</div>
+                    <button type="button" class="partida-result-btn" onclick="window.location.href='menu.php'">Ir al menú</button>
+                </div>
+            </div>
+
+            <div class="partida-link-legacy link" onclick="mostrarConfig()">Volver a configuración</div>
+        </main>
+
+        <aside class="soc-right-col">
+            <section class="soc-panel metrics-panel">
+                <h3>SYSTEM_METRICS // LIVE</h3>
+                <div class="metrics-rings">
+                    <button type="button" onclick="alternarDesgloseCIA()" class="metric-ring metric-cia">
+                        <span id="stat-cia">50</span>
+                        <small>CIA</small>
+                    </button>
+                    <div class="metric-ring metric-presupuesto">
+                        <span id="stat-presupuesto">50</span>
+                        <small>PRESUPUESTO</small>
+                    </div>
+                    <div class="metric-ring metric-despido">
+                        <span id="stat-despido">10</span>
+                        <small>DESPIDO</small>
+                    </div>
+                </div>
+
+                <div id="panel-desglose-cia" style="display: none;"></div>
+
+                <div class="timer-box">
+                    <strong>Tiempo restante</strong>
+                    <div><span id="cronometro">60</span>s</div>
+                </div>
+            </section>
+        </aside>
+    </div>
+
+    <div class="footer-text">
+        © 2026 CyberGame
+    </div>
+
+</div>
+
+<script src="script.js?v=20260402"></script>
+<script src="confi.js?v=20260429"></script>
+</body>
+</html>             
