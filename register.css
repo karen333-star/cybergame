@@ -3,17 +3,28 @@
    ================================ */
 
 body.register-page {
-    margin: 0;
-    min-height: 100vh;
-    padding: 0;
+    position: relative;
     overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: 16px;
     background:
-        radial-gradient(circle at 16% 20%, rgba(122, 68, 255, 0.22), transparent 44%),
-        radial-gradient(circle at 82% 84%, rgba(0, 173, 255, 0.18), transparent 38%),
-        linear-gradient(140deg, #1a1040 0%, #090b35 50%, #051a3a 100%);
+        radial-gradient(circle at 5% 50%, rgba(122, 68, 255, 0.32), transparent 40%),
+        radial-gradient(circle at 95% 50%, rgba(0, 173, 255, 0.32), transparent 40%),
+        linear-gradient(180deg, #000000 0%, #000000 100%);
+}
+
+body.register-page::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(rgba(131, 184, 255, 0.26) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(131, 184, 255, 0.26) 1px, transparent 1px),
+        linear-gradient(rgba(95, 139, 232, 0.14) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(95, 139, 232, 0.14) 1px, transparent 1px);
+    background-size: 54px 54px, 54px 54px, 27px 27px, 27px 27px;
+    opacity: 0.3;
+    z-index: 0;
 }
 
 body.register-page .register-grid-overlay {
@@ -36,36 +47,38 @@ body.register-page .register-shell {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 24px;
-    padding-top: 112px;
+    gap: 26px;
+    padding-top: 130px;
 }
 
 body.register-page #main-title {
     margin: 0;
-    width: min(760px, calc(100vw - 24px));
+    width: min(500px, calc(100vw - 24px));
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 5px;
     color: #ddd8ff;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: clamp(26px, 3.4vw, 34px);
+    font-family: 'Orbitron', sans-serif;
+    font-optical-sizing: auto;
+    font-size: clamp(50px, 3vw, 30px);
     letter-spacing: 0.08em;
     font-weight: 700;
+    font-style: normal;
     text-shadow: 0 0 16px rgba(168, 130, 255, 0.34);
     position: fixed;
     top: 12px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 3;
-    padding-bottom: 14px;
+    padding-bottom: 16px;
 }
 
 body.register-page #main-title::after {
     content: '';
     position: absolute;
     left: 50%;
-    width: min(1200px, calc(100vw - 18px));
+    width: min(1200px, calc(100vw - 20px));
     transform: translateX(-50%);
     bottom: 0;
     height: 1px;
@@ -345,7 +358,6 @@ body.register-page .btn {
 }
 
 body.register-page .btn::before {
-    content: '\u2192';
     position: absolute;
     right: 12px;
     font-size: 0.9em;

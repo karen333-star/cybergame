@@ -872,11 +872,23 @@ body.profile-page .profile-quick-panel .profile-quick-btn:nth-child(2) .profile-
     text-shadow: 0 0 8px rgba(148, 72, 255, 0.32);
 }
 
+body.profile-page .profile-quick-panel .menu-btn-secondary {
+    border-color: rgba(122, 74, 255, 0.62);
+    box-shadow: 0 0 12px rgba(122, 74, 255, 0.18), inset 0 0 0 1px rgba(122, 74, 255, 0.1);
+}
+
+body.profile-page .profile-quick-panel .menu-btn-secondary .profile-quick-copy strong {
+    color: #9448ff;
+    text-shadow: 0 0 8px rgba(148, 72, 255, 0.32);
+}
+
+body.profile-page .profile-quick-panel .menu-btn-danger,
 body.profile-page .profile-quick-panel .logout-btn {
     border-color: rgba(255, 76, 128, 0.58);
     box-shadow: 0 0 12px rgba(255, 76, 128, 0.16), inset 0 0 0 1px rgba(255, 76, 128, 0.1);
 }
 
+body.profile-page .profile-quick-panel .menu-btn-danger .profile-quick-copy strong,
 body.profile-page .profile-quick-panel .logout-btn .profile-quick-copy strong {
     color: #ff4c80;
     text-shadow: 0 0 8px rgba(255, 76, 128, 0.3);

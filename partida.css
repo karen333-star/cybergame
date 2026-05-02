@@ -1928,3 +1928,199 @@
         animation: none;
     }
 }
+
+
+/* Ocultar RESUMEN OPERATIVO y GRÁFICA cuando está en modo inbox escenarios */
+#partida.modo-inbox-escenarios .center-metrics-panel,
+#partida.modo-inbox-escenarios .cia-chart-panel {
+    display: none !important;
+}
+
+/* Ocultar GRÁFICA cuando hay un escenario abierto (correo individual) */
+#partida .soc-center-col:has(.scenario-panel.gmail-open) .center-metrics-panel,
+#partida .soc-center-col:has(.scenario-panel.gmail-open) .cia-chart-panel {
+    display: none !important;
+}
+
+/* Pantalla completa y responsiva */
+#partida.partida-screen {
+    width: 100vw;              /* ocupa todo el ancho */
+    height: 100vh;             /* ocupa todo el alto */
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: clamp(200px, 20%, 260px) minmax(0, 1fr) clamp(220px, 20%, 320px);
+    grid-auto-rows: minmax(0, 1fr);
+    gap: clamp(8px, 1vw, 16px);
+    padding: clamp(8px, 1.5vw, 18px);
+    box-sizing: border-box;
+    overflow: hidden;          /* evita cortes */
+}
+
+/* Columnas laterales y centro flexibles */
+#partida .soc-left-col,
+#partida .soc-right-col,
+#partida .soc-center-col {
+    min-width: 0;
+    min-height: 0;
+    flex: 1 1 auto;
+}
+
+/* Métricas responsivas */
+#partida .center-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: clamp(8px, 1vw, 14px);
+}
+
+/* Gráfica CIA responsiva */
+#partida .cia-chart-panel {
+    min-height: clamp(220px, 30vh, 420px);
+    flex: 1 1 auto;
+}
+
+/* Títulos adaptables */
+#partida .soc-headline .title {
+    font-size: clamp(20px, 3vw, 42px);
+    white-space: normal;       /* permite varias líneas */
+    text-overflow: clip;
+}
+
+/* Media query para móviles */
+@media (max-width: 768px) {
+    #partida.partida-screen {
+        grid-template-columns: 1fr;   /* una sola columna */
+        grid-auto-rows: auto;
+        padding: 10px;
+    }
+
+    #partida .cia-chart-panel {
+        min-height: 240px;     /* altura mínima en móvil */
+    }
+
+    #partida .center-metrics-grid {
+        grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    }
+}
+
+/* Pantalla completa responsiva */
+#partida.partida-screen {
+    width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: clamp(180px, 20%, 240px) minmax(0, 1fr) clamp(200px, 20%, 280px);
+    grid-auto-rows: minmax(0, 1fr);
+    gap: clamp(8px, 1vw, 16px);
+    padding: clamp(8px, 1.5vw, 18px);
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* Columnas flexibles */
+#partida .soc-left-col,
+#partida .soc-right-col,
+#partida .soc-center-col {
+    min-width: 0;
+    min-height: 0;
+    flex: 1 1 auto;
+}
+
+/* Métricas adaptables */
+#partida .center-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: clamp(8px, 1vw, 14px);
+}
+
+/* Gráfica CIA adaptada */
+#partida .cia-chart-panel {
+    min-height: clamp(200px, 35vh, 420px);
+    flex: 1 1 auto;
+}
+
+/* Títulos adaptables */
+#partida .soc-headline .title {
+    font-size: clamp(20px, 3vw, 42px);
+    white-space: normal;
+    text-overflow: clip;
+}
+
+/* Media queries para pantallas pequeñas */
+@media (max-width: 1024px) {
+    #partida.partida-screen {
+        grid-template-columns: 1fr;   /* apilar todo en una columna */
+        grid-auto-rows: auto;
+        padding: 10px;
+    }
+
+    #partida .cia-chart-panel {
+        min-height: 240px;
+    }
+
+    #partida .center-metrics-grid {
+        grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    }
+}
+
+.futuristic-chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  width: 100%;
+  height: 300px; /* altura visible */
+  background: radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.05), transparent 70%),
+              linear-gradient(180deg, rgba(3, 20, 36, 0.9), rgba(1, 8, 16, 0.95));
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  border-radius: 10px;
+  box-shadow: 0 0 24px rgba(0, 240, 255, 0.12);
+  padding: 20px;
+  overflow: hidden;
+}
+
+.futuristic-chart .bar {
+  position: relative;
+  width: 40px;
+  height: var(--height);
+  background: var(--color);
+  border-radius: 6px 6px 0 0;
+  box-shadow: 0 0 12px var(--color);
+  transition: height 0.4s ease, box-shadow 0.4s ease;
+}
+
+.futuristic-chart .bar:hover {
+  box-shadow: 0 0 24px var(--color);
+  transform: scale(1.05);
+}
+
+.futuristic-chart .bar span {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: var(--color);
+  font-weight: 700;
+  text-shadow: 0 0 6px var(--color);
+}
+
+.futuristic-chart .bar label {
+  position: absolute;
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: #d6f5ff;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .futuristic-chart {
+    height: 200px;
+    padding: 10px;
+  }
+  .futuristic-chart .bar {
+    width: 28px;
+  }
+}

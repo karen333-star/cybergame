@@ -307,16 +307,16 @@ function es_activa(string $seccionActual, string $esperada): string {
         <header class="history-nav-strip">
             <div class="history-nav-brand">CYBER_GAME</div>
             <div class="history-nav-actions">
-                <a href="menu.php" class="menu-btn">Volver al menú</a>
-                <a href="menu.php?logout=1" class="menu-btn logout-btn">Cerrar sesión</a>
+                <a href="menu.php" class="menu-btn menu-btn-secondary">Volver al menú</a>
+                <a href="menu.php?logout=1" class="menu-btn menu-btn-danger logout-btn">Cerrar sesión</a>
             </div>
         </header>
 
         <div class="card history-shell">
-            <div class="history-topbar">
+                <div class="history-topbar">
                 <div>
                     <h2>Historial</h2>
-                    <p>Usuario: <?php echo h($nombreUsuario); ?></p>
+                    <p>Usuario: <span class="oxanium-600"><?php echo h($nombreUsuario); ?></span></p>
                 </div>
             </div>
 

@@ -17,10 +17,9 @@ body:has(#config:not(.hidden)) {
     padding: 12px;
     overflow: hidden;
     background:
-        radial-gradient(circle at 10% 14%, rgba(0, 240, 255, 0.16), transparent 18%),
-        radial-gradient(circle at 86% 18%, rgba(255, 77, 116, 0.14), transparent 16%),
-        radial-gradient(circle at 52% 50%, rgba(0, 112, 255, 0.08), transparent 42%),
-        linear-gradient(180deg, #05070c 0%, #03050a 100%);
+        radial-gradient(circle at 5% 50%, rgba(122, 68, 255, 0.32), transparent 40%),
+        radial-gradient(circle at 95% 50%, rgba(0, 173, 255, 0.32), transparent 40%),
+        linear-gradient(180deg, #000000 0%, #000000 100%);
 }
 
 #config.hidden {
@@ -34,16 +33,12 @@ body:has(#config:not(.hidden)) {
     flex-direction: column;
     align-items: center;
     gap: 8px;
-    padding: 12px 14px 14px;
+    padding: 12px 14px 28px;
     color: #edfaff;
-    border: 1px solid rgba(0, 234, 255, 0.18);
-    background:
-        linear-gradient(180deg, rgba(4, 12, 26, 0.86) 0%, rgba(3, 8, 16, 0.94) 100%),
-        radial-gradient(circle at 50% 0%, rgba(0, 234, 255, 0.08), transparent 34%);
-    box-shadow:
-        0 22px 60px rgba(0, 0, 0, 0.6),
-        inset 0 1px 0 rgba(255, 255, 255, 0.04),
-        inset 0 0 0 1px rgba(0, 234, 255, 0.04);
+    position: relative;
+    border: none;
+    background: transparent;
+    box-shadow: none;
     overflow: hidden;
 }
 
@@ -51,6 +46,9 @@ body:has(#config:not(.hidden)) {
     margin: 0;
     color: #f2fdff;
     text-align: center;
+    font-family: 'Orbitron', sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
     font-size: clamp(20px, 2.2vw, 30px);
     line-height: 1;
     font-weight: 900;
@@ -76,16 +74,18 @@ body:has(#config:not(.hidden)) {
 }
 
 #config .config-grid {
-    width: min(100%, 1120px);
+    width: min(100%, 780px);
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(2, minmax(0, 360px));
+    justify-content: center;
+    gap: 12px;
 }
 
 #config .config-card {
     --accent: #00eaff;
     position: relative;
-    min-height: 150px;
+    width: 100%;
+    min-height: 172px;
     padding: 10px 10px 8px;
     overflow: hidden;
     background:
@@ -290,63 +290,98 @@ body:has(#config:not(.hidden)) {
 }
 
 #config .config-adjust button {
-    width: 28px;
-    height: 22px;
+    width: 9px;
+    height: 20px;
     padding: 0;
     border: 1px solid rgba(25, 233, 255, 0.28);
     border-radius: 4px;
-    background: linear-gradient(180deg, #07101f 0%, #040a13 100%);
+    background: linear-gradient(180deg, rgba(7, 16, 31, 0.28), rgba(4, 10, 19, 0.28));
     color: #19e9ff;
     font-size: 11px;
     font-weight: 800;
     line-height: 1;
+    box-shadow: 0 0 0 1px rgba(25, 233, 255, 0.12), 0 0 12px rgba(25, 233, 255, 0.18);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+/* Botones pequeños para flechas y X */
+#config .config-adjust button,
+#config .config-close-btn,   /* si tu botón de cerrar usa esta clase */
+#partida .bandeja-mail-close {
+    width: 24px;              /* ancho compacto */
+    height: 24px;             /* alto igual para proporción */
+    min-width: 0 !important;  /* evita que se estiren */
+    min-height: 0 !important;
+    padding: 0;               /* sin relleno extra */
+    display: inline-flex;     /* centra el ícono */
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;          /* tamaño del símbolo */
+    line-height: 1;
+    border-radius: 999px;     /* forma circular */
+}
+
+/* Hover compacto sin deformar */
+#config .config-adjust button:hover,
+#partida .bandeja-mail-close:hover {
+    transform: none;
+    box-shadow: 0 0 6px rgba(0, 240, 255, 0.4);
+}
+
+
+#config .config-adjust button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 1px rgba(25, 233, 255, 0.22), 0 0 16px rgba(25, 233, 255, 0.24);
 }
 
 #config .config-card-rose .config-adjust button {
     border-color: rgba(255, 77, 116, 0.32);
     color: #ff5578;
+    box-shadow: 0 0 0 1px rgba(255, 77, 116, 0.12), 0 0 12px rgba(255, 77, 116, 0.18);
 }
 
 #config .config-actions {
-    width: min(100%, 760px);
-    margin-top: 8px;
+    position: static;
+    width: auto !important;
+    margin-top: 10px !important;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-}
-
-#config .config-start-btn {
-    width: 48%;
-    margin-top: 0;
-    padding: 8px 12px;
-    border: none;
-    clip-path: polygon(8% 0, 100% 0, 100% 76%, 92% 100%, 0 100%, 0 24%);
-    background:
-        linear-gradient(180deg, #52fbff 0%, #00d9ff 100%),
-        radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.42), transparent 46%);
-    color: #00171d;
-    font-size: 10px;
-    font-weight: 900;
-    letter-spacing: 0.13em;
-    text-transform: uppercase;
-    display: inline-flex;
-    align-items: center;
     justify-content: center;
-    gap: 6px;
-    box-shadow:
-        0 0 16px rgba(0, 242, 255, 0.9),
-        0 0 34px rgba(0, 242, 255, 0.2),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+    flex-direction: row;
+    gap: 12px;
+    z-index: 2;
 }
 
-#config .config-start-btn:hover {
-    filter: brightness(1.08);
+#config .config-actions .config-start-btn {
+    width: min(240px, 100%) !important;
+    margin-top: 0 !important;
+    min-height: 44px !important;
+    padding: 10px 14px !important;
+    border: 1px solid rgba(133, 102, 255, 0.45) !important;
+    border-radius: 4px !important;
+    background: linear-gradient(180deg, rgba(31, 23, 66, 0.28), rgba(22, 17, 46, 0.28)) !important;
+    color: #f1ebff !important;
+    font-family: 'Rajdhani', sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.06em !important;
+    text-transform: uppercase !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0 !important;
+    position: relative !important;
+    box-shadow: 0 0 0 1px rgba(133, 102, 255, 0.18), 0 0 18px rgba(133, 102, 255, 0.22) !important;
+    text-shadow: 0 0 8px rgba(184, 157, 255, 0.42), 0 0 16px rgba(108, 78, 214, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
 }
 
 #config .config-start-icon {
-    font-size: 9px;
-    line-height: 1;
+    display: none !important;
+}
+
+#config .config-actions .config-start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 1px rgba(133, 102, 255, 0.28), 0 0 22px rgba(133, 102, 255, 0.34) !important;
 }
 
 @media (max-width: 1024px) {
@@ -356,7 +391,9 @@ body:has(#config:not(.hidden)) {
     }
 
     #config .config-grid {
-        width: min(100%, 920px);
+        width: min(100%, 720px);
+        grid-template-columns: repeat(2, minmax(0, 330px));
+        justify-content: center;
         gap: 8px;
     }
 }
@@ -375,7 +412,7 @@ body:has(#config:not(.hidden)) {
 
     #config .config-grid {
         grid-template-columns: 1fr;
-        width: min(100%, 420px);
+        width: min(100%, 360px);
         gap: 8px;
     }
 
@@ -389,14 +426,24 @@ body:has(#config:not(.hidden)) {
     }
 
     #config .config-actions {
-        width: min(100%, 420px);
+        width: auto !important;
         gap: 8px;
+        flex-direction: row;
+        align-items: center;
     }
 
-    #config .config-start-btn {
-        width: 48%;
-        font-size: 9px;
-        letter-spacing: 0.1em;
-        padding: 7px 10px;
+    #config .config-actions .config-start-btn {
+        width: min(240px, 100%) !important;
+        padding: 8px 12px 8px 28px !important;
     }
 }
+
+/* Botón azul estilo fondo */
+body.menu-page .menu-btn-primary {
+    border-color: #108fb6;  /* azul intenso */
+    background: linear-gradient(180deg, rgba(0, 102, 255, 0.18), rgba(0, 102, 255, 0.12));
+    box-shadow: 0 0 14px rgba(0, 102, 255, 0.45);
+    text-shadow: 0 0 2px #ffffff, 0 0 8px rgba(0, 195, 255, 0.6);
+    color: #ffffff; /* texto blanco */
+}
+

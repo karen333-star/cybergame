@@ -35,6 +35,7 @@ function mostrarPartida() {
         partida.classList.remove('hidden');
     }
     aplicarZoomConfiguracion(false);
+    programarRenderGraficaCIA();
 }
 
 function actualizarMedidorConfiguracion(id) {
@@ -264,6 +265,16 @@ function actualizarPanelDesgloseCIA() {
         '<div><strong>Integridad</strong>: ' + escaparHtml(formatearPuntajeCIA(desglose.integridad)) + '%</div>' +
         '<div><strong>Accesibilidad</strong>: ' + escaparHtml(formatearPuntajeCIA(desglose.accesibilidad)) + '%</div>' +
         '<div style="margin-top:6px;"><strong>CIA promedio</strong>: ' + escaparHtml(formatearPuntajeCIA(desglose.cia)) + '%</div>';
+
+    // Compact panel inside the CIA chart
+    const compact = document.getElementById('panel-desglose-cia-compact');
+    if (compact) {
+        compact.innerHTML = '' +
+            '<div class="row"><div class="label">Conf.</div><div class="value">' + escaparHtml(formatearPuntajeCIA(desglose.confidencialidad)) + '%</div></div>' +
+            '<div class="row"><div class="label">Int.</div><div class="value">' + escaparHtml(formatearPuntajeCIA(desglose.integridad)) + '%</div></div>' +
+            '<div class="row"><div class="label">Acc.</div><div class="value">' + escaparHtml(formatearPuntajeCIA(desglose.accesibilidad)) + '%</div></div>' +
+            '<div class="row"><div class="label">CIA prom.</div><div class="value">' + escaparHtml(formatearPuntajeCIA(desglose.cia)) + '%</div></div>';
+    }
 }
 
 function alternarDesgloseCIA() {
@@ -415,6 +426,355 @@ function actualizarEstadoEspera(texto) {
 
 function clamp(valor, min, max) {
     return Math.max(min, Math.min(max, valor));
+}
+
+function obtenerEstadoGraficaCIA() {
+    if (!window.estadoPartida.grafica_cia) {
+        window.estadoPartida.grafica_cia = {
+            base: null,
+            velas: [],
+            ultimo_valor: null,
+            max_puntos: 28,
+            marco_inicializado: false,
+            raf_pendiente: null
+        };
+    }
+
+    return window.estadoPartida.grafica_cia;
+}
+
+function generarVelasInicialesCIA(base, cantidad) {
+    const velas = [];
+    let previo = clamp(Math.round(Number(base) || 0), 0, 100);
+
+    for (let indice = 0; indice < cantidad; indice++) {
+        const direccion = indice % 2 === 0 ? 1 : -1;
+        const sesgo = ((base + indice * 5) % 7) - 3;
+        const variacion = direccion * (2 + (indice % 4)) + sesgo;
+        const apertura = previo;
+        const cierre = clamp(previo + variacion, 0, 100);
+        const amplitud = 3 + (indice % 4);
+        const maximo = clamp(Math.max(apertura, cierre) + amplitud, 0, 100);
+        const minimo = clamp(Math.min(apertura, cierre) - amplitud, 0, 100);
+
+        velas.push({
+            open: apertura,
+            high: maximo,
+            low: minimo,
+            close: cierre
+        });
+
+        previo = cierre;
+    }
+
+    return velas;
+}
+
+function reiniciarGraficaCIA(valorInicial) {
+    const estadoGrafica = obtenerEstadoGraficaCIA();
+    const base = clamp(Math.round(Number(valorInicial) || 0), 0, 100);
+
+    estadoGrafica.base = base;
+    estadoGrafica.velas = generarVelasInicialesCIA(base, 8);
+    estadoGrafica.ultimo_valor = estadoGrafica.velas.length > 0
+        ? estadoGrafica.velas[estadoGrafica.velas.length - 1].close
+        : base;
+}
+
+function registrarVelaCIA(valor) {
+    const estadoGrafica = obtenerEstadoGraficaCIA();
+    const cia = clamp(Math.round(Number(valor) || 0), 0, 100);
+
+    if (estadoGrafica.base == null || estadoGrafica.velas.length === 0) {
+        reiniciarGraficaCIA(cia);
+        return;
+    }
+
+    if (estadoGrafica.ultimo_valor === cia) {
+        return;
+    }
+
+    const apertura = estadoGrafica.ultimo_valor;
+    const cierre = cia;
+    const indice = estadoGrafica.velas.length;
+    const amplitud = 3 + ((estadoGrafica.base + indice) % 5);
+    const maximo = clamp(Math.max(apertura, cierre) + amplitud, 0, 100);
+    const minimo = clamp(Math.min(apertura, cierre) - amplitud, 0, 100);
+
+    estadoGrafica.velas.push({
+        open: apertura,
+        high: maximo,
+        low: minimo,
+        close: cierre
+    });
+
+    if (estadoGrafica.velas.length > estadoGrafica.max_puntos) {
+        estadoGrafica.velas.splice(0, estadoGrafica.velas.length - estadoGrafica.max_puntos);
+    }
+
+    estadoGrafica.ultimo_valor = cierre;
+}
+
+function obtenerLienzoGraficaCIA() {
+    const canvas = document.getElementById('cia-candlestick-canvas');
+    if (!canvas) {
+        return null;
+    }
+
+    const frame = canvas.parentElement;
+    if (!frame) {
+        return null;
+    }
+
+    return {
+        canvas: canvas,
+        frame: frame
+    };
+}
+
+function programarRenderGraficaCIA() {
+    const estadoGrafica = obtenerEstadoGraficaCIA();
+    if (estadoGrafica.raf_pendiente) {
+        cancelAnimationFrame(estadoGrafica.raf_pendiente);
+    }
+
+    estadoGrafica.raf_pendiente = requestAnimationFrame(function() {
+        estadoGrafica.raf_pendiente = null;
+        renderGraficaCIA();
+    });
+}
+
+function renderGraficaCIA() {
+    const referencia = obtenerLienzoGraficaCIA();
+    if (!referencia) {
+        return;
+    }
+
+    const canvas = referencia.canvas;
+    const frame = referencia.frame;
+    const estadoGrafica = obtenerEstadoGraficaCIA();
+    const velas = estadoGrafica.velas;
+
+    if (!velas || velas.length === 0) {
+        return;
+    }
+
+    const ancho = Math.max(320, frame.clientWidth || canvas.clientWidth || canvas.width || 320);
+    const alto = Math.max(240, frame.clientHeight || canvas.clientHeight || canvas.height || 240);
+    const dpr = Math.max(1, window.devicePixelRatio || 1);
+
+    canvas.width = Math.round(ancho * dpr);
+    canvas.height = Math.round(alto * dpr);
+    canvas.style.width = ancho + 'px';
+    canvas.style.height = alto + 'px';
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+        renderGraficaCIADOM(frame, velas);
+        return;
+    }
+
+    ctx.save();
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, ancho, alto);
+
+    const margenIzquierdo = 48;
+    const margenDerecho = 18;
+    const margenSuperior = 16;
+    const margenInferior = 24;
+    const areaAncho = ancho - margenIzquierdo - margenDerecho;
+    const areaAlto = alto - margenSuperior - margenInferior;
+    const maxValor = 75;
+    const minValor = 0;
+
+    ctx.fillStyle = 'rgba(255,255,255,0.62)';
+    ctx.font = '10px Arial, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+
+    [75, 50, 25, 0].forEach(function(valor) {
+        const y = margenSuperior + areaAlto - ((valor - minValor) / (maxValor - minValor)) * areaAlto;
+        ctx.strokeStyle = 'rgba(115, 232, 255, 0.10)';
+        ctx.beginPath();
+        ctx.moveTo(margenIzquierdo, y);
+        ctx.lineTo(ancho - margenDerecho, y);
+        ctx.stroke();
+        ctx.fillText(String(valor), margenIzquierdo - 8, y);
+    });
+
+    const rango = Math.max(1, maxValor - minValor);
+    const espacioPorVela = areaAncho / velas.length;
+    const anchoVela = Math.max(12, Math.min(28, espacioPorVela * 0.72));
+
+    velas.forEach(function(vela, indice) {
+        const centroX = margenIzquierdo + (indice + 0.5) * espacioPorVela;
+        const yOpen = margenSuperior + areaAlto - ((vela.open - minValor) / rango) * areaAlto;
+        const yClose = margenSuperior + areaAlto - ((vela.close - minValor) / rango) * areaAlto;
+        const yHigh = margenSuperior + areaAlto - ((vela.high - minValor) / rango) * areaAlto;
+        const yLow = margenSuperior + areaAlto - ((vela.low - minValor) / rango) * areaAlto;
+        const sube = vela.close >= vela.open;
+        const color = sube ? '#63efff' : '#ff4f9b';
+        const relleno = sube ? 'rgba(71, 223, 255, 0.92)' : 'rgba(255, 79, 155, 0.92)';
+
+        // draw baseline from 0 up to close for better readability
+        const baseY = margenSuperior + areaAlto;
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'rgba(99, 239, 255, 0.12)';
+        ctx.beginPath();
+        ctx.moveTo(centroX, baseY);
+        ctx.lineTo(centroX, yClose);
+        ctx.stroke();
+
+        // wick (high-low)
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(centroX, yHigh);
+        ctx.lineTo(centroX, yLow);
+        ctx.stroke();
+
+        const cuerpoTop = Math.min(yOpen, yClose);
+        const cuerpoAlto = Math.max(2, Math.abs(yClose - yOpen));
+        ctx.fillStyle = relleno;
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 18;
+        ctx.fillRect(centroX - anchoVela / 2, cuerpoTop, anchoVela, cuerpoAlto);
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = 'rgba(255,255,255,0.30)';
+        ctx.strokeRect(centroX - anchoVela / 2, cuerpoTop, anchoVela, cuerpoAlto);
+    });
+
+    const ultimaVela = velas[velas.length - 1];
+    const ultimoY = margenSuperior + areaAlto - ((ultimaVela.close - minValor) / rango) * areaAlto;
+    ctx.fillStyle = 'rgba(6, 14, 26, 0.88)';
+    ctx.strokeStyle = 'rgba(99, 239, 255, 0.68)';
+    ctx.lineWidth = 1;
+    dibujarRectanguloRedondeado(ctx, ancho - 104, ultimoY - 12, 84, 24, 12);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = '#dffcff';
+    ctx.font = '700 10px Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('CIA ' + String(Math.round(ultimaVela.close)), ancho - 62, ultimoY);
+
+    ctx.restore();
+    renderGraficaCIADOM(frame, velas);
+}
+
+function renderGraficaCIADOM(frame, velas) {
+    if (!frame) {
+        return;
+    }
+
+    let layer = frame.querySelector('#cia-candlestick-layer');
+    if (!layer) {
+        layer = document.createElement('div');
+        layer.id = 'cia-candlestick-layer';
+        layer.className = 'cia-candlestick-layer';
+        layer.setAttribute('aria-hidden', 'true');
+        frame.appendChild(layer);
+    }
+
+    layer.innerHTML = '';
+    layer.classList.toggle('is-empty', !velas || velas.length === 0);
+
+    if (!velas || velas.length === 0) {
+        return;
+    }
+
+    layer.style.gridTemplateColumns = 'repeat(' + String(velas.length) + ', minmax(0, 1fr))';
+
+    const maxValor = 75;
+    const minValor = 0;
+    const rango = Math.max(1, maxValor - minValor);
+
+    velas.forEach(function(vela) {
+        const slot = document.createElement('div');
+        slot.className = 'cia-candle-slot';
+
+        const highPct = ((maxValor - vela.high) / rango) * 100;
+        const lowPct = ((maxValor - vela.low) / rango) * 100;
+        const openPct = ((maxValor - vela.open) / rango) * 100;
+        const closePct = ((maxValor - vela.close) / rango) * 100;
+        const bodyTop = Math.min(openPct, closePct);
+        const bodyHeight = Math.max(2.5, Math.abs(closePct - openPct));
+        const candleColor = vela.close >= vela.open ? '#63efff' : '#ff4f9b';
+        const candleFill = vela.close >= vela.open ? '#47dfff' : '#ff4f9b';
+
+        slot.style.setProperty('--wick-top', highPct.toFixed(2) + '%');
+        slot.style.setProperty('--wick-height', Math.max(2, lowPct - highPct).toFixed(2));
+        slot.style.setProperty('--candle-color', candleColor);
+        slot.style.setProperty('--candle-fill', candleFill);
+        slot.style.setProperty('--body-top', bodyTop.toFixed(2) + '%');
+        slot.style.setProperty('--body-height', bodyHeight.toFixed(2) + '%');
+
+        const body = document.createElement('div');
+        body.className = 'cia-candle-body' + (vela.close >= vela.open ? ' is-up' : ' is-down');
+        body.style.setProperty('--body-top', bodyTop.toFixed(2) + '%');
+        body.style.setProperty('--body-height', bodyHeight.toFixed(2) + '%');
+        body.style.setProperty('--body-width', '12px');
+        body.style.setProperty('--candle-color', candleColor);
+        body.style.setProperty('--candle-fill', candleFill);
+        body.style.top = bodyTop.toFixed(2) + '%';
+        body.style.height = bodyHeight.toFixed(2) + '%';
+
+        const tag = document.createElement('div');
+        tag.className = 'cia-candle-tag';
+        tag.textContent = String(Math.round(vela.close));
+        tag.style.top = ((openPct + closePct) / 2).toFixed(2) + '%';
+
+        // baseline DOM: vertical from base (0) to close
+        const baseline = document.createElement('div');
+        baseline.className = 'cia-candle-baseline';
+        const baselineHeight = Math.max(2.5, (100 - closePct));
+        baseline.style.height = baselineHeight.toFixed(2) + '%';
+
+        slot.appendChild(body);
+        slot.appendChild(baseline);
+        slot.appendChild(tag);
+        slot.style.setProperty('--tag-top', ((openPct + closePct) / 2).toFixed(2) + '%');
+        layer.appendChild(slot);
+    });
+}
+
+function dibujarRectanguloRedondeado(ctx, x, y, ancho, alto, radio) {
+    const r = Math.min(radio, ancho / 2, alto / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + ancho - r, y);
+    ctx.arcTo(x + ancho, y, x + ancho, y + r, r);
+    ctx.lineTo(x + ancho, y + alto - r);
+    ctx.arcTo(x + ancho, y + alto, x + ancho - r, y + alto, r);
+    ctx.lineTo(x + r, y + alto);
+    ctx.arcTo(x, y + alto, x, y + alto - r, r);
+    ctx.lineTo(x, y + r);
+    ctx.arcTo(x, y, x + r, y, r);
+    ctx.closePath();
+}
+
+function actualizarGraficaCIA(valor, forzar) {
+    if (forzar) {
+        reiniciarGraficaCIA(valor);
+    } else {
+        registrarVelaCIA(valor);
+    }
+
+    programarRenderGraficaCIA();
+}
+
+function inicializarGraficaCIADesdePartida() {
+    const valorInicial = Number(window.estadoPartida.cia);
+    if (!Number.isFinite(valorInicial)) {
+        return;
+    }
+
+    const estadoGrafica = obtenerEstadoGraficaCIA();
+    if (estadoGrafica.base == null) {
+        reiniciarGraficaCIA(valorInicial);
+    }
+
+    programarRenderGraficaCIA();
 }
 
 function calcularIntervaloEsperaSegundos(presupuestoActual) {
@@ -1601,6 +1961,7 @@ function actualizarContadores() {
     }
     actualizarPerfilOperativo();
     actualizarPanelDesgloseCIA();
+    actualizarGraficaCIA(window.estadoPartida.cia);
 }
 
 function aplicarEstadoDesdeRespuesta(respuesta) {
@@ -2166,6 +2527,7 @@ function iniciarPartida() {
     window.estadoPartida.bloqueo_final_activo = false;
     window.estadoPartida.partida_finalizada = false;
     window.estadoPartida.ronda_actual = 0;
+    reiniciarGraficaCIA(cia);
     const modalFin = document.getElementById('modal-fin-partida');
     if (modalFin) {
         modalFin.style.display = 'none';
@@ -2216,6 +2578,7 @@ function iniciarPartida() {
                 };
                 window.estadoPartida.presupuesto = Number(data.estado.presupuesto);
                 window.estadoPartida.despido = Number(data.estado.despido);
+                actualizarGraficaCIA(window.estadoPartida.cia, true);
                 actualizarContadores();
             }
             if (data.partida_finalizada || data.sin_escenarios || !data.turno) {
@@ -2286,6 +2649,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     actualizarMedidoresConfiguracion();
+
+    if (!window.__graficaCiaResizeRegistrada) {
+        window.__graficaCiaResizeRegistrada = true;
+        window.addEventListener('resize', function() {
+            programarRenderGraficaCIA();
+        });
+    }
+
+    inicializarGraficaCIADesdePartida();
 
     const params = new URLSearchParams(window.location.search);
     if (params.get('view') === 'config') {

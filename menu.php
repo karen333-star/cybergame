@@ -25,7 +25,7 @@ $usuario_param = urlencode($nombre_usuario);
     <link rel="stylesheet" href="menu.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
 <body class="menu-page">
     <div class="menu-grid-overlay" aria-hidden="true"></div>
@@ -36,8 +36,8 @@ $usuario_param = urlencode($nombre_usuario);
             <div class="menu-corner menu-corner-bl" aria-hidden="true"></div>
             <div class="menu-corner menu-corner-br" aria-hidden="true"></div>
 
-            <h1 id="main-title" class="menu-title"><span class="brand-shield">◬</span> CYBER_GAME_M2K</h1>
-            <h2 class="menu-welcome">Bienvenido, <?php echo htmlspecialchars($nombre_usuario); ?>!</h2>
+            <h1 id="main-title" class="menu-title"><span class="brand-shield">◬</span> CYBER⥂GAME ◬</h1>
+            <h2 class="menu-welcome oxanium-700">Bienvenido, <?php echo htmlspecialchars($nombre_usuario); ?>!</h2>
 
             <div class="menu-opciones">
                 <a href="index.html?view=config&usuario=<?php echo $usuario_param; ?>" class="menu-btn menu-btn-primary">

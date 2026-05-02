@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="juego.css">
     <link rel="stylesheet" href="profile.css"> 
     <link rel="stylesheet" href="menu.css"> 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -82,7 +85,7 @@
     <div id="config" class="hidden config-screen">
         <style>
             #config.config-screen {
-                padding: 10px !important;
+                padding: 14px 10px 10px !important;
                 overflow: hidden !important;
             }
 
@@ -91,12 +94,12 @@
                 max-height: calc(100dvh - 4px) !important;
                 padding: 18px 16px 20px !important;
                 gap: 13px !important;
-                transform: translateY(-90px) scale(1.18, 1.28);
+                transform: translateY(-40px) scale(1.18, 1.28);
                 transform-origin: center top;
             }
 
             #config .config-title {
-                font-size: 25px !important;
+                font-size: 30px !important;
                 line-height: 1 !important;
             }
 
@@ -353,13 +356,11 @@
             </form>
 
             <div class="config-actions" style="width:min(620px,96%);margin-top:14px;display:flex;justify-content:space-between;align-items:center;gap:12px;">
-                <button type="button" class="config-start-btn" style="width:48%;margin-top:0;" onclick="window.location.href='menu.php'">
-                    <span class="config-start-icon">⏻</span>
+                <button type="button" class="config-start-btn menu-btn menu-btn-secondary" style="width:48%;margin-top:0;" onclick="window.location.href='menu.php'">
                     VOLVER AL MENU
                 </button>
 
-                <button type="button" class="config-start-btn" style="width:48%;margin-top:0;" onclick="iniciarPartida()">
-                    <span class="config-start-icon">⏻</span>
+                <button type="button" class="config-start-btn menu-btn menu-btn-primary" style="width:48%;margin-top:0;" onclick="iniciarPartida()">
                     INICIAR PARTIDA
                 </button>
             </div>
@@ -370,14 +371,14 @@
         <aside class="soc-left-col">
             <section class="soc-panel profile-panel">
                 <h3>OPERATIVE_PROFILE</h3>
-                <div class="profile-name" id="profile-usuario">AGENT_K9</div>
+                <div class="profile-name oxanium-700" id="profile-usuario">AGENT_K9</div>
                 <div class="profile-status" id="profile-ronda">RONDA: 0</div>
                 <div class="profile-role" id="profile-rank">RANK GLOBAL: N/D</div>
             </section>
 
             <section class="soc-panel nav-panel">
                 <h3>SYSTEM_NAV</h3>
-                <button type="button" class="soc-nav-btn" onclick="window.location.href='menu.php'">VOLVER AL MENU</button>
+                <button type="button" class="soc-nav-btn menu-btn menu-btn-secondary" onclick="window.location.href='menu.php'">VOLVER AL MENU</button>
                 <button type="button" class="soc-nav-btn" onclick="mostrarConfig()">VOLVER A CONFIGURACION</button>
 
                 <div id="mailbox-controls" class="soc-mailbox-controls">
@@ -492,7 +493,7 @@
                     <div id="modal-fin-estado" class="partida-result-badge">ESTADO</div>
                     <div id="modal-fin-titulo" class="partida-result-title">Resultado de partida</div>
                     <div id="modal-fin-mensaje" class="partida-result-message">La partida terminó.</div>
-                    <button type="button" class="partida-result-btn" onclick="window.location.href='menu.php'">Ir al menú</button>
+                    <button type="button" class="partida-result-btn menu-btn menu-btn-secondary" onclick="window.location.href='menu.php'">Ir al menú</button>
                 </div>
             </div>
 
@@ -509,7 +510,7 @@
                     </button>
                     <div class="metric-ring metric-presupuesto">
                         <span id="stat-presupuesto">50</span>
-                        <small>PRESUPUESTO</small>
+                        <small>DINERO</small>
                     </div>
                     <div class="metric-ring metric-despido">
                         <span id="stat-despido">10</span>
@@ -532,6 +533,19 @@
     </div>
 
 </div>
+
+<div class="cia-chart-panel">
+  <div class="futuristic-chart">
+    <div class="bar" style="--height: 8%; --color: #ff2f84;"><span>8%</span><label>2010</label></div>
+    <div class="bar" style="--height: 10%; --color: #ff74b4;"><span>10%</span><label>2011</label></div>
+    <div class="bar" style="--height: 40%; --color: #b84fff;"><span>40%</span><label>2012</label></div>
+    <div class="bar" style="--height: 84%; --color: #9deeff;"><span>84%</span><label>2013</label></div>
+    <div class="bar" style="--height: 98%; --color: #00f0ff;"><span>98%</span><label>2014</label></div>
+    <div class="bar" style="--height: 92%; --color: #5fdcff;"><span>92%</span><label>2015</label></div>
+    <div class="bar" style="--height: 62%; --color: #84ff74;"><span>62%</span><label>2017</label></div>
+  </div>
+</div>
+
 
 <script src="script.js?v=20260402"></script>
 <script src="confi.js?v=20260429"></script>
