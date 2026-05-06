@@ -1409,10 +1409,10 @@ function renderCorreoGmail(opts) {
 
     return '' +
         '<div class="correo-card correo-gmail' + (compacto ? ' correo-gmail-compacto' : '') + '" style="--correo-accent:' + escaparHtml(colorEtiqueta) + ';">' +
+            (mostrarCerrar ? '<button type="button" class="correo-close-x" onclick="cerrarCorreoRepercusion()" aria-label="Cerrar correo">✖</button>' : '') +
             '<div class="correo-topbar">' +
                 '<div class="correo-headline"><div class="correo-subject">' + escaparHtml(asunto) + '</div><span class="correo-inbox-tag">Recibidos</span></div>' +
                 '<div class="correo-time">Hoy</div>' +
-                (mostrarCerrar ? '<button type="button" class="correo-close-x" onclick="cerrarCorreoRepercusion()" aria-label="Cerrar correo">✖</button>' : '') +
             '</div>' +
             '<div class="correo-sender-row">' +
                 '<div class="correo-avatar" aria-hidden="true">' + escaparHtml(inicial) + '</div>' +

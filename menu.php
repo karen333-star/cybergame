@@ -40,17 +40,17 @@ $usuario_param = urlencode($nombre_usuario);
             <h2 class="menu-welcome oxanium-700">Bienvenido, <?php echo htmlspecialchars($nombre_usuario); ?>!</h2>
 
             <div class="menu-opciones">
-                <a href="index.html?view=config&usuario=<?php echo $usuario_param; ?>" class="menu-btn menu-btn-primary">
-                    <span>INICIAR PARTIDA</span>
-                </a>
                 <a href="#" id="tutorial-btn" class="menu-btn menu-btn-secondary">
                     <span>TUTORIAL</span>
                 </a>
-                <a href="perfil.php" class="menu-btn menu-btn-secondary">
-                    <span>VER PERFIL</span>
+                <a href="index.html?view=config&usuario=<?php echo $usuario_param; ?>" class="menu-btn menu-btn-primary">
+                    <span>INICIAR PARTIDA</span>
                 </a>
                 <a href="historial.php" class="menu-btn menu-btn-secondary">
                     <span>VER HISTORIAL</span>
+                </a>
+                <a href="perfil.php" class="menu-btn menu-btn-secondary">
+                    <span>MI PERFIL</span>
                 </a>
                 <a href="menu.php?logout=1" class="menu-btn menu-btn-danger logout-btn">
                     <span>CERRAR SESION</span>

@@ -822,6 +822,7 @@
     background: linear-gradient(180deg, rgba(4, 25, 45, 0.94) 0%, rgba(2, 17, 31, 0.95) 100%);
     border: 1px solid var(--panel-border);
     box-shadow: var(--shadow-outer), inset 0 0 0 1px rgba(0, 240, 255, 0.1);
+    overflow: visible;
 }
 
 #partida .scenario-panel.gmail-open .scenario-type,
@@ -1239,34 +1240,49 @@
 }   
 
 #partida #correo-repercusion .correo-close-x {
-    position: static;
-    width: 24px;
-    height: 24px;
-    min-width: 24px;
-    margin: 0 4px 0 8px;
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: auto;
+    height: auto;
+    min-width: 0;
+    margin: 0;
     padding: 0;
-    border: 1px solid rgba(255, 110, 136, 0.62);
-    border-radius: 999px;
-    background: rgba(82, 14, 31, 0.82);
-    color: #ff7f98;
-    font-size: 16px;
+    border: 0 !important;
+    border-radius: 0;
+    background: transparent !important;
+    color: #f7fbff;
+    font-size: 18px;
     line-height: 1;
     font-weight: 900;
     text-align: center;
     cursor: pointer;
-    text-shadow: 0 0 8px rgba(255, 75, 95, 0.35);
-    z-index: 12;
+    text-shadow: 0 0 5px rgba(83, 189, 255, 0.95), 0 0 12px rgba(32, 144, 255, 0.55);
+    z-index: 15;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     flex: 0 0 auto;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none !important;
+    box-shadow: none !important;
 }
 
 #partida #correo-repercusion .correo-close-x:hover {
-    color: #ffd5df;
-    background: rgba(114, 20, 44, 0.92);
-    border-color: rgba(255, 151, 171, 0.95);
-    text-shadow: 0 0 12px rgba(255, 164, 182, 0.85);
+    color: #ffffff;
+    background: transparent !important;
+    border: 0 !important;
+    outline: none;
+    box-shadow: none;
+    text-shadow: 0 0 6px rgba(120, 209, 255, 1), 0 0 16px rgba(53, 154, 255, 0.82);
+}
+
+#partida #correo-repercusion .correo-close-x:focus,
+#partida #correo-repercusion .correo-close-x:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+    border: 0 !important;
 }
 
 #partida .correo-gmail {
@@ -1302,7 +1318,7 @@
     justify-content: space-between;
     align-items: center;
     gap: 10px;
-    padding: 16px 18px 10px;
+    padding: 16px 18px 10px 18px;
     border-bottom: 1px solid rgba(0, 220, 255, 0.26);
     background: linear-gradient(180deg, rgba(7, 43, 72, 0.72) 0%, rgba(5, 32, 53, 0.5) 100%);
 }
@@ -1653,20 +1669,32 @@
 
 #partida .metric-ring {
     width: 82px;
+    height: 82px;
+    min-width: 82px;
+    min-height: 82px;
     aspect-ratio: 1 / 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     border: 2px solid #00ff8a;
-    border-radius: 999px;
+    border-radius: 50%;
     background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.06), rgba(5, 18, 31, 0.93));
     color: #cdffec;
     font-weight: 800;
-    padding: 8px;
+    padding: 0;
+    box-sizing: border-box;
     box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.42), 0 0 10px rgba(255, 255, 255, 0.42), 0 0 24px rgba(255, 255, 255, 0.18);
     position: relative;
     overflow: hidden;
+    clip-path: circle(50% at 50% 50%);
+}
+
+#partida button.metric-ring {
+    appearance: none;
+    -webkit-appearance: none;
+    margin: 0;
+    padding: 0;
 }
 
 #partida .metric-ring::before {
@@ -1942,6 +1970,12 @@
     display: none !important;
 }
 
+#partida .soc-center-col:has(.scenario-panel.gmail-open) {
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 4px;
+}
+
 /* Pantalla completa y responsiva */
 #partida.partida-screen {
     width: 100vw;              /* ocupa todo el ancho */
@@ -2062,65 +2096,3 @@
     }
 }
 
-.futuristic-chart {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-around;
-  width: 100%;
-  height: 300px; /* altura visible */
-  background: radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.05), transparent 70%),
-              linear-gradient(180deg, rgba(3, 20, 36, 0.9), rgba(1, 8, 16, 0.95));
-  border: 1px solid rgba(0, 240, 255, 0.2);
-  border-radius: 10px;
-  box-shadow: 0 0 24px rgba(0, 240, 255, 0.12);
-  padding: 20px;
-  overflow: hidden;
-}
-
-.futuristic-chart .bar {
-  position: relative;
-  width: 40px;
-  height: var(--height);
-  background: var(--color);
-  border-radius: 6px 6px 0 0;
-  box-shadow: 0 0 12px var(--color);
-  transition: height 0.4s ease, box-shadow 0.4s ease;
-}
-
-.futuristic-chart .bar:hover {
-  box-shadow: 0 0 24px var(--color);
-  transform: scale(1.05);
-}
-
-.futuristic-chart .bar span {
-  position: absolute;
-  top: -22px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 12px;
-  color: var(--color);
-  font-weight: 700;
-  text-shadow: 0 0 6px var(--color);
-}
-
-.futuristic-chart .bar label {
-  position: absolute;
-  bottom: -22px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 11px;
-  color: #d6f5ff;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-/* Responsividad */
-@media (max-width: 768px) {
-  .futuristic-chart {
-    height: 200px;
-    padding: 10px;
-  }
-  .futuristic-chart .bar {
-    width: 28px;
-  }
-}
