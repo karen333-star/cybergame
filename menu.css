@@ -39,15 +39,12 @@ body.menu-page .menu-container {
 }
 
 body.menu-page .menu-card {
-    width: min(560px, 96%);
-    padding: 32px 18px 22px;
-    border-radius: 10px;
-    border: 1px solid rgba(123, 88, 255, 0.78);
-    background: rgba(2, 5, 14, 0.82);
-    box-shadow:
-        0 0 0 1px rgba(117, 195, 255, 0.1),
-        0 0 26px rgba(95, 63, 214, 0.28),
-        inset 0 0 20px rgba(255, 255, 255, 0.02);
+    width: 100%;
+    padding: 12px 0 22px;
+    border-radius: 0;
+    border: none;
+    background: transparent;
+    box-shadow: none;
     color: #edf9ff;
     position: relative;
     margin-top: 0;
@@ -57,8 +54,9 @@ body.menu-page .menu-corner {
     position: absolute;
     width: 18px;
     height: 18px;
-    border: 2px solid #8058ff;
-    filter: drop-shadow(0 0 8px rgba(128, 88, 255, 0.6));
+    border: none;
+    filter: none;
+    display: none;
 }
 
 body.menu-page .menu-corner-tl {
@@ -159,31 +157,65 @@ body.menu-page .menu-opciones {
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    align-items: stretch;
+    gap: 18px;
+    align-items: center;
     width: 100%;
 }
 
 body.menu-page .menu-opciones .menu-btn {
-    width: 100% !important;
+    width: min(470px, 100%) !important;
     min-width: 0 !important;
-    max-width: none !important;
-    min-height: 56px;
+    max-width: 100% !important;
+    min-height: 72px !important;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 12px;
-    padding: 12px 18px;
-    border-radius: 12px;
+    padding: 14px 22px 14px 102px !important;
+    border-radius: 999px !important;
     text-decoration: none;
-    color: #f2fbff;
+    color: #eef7ff;
     font-family: 'Rajdhani', sans-serif;
-    font-size: clamp(18px, 2vw, 24px);
-    font-weight: 700;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
+    font-size: clamp(26px, 2.4vw, 34px);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    position: relative;
+    overflow: visible;
+    border: 0 !important;
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, filter 0.2s ease;
     /* Color base del boton: borde + halo neon principal */
+}
+
+body.menu-page .menu-opciones .menu-btn::before {
+    content: '' !important;
+    position: absolute;
+    left: -2px;
+    top: 6px;
+    bottom: 6px;
+    width: 92px;
+    background: linear-gradient(180deg, #ffffff 0%, #eceef4 100%);
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+    border-radius: 18px;
+    box-shadow: 0 4px 12px rgba(7, 8, 20, 0.3), inset 0 0 0 1px rgba(120, 130, 170, 0.2);
+    z-index: 1;
+}
+
+body.menu-page .menu-opciones .menu-btn::after {
+    content: '' !important;
+    position: absolute;
+    left: 36px;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1;
+    z-index: 2;
+}
+
+body.menu-page .menu-opciones .menu-btn span {
+    position: relative;
+    z-index: 2;
 }
 
 body.menu-page .menu-btn .menu-icon {
@@ -194,27 +226,37 @@ body.menu-page .menu-btn .menu-icon {
 
 body.menu-page .menu-btn-primary {
     /* Intensidad y color del boton Iniciar Partida */
-    border-color: rgba(0, 245, 255, 1);
-    color: #c4f4ff;
-    background: rgba(0, 0, 0, 0.22);
-    box-shadow: 0 0 0 1px rgba(0, 245, 255, 0.72), 0 0 24px rgba(0, 245, 255, 0.82);
+    border-color: rgba(120, 244, 255, 0.95);
+    color: #e8ffff;
+    background: linear-gradient(90deg, #0f8fd1 0%, #71eff7 100%);
+    box-shadow: 0 0 0 1px rgba(0, 245, 255, 0.72), 0 0 24px rgba(0, 245, 255, 0.82), 0 12px 28px rgba(87, 229, 255, 0.24);
 }
 
 body.menu-page .menu-btn-secondary {
     /* Intensidad y color de los botones secundarios */
-    border-color: rgba(180, 120, 255, 1);
-    color: #d2e0f7;
-    background: rgba(0, 0, 0, 0.22);
-    box-shadow: 0 0 0 1px rgba(180, 120, 255, 0.74), 0 0 22px rgba(180, 120, 255, 0.82);
+    border-color: rgba(236, 123, 255, 0.96);
+    color: #f4ecff;
+    background: linear-gradient(90deg, #7f28e5 0%, #f07de4 100%);
+    box-shadow: 0 0 0 1px rgba(180, 120, 255, 0.74), 0 0 22px rgba(180, 120, 255, 0.82), 0 12px 28px rgba(185, 87, 255, 0.24);
+}
+
+body.menu-page .menu-opciones a:nth-child(3).menu-btn-secondary {
+    border-color: rgba(255, 146, 240, 0.96);
+    background: linear-gradient(90deg, #ce57e7 0%, #f59fe9 100%);
+}
+
+body.menu-page .menu-opciones a:nth-child(4).menu-btn-secondary {
+    border-color: rgba(255, 124, 165, 0.95);
+    background: linear-gradient(90deg, #f3007b 0%, #ff7d2f 100%);
 }
 
 body.menu-page .menu-btn-danger {
     /* Intensidad y color del boton de cierre de sesion */
     margin-top: 10px;
-    border-color: rgba(255, 92, 170, 1);
-    color: #ffd0dd;
-    background: rgba(0, 0, 0, 0.22);
-    box-shadow: 0 0 0 1px rgba(255, 92, 170, 0.74), 0 0 22px rgba(255, 92, 170, 0.82);
+    border-color: rgba(255, 116, 170, 1);
+    color: #ffe9f0;
+    background: linear-gradient(90deg, #c7327d 0%, #e2599d 100%);
+    box-shadow: 0 0 0 1px rgba(255, 92, 170, 0.74), 0 0 22px rgba(255, 92, 170, 0.82), 0 12px 28px rgba(233, 92, 170, 0.24);
 }
 
 body.menu-page .menu-btn:hover {
@@ -224,23 +266,23 @@ body.menu-page .menu-btn:hover {
 }
 
 body.menu-page .menu-btn-primary:hover {
-    box-shadow: 0 0 0 1px rgba(0, 245, 255, 0.9), 0 0 30px rgba(0, 245, 255, 0.84), 0 0 44px rgba(0, 245, 255, 0.22);
+    box-shadow: 0 0 0 1px rgba(0, 245, 255, 0.92), 0 0 30px rgba(0, 245, 255, 0.86), 0 0 44px rgba(0, 245, 255, 0.24), 0 16px 32px rgba(87, 229, 255, 0.28);
 }
 
 body.menu-page .menu-btn-secondary:hover {
-    box-shadow: 0 0 0 1px rgba(180, 120, 255, 0.9), 0 0 30px rgba(180, 120, 255, 0.84), 0 0 44px rgba(180, 120, 255, 0.22);
+    box-shadow: 0 0 0 1px rgba(180, 120, 255, 0.92), 0 0 30px rgba(180, 120, 255, 0.86), 0 0 44px rgba(180, 120, 255, 0.24), 0 16px 32px rgba(185, 87, 255, 0.28);
 }
 
 body.menu-page .menu-btn-danger:hover {
-    box-shadow: 0 0 0 1px rgba(255, 92, 170, 0.9), 0 0 30px rgba(255, 92, 170, 0.84), 0 0 44px rgba(255, 92, 170, 0.22);
+    box-shadow: 0 0 0 1px rgba(255, 92, 170, 0.92), 0 0 30px rgba(255, 92, 170, 0.86), 0 0 44px rgba(255, 92, 170, 0.24), 0 16px 32px rgba(233, 92, 170, 0.28);
 }
 
 body.menu-page #tutorial-btn {
     /* Tutorial en azul oscuro, con su propia intensidad neon */
-    border-color: rgba(74, 165, 255, 1);
-    color: #f0fbff;
-    background: rgba(0, 0, 0, 0.22);
-    box-shadow: 0 0 0 1px rgba(74, 165, 255, 0.9), 0 0 30px rgba(74, 165, 255, 0.88), 0 0 44px rgba(74, 165, 255, 0.22);
+    border-color: rgba(223, 120, 255, 0.95);
+    color: #f8f2ff;
+    background: linear-gradient(90deg, #6d22d2 0%, #f058e5 100%);
+    box-shadow: 0 0 0 1px rgba(174, 100, 255, 0.88), 0 0 30px rgba(174, 100, 255, 0.84), 0 0 44px rgba(174, 100, 255, 0.22), 0 12px 28px rgba(174, 100, 255, 0.24);
 }
 
 body.menu-page #tutorial-btn:hover {
@@ -296,8 +338,22 @@ body.menu-page .menu-status-dot {
     }
 
     body.menu-page .menu-btn {
-        font-size: clamp(16px, 4.8vw, 22px);
-        min-height: 50px;
+        width: min(360px, 100%) !important;
+        font-size: clamp(20px, 5.2vw, 28px);
+        min-height: 62px;
+        padding-left: 86px;
+    }
+
+    body.menu-page .menu-opciones .menu-btn::before {
+        width: 74px;
+        left: -1px;
+        top: 6px;
+        bottom: 6px;
+    }
+
+    body.menu-page .menu-opciones .menu-btn::after {
+        left: 30px;
+        font-size: 24px;
     }
 
     body.menu-page .menu-status {
@@ -445,7 +501,7 @@ body.menu-page .menu-status-dot {
 body.menu-page .menu-opciones {
     display: flex;
     flex-direction: column;   /* botones en columna */
-    align-items: center;      /* centrados horizontalmente */
+    align-items: stretch;     /* mantiene boton ancho completo */
     justify-content: center;  /* centrados verticalmente */
     gap: 18px;                /* espacio uniforme entre botones */
     width: 100%;              /* ocupar todo el ancho */
@@ -666,17 +722,6 @@ body.menu-page .menu-corner-tr,
 body.menu-page .menu-corner-bl,
 body.menu-page .menu-corner-br {
     display: none !important;
-}
-
-/* Ajustar el contenedor para ocupar toda la pantalla */
-body.menu-page .menu-container {
-    min-height: 100vh;             /* ocupa toda la altura */
-    display: flex;
-    flex-direction: column;        /* título arriba, botones debajo */
-    align-items: center;
-    justify-content: center;
-    gap: 24px;                     /* espacio entre título y botones */
-    padding: 40px 0;
 }
 
 /* Título global */
@@ -912,6 +957,375 @@ body.menu-page .menu-opciones {
     body.menu-page .menu-welcome {
         font-size: 16px !important;
         margin: 6px 0 14px !important;
+    }
+}
+
+/* ==================================
+   FINAL OVERRIDE - BOTONES PLANTILLA
+   ================================== */
+body.menu-page .menu-opciones {
+    /* Reemplazado: usar grid 3-columnas: izquierda / centro / derecha */
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 1fr auto 1fr !important;
+    align-items: center !important;
+    justify-items: center !important;
+    gap: 22px !important;
+    margin-top: 8px !important;
+}
+
+/* Column wrappers dentro de .menu-opciones */
+.menu-col { display: flex; flex-direction: column; gap: 18px; align-items: center; }
+.menu-col-left { align-items: flex-start; }
+.menu-col-right { align-items: flex-end; }
+.menu-col-center { align-items: center; }
+
+/* Centro: botón principal más grande */
+.menu-col-center .menu-btn.main-btn { width: min(420px, 60%); min-height: 96px; padding-left: 0 !important; padding-right: 0 !important; }
+
+/* Alineación de botones de columna izquierda/derecha para mantener el aspecto original */
+.menu-col-left .menu-btn,
+.menu-col-right .menu-btn { width: min(320px, 85%); justify-content: center; padding-left: 110px !important; }
+
+/* Móvil: volver a columna única centrada */
+@media (max-width: 900px) {
+    body.menu-page .menu-opciones { display: flex !important; flex-direction: column !important; align-items: center !important; }
+    .menu-col, .menu-col-left, .menu-col-right, .menu-col-center { width: 100%; align-items: center; }
+    .menu-col-left .menu-btn, .menu-col-right .menu-btn { width: 100%; padding-left: 126px !important; }
+    .menu-col-center .menu-btn.main-btn { width: 100%; min-height: 80px; }
+}
+
+body.menu-page .menu-opciones .menu-btn {
+    position: relative;
+    width: min(360px, 90%);
+    min-width: 0;
+    min-height: 80px !important;
+    padding: 12px 20px 12px 126px !important;
+    border-radius: 999px;
+    border: 2px solid !important;
+    background: #000 !important;
+    overflow: visible;
+    display: flex;
+    align-items: center;
+    /* Aqui se ajusta la posicion del texto de los botones */
+    justify-content: center;
+    text-transform: none;
+    font-size: clamp(24px, 2vw, 28px);
+    font-weight: 600;
+    letter-spacing: 0;
+    color: #f5f1ff !important;
+    transition: all 0.3s ease !important;
+}
+
+body.menu-page .menu-opciones .menu-btn::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: -4px;
+    bottom: -4px;
+    width: 180px !important;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 220'>%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%23ffffff'/%3E%3Cstop offset='1' stop-color='%23f0f2f6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M26 18 C34 14 172 106 172 106 C172 106 34 198 26 194 C18 190 18 26 26 18 Z' fill='url(%23g)' stroke='%23000000' stroke-opacity='0.04' stroke-width='2'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: contain;
+    box-shadow: 0 8px 22px rgba(6,6,18,0.38), inset 0 3px 0 rgba(255,255,255,0.96);
+    z-index: 2;
+}
+
+body.menu-page .menu-opciones .menu-btn::after {
+    content: none !important;
+}
+
+body.menu-page .menu-opciones .menu-btn span {
+
+    width: 100% !important;
+    /* Esta regla centra o alinea el texto dentro del boton */
+    text-align: center !important;
+}
+
+
+
+body.menu-page .menu-btn-danger::after {
+    content: none !important;
+}
+
+@media (max-width: 900px) {
+    body.menu-page .menu-opciones {
+        gap: 16px !important;
+    }
+
+    body.menu-page .menu-opciones .menu-btn {
+        width: min(380px, 100%) !important;
+        min-height: 64px !important;
+        padding: 12px 16px 12px 88px !important;
+        font-size: clamp(21px, 5vw, 28px) !important;
+    }
+
+    body.menu-page .menu-opciones .menu-btn::before {
+        width: 78px !important;
+        left: -4px !important;
+    }
+
+    body.menu-page .menu-opciones .menu-btn::after {
+        left: 30px !important;
+        font-size: 25px !important;
+    }
+}
+
+/* Avoid clipping of large triangles and make title adaptive on small screens */
+body.menu-page .menu-card {
+    overflow: visible !important;
+}
+
+body.menu-page .menu-container {
+    overflow: visible !important;
+}
+
+@media (max-width: 700px) {
+    body.menu-page #main-title,
+    body.menu-page .menu-title {
+        position: static !important;
+        transform: none !important;
+        left: auto !important;
+        margin: 8px 0 !important;
+        font-size: clamp(18px, 6vw, 26px) !important;
+        text-align: center !important;
+    }
+
+}
+
+/* FORCE-OVERRIDE: Ensure all changes are visible */
+body.menu-page .menu-card {
+    width: 100% !important;
+    padding: 12px 0 22px !important;
+    border-radius: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+body.menu-page .menu-corner,
+body.menu-page .menu-corner-tl,
+body.menu-page .menu-corner-tr,
+body.menu-page .menu-corner-bl,
+body.menu-page .menu-corner-br {
+    display: none !important;
+    border: none !important;
+}
+
+body.menu-page .menu-opciones .menu-btn {
+    position: relative !important;
+    width: min(360px, 90%) !important;
+    min-height: 80px !important;
+    padding: 12px 20px 12px 142px !important;
+    border-radius: 999px !important;
+    border: none !important;
+    overflow: visible !important;
+}
+
+body.menu-page .menu-opciones .menu-btn::before {
+    content: '' !important;
+    position: absolute !important;
+    left: -20px !important;
+    top: -4px !important;
+    bottom: -4px !important;
+    width: 180px !important;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 220'>%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%23ffffff'/%3E%3Cstop offset='1' stop-color='%23f0f2f6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M26 18 C34 14 172 106 172 106 C172 106 34 198 26 194 C18 190 18 26 26 18 Z' fill='url(%23g)' stroke='%23000000' stroke-opacity='0.04' stroke-width='2'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: left center !important;
+    background-size: contain !important;
+    box-shadow: 0 8px 22px rgba(6,6,18,0.38), inset 0 3px 0 rgba(255,255,255,0.96) !important;
+    z-index: 2 !important;
+}
+
+/* FINAL FORCE: Neon borders and transparent backgrounds */
+body.menu-page #tutorial-btn {
+    border-color: #3a37f7 !important;
+    background: black !important;
+    box-shadow: 0 0 0 2px #5e6eff, 0 0 20px rgba(89, 78, 243, 0.658), inset 0 0 20px rgba(218, 94, 255, 0.1) !important;
+}
+
+body.menu-page .menu-btn-primary {
+    border-color: #00ffc8 !important;
+    background: black !important;
+    box-shadow: 0 0 0 2px #00ffc8, 0 0 20px rgba(0, 255, 200, 0.6), inset 0 0 20px rgba(0, 245, 255, 0.1) !important;
+}
+
+body.menu-page .menu-opciones a:nth-child(3) {
+    border-color: #066df3 !important;
+    background: black !important;
+    box-shadow: 0 0 0 2px #5d96ff, 0 0 20px rgba(93, 218, 255, 0.6), inset 0 0 20px rgba(93, 218, 255, 0.1) !important;
+}
+
+body.menu-page .menu-opciones a:nth-child(4) {
+    border-color: #640af5 !important;
+    background: black !important;
+    box-shadow: 0 0 0 2px #8446f8, 0 0 20px rgba(112, 81, 250, 0.747), inset 0 0 20px rgba(218, 94, 255, 0.1) !important;
+}
+
+body.menu-page .menu-btn-danger {
+    border-color: #a51d38 !important;
+    background: black !important;
+    box-shadow: 0 0 0 2px #ff1744, 0 0 20px rgba(243, 5, 52, 0.904), inset 0 0 20px rgba(255, 23, 68, 0.1) !important;
+}
+
+/* ==================================
+   LAYOUT FINAL - TITULO Y DISTRIBUCION
+   ================================== */
+body.menu-page .menu-card {
+    width: min(1380px, 96vw) !important;
+    margin: 0 auto !important;
+    padding: 14px 18px 30px !important;
+}
+
+body.menu-page .menu-title-divider {
+    width: min(980px, 94vw);
+    height: 3px;
+    margin: 12px auto 12px;
+    background: linear-gradient(90deg, transparent 0%, rgba(175, 96, 255, 0.72) 18%, rgba(195, 109, 255, 0.9) 50%, rgba(175, 96, 255, 0.72) 82%, transparent 100%);
+    box-shadow: 0 0 16px rgba(197, 109, 255, 0.45);
+}
+
+body.menu-page .menu-title-divider-bottom {
+    margin-top: 8px;
+    margin-bottom: 10px;
+}
+
+body.menu-page .menu-welcome {
+    text-align: center;
+    margin: 0 !important;
+    font-size: clamp(22px, 2.2vw, 30px) !important;
+    letter-spacing: 0.04em;
+    color: #ffffff !important;
+    text-shadow: 0 0 14px rgba(255, 255, 255, 0.32) !important;
+}
+
+body.menu-page .menu-username {
+    margin: 0 0 8px;
+    text-align: center;
+    color: #d8ebff;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: clamp(20px, 1.8vw, 28px);
+    letter-spacing: 0.03em;
+}
+
+body.menu-page .menu-tagline {
+    margin: 0 0 10px;
+    text-align: center;
+    color: #ffffff;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: calc(clamp(16px, 1.35vw, 22px) + 2px);
+    letter-spacing: 0.02em;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.22);
+}
+
+body.menu-page .menu-welcome::after {
+    content: none !important;
+    display: none !important;
+}
+
+body.menu-page .menu-opciones {
+    width: min(1060px, 82vw) !important;
+    margin: 36px auto 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 2px !important;
+}
+
+body.menu-page .menu-top-row {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: clamp(10px, 2vw, 24px);
+    align-items: start;
+    padding-inline: clamp(0px, 1vw, 12px);
+    box-sizing: border-box;
+}
+
+body.menu-page .menu-center-row {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: -8px;
+}
+
+body.menu-page .menu-col-left {
+    justify-self: start !important;
+    align-items: flex-start !important;
+}
+
+body.menu-page .menu-col-center {
+    justify-self: center !important;
+}
+
+body.menu-page .menu-col-right {
+    justify-self: end !important;
+    align-items: flex-end !important;
+}
+
+body.menu-page .menu-col-left .menu-btn,
+body.menu-page .menu-col-right .menu-btn {
+    width: min(280px, 100%) !important;
+    min-height: 88px !important;
+    padding: 14px 18px 14px 104px !important;
+    font-size: clamp(24px, 1.95vw, 30px) !important;
+}
+
+body.menu-page .menu-col-center .menu-btn.main-btn {
+    width: min(280px, 100%) !important;
+    min-height: 88px !important;
+    padding: 14px 18px 14px 104px !important;
+    font-size: clamp(24px, 1.95vw, 30px) !important;
+}
+
+body.menu-page .menu-col-center .menu-btn.main-btn::before {
+    width: 180px !important;
+    left: -20px !important;
+}
+
+@media (max-width: 1100px) {
+    body.menu-page .menu-opciones {
+        gap: 8px !important;
+    }
+
+    body.menu-page .menu-top-row {
+        grid-template-columns: 1fr !important;
+        row-gap: 14px !important;
+        padding-inline: 0 !important;
+    }
+
+    body.menu-page .menu-col-left,
+    body.menu-page .menu-col-right {
+        justify-self: center !important;
+        align-items: center !important;
+        width: 100%;
+    }
+
+    body.menu-page .menu-col-left .menu-btn,
+    body.menu-page .menu-col-right .menu-btn {
+        width: min(520px, 100%) !important;
+        min-height: 78px !important;
+        padding: 12px 18px 12px 118px !important;
+        font-size: clamp(22px, 5vw, 30px) !important;
+    }
+
+    body.menu-page .menu-center-row {
+        margin-top: 4px;
+    }
+
+    body.menu-page .menu-col-left .menu-btn::before,
+    body.menu-page .menu-col-right .menu-btn::before,
+    body.menu-page .menu-col-center .menu-btn.main-btn::before {
+        width: 170px !important;
+        left: -16px !important;
+    }
+
+    body.menu-page .menu-col-center .menu-btn.main-btn {
+        width: min(520px, 100%) !important;
+        min-height: 78px !important;
+        padding: 12px 18px 12px 118px !important;
+        font-size: clamp(22px, 5vw, 30px) !important;
     }
 }
 
