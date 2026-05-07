@@ -37,24 +37,37 @@ $usuario_param = urlencode($nombre_usuario);
             <div class="menu-corner menu-corner-br" aria-hidden="true"></div>
 
             <h1 id="main-title" class="menu-title"><span class="brand-shield">◬</span> CYBER⥂GAME ◬</h1>
-            <h2 class="menu-welcome oxanium-700">Bienvenido, <?php echo htmlspecialchars($nombre_usuario); ?>!</h2>
+            <p class="menu-tagline">Descubre amenazas y conviertete en un defensor informatico</p>
+            <div class="menu-title-divider" aria-hidden="true"></div>
+            <h2 class="menu-welcome oxanium-700">Bienvenido <?php echo htmlspecialchars($nombre_usuario); ?></h2>
+            <div class="menu-title-divider menu-title-divider-bottom" aria-hidden="true"></div>
 
             <div class="menu-opciones">
-                <a href="#" id="tutorial-btn" class="menu-btn menu-btn-secondary">
-                    <span>TUTORIAL</span>
-                </a>
-                <a href="index.html?view=config&usuario=<?php echo $usuario_param; ?>" class="menu-btn menu-btn-primary">
-                    <span>INICIAR PARTIDA</span>
-                </a>
-                <a href="historial.php" class="menu-btn menu-btn-secondary">
-                    <span>VER HISTORIAL</span>
-                </a>
-                <a href="perfil.php" class="menu-btn menu-btn-secondary">
-                    <span>MI PERFIL</span>
-                </a>
-                <a href="menu.php?logout=1" class="menu-btn menu-btn-danger logout-btn">
-                    <span>CERRAR SESION</span>
-                </a>
+                <div class="menu-top-row">
+                    <div class="menu-col menu-col-left">
+                        <a href="#" id="tutorial-btn" class="menu-btn menu-btn-secondary">
+                            <span>TUTORIAL</span>
+                        </a>
+                        <a href="historial.php" class="menu-btn menu-btn-secondary">
+                            <span>VER HISTORIAL</span>
+                        </a>
+                    </div>
+
+                    <div class="menu-col menu-col-right">
+                        <a href="perfil.php" class="menu-btn menu-btn-secondary">
+                            <span>MI PERFIL</span>
+                        </a>
+                        <a href="menu.php?logout=1" class="menu-btn menu-btn-danger logout-btn">
+                            <span>CERRAR SESION</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="menu-center-row">
+                    <a href="index.html?view=config&usuario=<?php echo $usuario_param; ?>" class="menu-btn menu-btn-primary main-btn">
+                        <span>INICIAR PARTIDA</span>
+                    </a>
+                </div>
             </div>
 
             <p class="menu-status"><span class="menu-status-dot"></span>SISTEMA OPERATIVO // RED SEGURA</p>
