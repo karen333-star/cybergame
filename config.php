@@ -14,7 +14,15 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 }
 
 // Conexión a BD CYBERGAME
-$conn = new mysqli("localhost", "root", "", "CYBERGAME");
+
+// Conexión a BD CYBERGAME
+$dbHost = getenv('CYBERGAME_DB_HOST') ?: 'localhost';
+$dbUser = getenv('CYBERGAME_DB_USER') ?: 'u592438158_Toska';
+$dbPass = getenv('CYBERGAME_DB_PASS') ?: 'LauraHermosa.117';
+$dbName = getenv('CYBERGAME_DB_NAME') ?: 'u592438158_cybergame';
+
+$conn = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
+
 
 // Verificar conexión
 if ($conn->connect_error) {

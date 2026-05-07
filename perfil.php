@@ -216,7 +216,7 @@ foreach ($top5 as $escenario) {
                 <div class="profile-panel profile-brand-panel">
                     <div class="profile-kicker">MI PERFIL</div>
                     <div class="profile-avatar" aria-hidden="true">◌</div>
-                    <h2 class="profile-user-name oxanium-700"><?php echo htmlspecialchars($userProfile['nombre_usuario'] ?? '-'); ?></h2>
+                    <h2 class="profile-user-name"><?php echo htmlspecialchars($userProfile['nombre_usuario'] ?? '-'); ?></h2>
                 </div>
 
                 <div class="profile-panel profile-account-panel">
@@ -261,7 +261,7 @@ foreach ($top5 as $escenario) {
                 <?php endif; ?>
 
                 <section class="profile-hero">
-                    <div class="profile-kicker profile-kicker-main">CENTRO DE IDENTIDAD</div>
+                    <div class="profile-kicker profile-kicker-main">CENTRO DE INFORMACON PERFILESCA DE LA PERFILACION DE CEJAS Y ZEBRAS</div>
                     <h1>Controla tu cuenta, revisa tu progreso y accede a tus módulos críticos.</h1>
                 </section>
 
@@ -391,15 +391,15 @@ foreach ($top5 as $escenario) {
                 <section class="profile-panel profile-quick-panel">
                     <h3 class="profile-panel-title">Acceso Rápido</h3>
                     <div class="profile-quick-grid">
-                        <a href="historial.php" class="menu-btn menu-btn-secondary profile-quick-btn">
+                        <a href="historial.php" class="menu-btn profile-quick-btn">
                             <span class="profile-quick-icon" aria-hidden="true">⌁</span>
                             <span class="profile-quick-copy"><strong>Ver Historial</strong><small>Resultados, comparativas y desempeño</small></span>
                         </a>
-                        <a href="menu.php" class="menu-btn menu-btn-secondary profile-quick-btn">
+                        <a href="menu.php" class="menu-btn profile-quick-btn">
                             <span class="profile-quick-icon" aria-hidden="true">⌂</span>
                             <span class="profile-quick-copy"><strong>Volver al Menú</strong><small>Regresa al centro de control principal</small></span>
                         </a>
-                        <a href="menu.php?logout=1" class="menu-btn menu-btn-danger logout-btn profile-quick-btn">
+                        <a href="menu.php?logout=1" class="menu-btn logout-btn profile-quick-btn">
                             <span class="profile-quick-icon" aria-hidden="true">⇥</span>
                             <span class="profile-quick-copy"><strong>Cerrar Sesión</strong><small>Salir del sistema de forma segura</small></span>
                         </a>
