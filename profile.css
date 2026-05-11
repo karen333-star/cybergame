@@ -8,6 +8,8 @@
         align-items: stretch;
         justify-content: flex-start;
         padding: 18px;
+        overflow-x: hidden;
+        overflow-y: auto;
         background:
             radial-gradient(circle at 15% 15%, rgba(0, 230, 255, 0.12), transparent 22%),
             radial-gradient(circle at 86% 10%, rgba(168, 85, 247, 0.14), transparent 18%),

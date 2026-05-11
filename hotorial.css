@@ -8,6 +8,7 @@ body.history-cyber {
     min-height: 100vh;
     padding: 0;
     overflow-x: hidden;
+    overflow-y: auto;
     background:
         radial-gradient(circle at 20% 18%, rgba(141, 77, 255, 0.2), transparent 42%),
         radial-gradient(circle at 85% 95%, rgba(51, 127, 255, 0.25), transparent 40%),
@@ -337,6 +338,35 @@ body.history-cyber .history-item-button {
 body.history-cyber .status-pill {
     border-radius: 999px;
     border: 1px solid transparent;
+}
+
+body.history-cyber .event-outcome-badge {
+    margin: 10px 0 12px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    font-family: 'Rajdhani', sans-serif;
+    letter-spacing: 0.03em;
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+}
+
+body.history-cyber .event-outcome-badge strong {
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+body.history-cyber .event-outcome-positive {
+    background: rgba(44, 199, 126, 0.18);
+    border-color: rgba(107, 245, 177, 0.44);
+    color: #adffd6;
+}
+
+body.history-cyber .event-outcome-negative {
+    background: rgba(236, 74, 122, 0.18);
+    border-color: rgba(255, 130, 167, 0.44);
+    color: #ffd0df;
 }
 
 body.history-cyber .estado-ganada {

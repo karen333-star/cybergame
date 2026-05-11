@@ -64,7 +64,10 @@ $usuario_param = urlencode($nombre_usuario);
                 </div>
 
                 <div class="menu-center-row">
-                    <a href="index.html?view=config&usuario=<?php echo $usuario_param; ?>" class="menu-btn menu-btn-primary main-btn">
+                    <a href="#" id="continuar-partida-btn" class="menu-btn menu-btn-primary main-btn" style="display: none;">
+                        <span>CONTINUAR PARTIDA</span>
+                    </a>
+                    <a href="index.html?view=config&usuario=<?php echo $usuario_param; ?>" id="iniciar-partida-btn" class="menu-btn menu-btn-primary main-btn">
                         <span>INICIAR PARTIDA</span>
                     </a>
                 </div>
@@ -167,6 +170,95 @@ $usuario_param = urlencode($nombre_usuario);
             // initialize hidden
             overlay.style.display = 'none';
         })();
+    </script>
+
+    <script>
+        // Verificar si hay partida pendiente al cargar el menú
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarPartidaPendiente();
+        });
+
+        function verificarPartidaPendiente() {
+            const body = new URLSearchParams({ accion: 'obtener_ultima_partida' });
+
+            fetch('partida_api.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: body.toString()
+            })
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    if (!data.ok) {
+                        console.error('Error verificando partida:', data.error);
+                        return;
+                    }
+
+                    const btnContinuar = document.getElementById('continuar-partida-btn');
+                    const btnIniciar = document.getElementById('iniciar-partida-btn');
+
+                    if (!btnContinuar || !btnIniciar) {
+                        return;
+                    }
+
+                    if (data.hay_partida_pendiente && data.id_partida) {
+                        // Hay partida en progreso
+                        btnContinuar.style.display = 'inline-block';
+                        btnIniciar.style.display = 'none';
+
+                        btnContinuar.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            reanudirPartida(data.id_partida);
+                        });
+                    } else {
+                        // No hay partida en progreso
+                        btnContinuar.style.display = 'none';
+                        btnIniciar.style.display = 'inline-block';
+                    }
+                })
+                .catch(function(err) {
+                    console.error('Error en fetch verificar partida:', err);
+                    // En caso de error, mostrar botón de iniciar
+                    const btnContinuar = document.getElementById('continuar-partida-btn');
+                    const btnIniciar = document.getElementById('iniciar-partida-btn');
+                    if (btnContinuar && btnIniciar) {
+                        btnContinuar.style.display = 'none';
+                        btnIniciar.style.display = 'inline-block';
+                    }
+                });
+        }
+
+        function reanudirPartida(idPartida) {
+            const body = new URLSearchParams({
+                accion: 'reanudar_ultima_partida',
+                id_partida: String(idPartida)
+            });
+
+            fetch('partida_api.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: body.toString()
+            })
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    if (!data.ok) {
+                        alert('No se pudo reanudar la partida: ' + (data.error || 'ERROR'));
+                        return;
+                    }
+
+                    // Guardar el estado de la partida en sessionStorage
+                    sessionStorage.setItem('partida_reanudada', JSON.stringify({
+                        estado: data.estado || {},
+                        config: data.config || {}
+                    }));
+
+                    // Redirigir a la partida
+                    window.location.href = 'index.html?view=partida&usuario=' + encodeURIComponent(document.querySelector('.menu-welcome').textContent.replace('Bienvenido ', ''));
+                })
+                .catch(function(err) {
+                    console.error('Error en fetch reanudar partida:', err);
+                    alert('Error de red al reanudar partida');
+                });
+        }
     </script>
 
 </body>

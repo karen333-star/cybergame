@@ -979,6 +979,97 @@ try {
         ]);
     }
 
+    if ($accion === 'obtener_ultima_partida') {
+        $sqlUltimaPartida = "
+            SELECT 
+                id_partida,
+                estado_partida,
+                cia_inicial,
+                presupuesto_inicial,
+                despido_inicial,
+                max_rondas,
+                tiempo_inicial
+            FROM partidas
+            WHERE id_usuario = ?
+            ORDER BY id_partida DESC
+            LIMIT 1
+        ";
+
+        $stmtUltima = $conn->prepare($sqlUltimaPartida);
+        if (!$stmtUltima) {
+            throw new RuntimeException('Error prepare última partida: ' . $conn->error);
+        }
+
+        $stmtUltima->bind_param('i', $idUsuario);
+        $stmtUltima->execute();
+        $resUltima = $stmtUltima->get_result();
+
+        if ($resUltima->num_rows === 0) {
+            responder(['ok' => true, 'hay_partida_pendiente' => false]);
+        }
+
+        $ultimaPartida = $resUltima->fetch_assoc();
+        $estadoPartida = (string)$ultimaPartida['estado_partida'];
+
+        // Si la última partida está en curso, se puede continuar
+        if ($estadoPartida === 'en_curso') {
+            responder([
+                'ok' => true,
+                'hay_partida_pendiente' => true,
+                'id_partida' => (int)$ultimaPartida['id_partida'],
+                'estado' => $estadoPartida
+            ]);
+        } else {
+            responder(['ok' => true, 'hay_partida_pendiente' => false]);
+        }
+    }
+
+    if ($accion === 'reanudar_ultima_partida') {
+        $idPartidaReanudar = isset($_POST['id_partida']) ? (int)$_POST['id_partida'] : 0;
+
+        if ($idPartidaReanudar <= 0) {
+            responder(['ok' => false, 'error' => 'ID_PARTIDA_INVALIDO']);
+        }
+
+        $sqlValidaPartida = "
+            SELECT id_partida, estado_partida, cia_inicial, presupuesto_inicial, despido_inicial, max_rondas
+            FROM partidas
+            WHERE id_partida = ? AND id_usuario = ? AND estado_partida = 'en_curso'
+            LIMIT 1
+        ";
+        $stmtValida = $conn->prepare($sqlValidaPartida);
+        if (!$stmtValida) {
+            throw new RuntimeException('Error prepare validar reanudar: ' . $conn->error);
+        }
+
+        $stmtValida->bind_param('ii', $idPartidaReanudar, $idUsuario);
+        $stmtValida->execute();
+        $resValida = $stmtValida->get_result();
+
+        if ($resValida->num_rows === 0) {
+            responder(['ok' => false, 'error' => 'PARTIDA_NO_ENCONTRADA']);
+        }
+
+        $partidaData = $resValida->fetch_assoc();
+
+        $_SESSION['partida_id_actual'] = $idPartidaReanudar;
+
+        $estadoActual = obtener_estado_actual_partida($conn, $idPartidaReanudar);
+
+        responder([
+            'ok' => true,
+            'accion' => 'reanudar_ultima_partida',
+            'id_partida' => $idPartidaReanudar,
+            'estado' => $estadoActual,
+            'config' => [
+                'cia_inicial' => (int)$partidaData['cia_inicial'],
+                'presupuesto_inicial' => (int)$partidaData['presupuesto_inicial'],
+                'despido_inicial' => (float)$partidaData['despido_inicial'],
+                'max_rondas' => (int)$partidaData['max_rondas']
+            ]
+        ]);
+    }
+
     responder(['ok' => false, 'error' => 'ACCION_INVALIDA']);
 } catch (Throwable $e) {
     error_log('partida_api.php: ' . $e->getMessage());

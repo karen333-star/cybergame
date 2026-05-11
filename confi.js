@@ -8,6 +8,45 @@ function ocultarPantallas() {
     });
 }
 
+function verificarYCargarPartidaReanudada() {
+    const datosReanudada = sessionStorage.getItem('partida_reanudada');
+    if (!datosReanudada) {
+        return false;
+    }
+
+    try {
+        const data = JSON.parse(datosReanudada);
+        sessionStorage.removeItem('partida_reanudada');
+
+        if (data.estado) {
+            window.estadoPartida.cia = Number(data.estado.cia);
+            window.estadoPartida.cia_desglose = {
+                confidencialidad: data.estado.confidencialidad,
+                integridad: data.estado.integridad,
+                accesibilidad: data.estado.accesibilidad,
+                cia: data.estado.cia
+            };
+            window.estadoPartida.presupuesto = Number(data.estado.presupuesto);
+            window.estadoPartida.despido = Number(data.estado.despido);
+        }
+
+        if (data.config) {
+            window.estadoPartida.maxRondas = Number(data.config.max_rondas || data.config.maxRondas);
+        }
+
+        reiniciarGraficaCIA(window.estadoPartida.cia);
+        actualizarGraficaCIA(window.estadoPartida.cia, true);
+        actualizarContadores();
+
+        mostrarPartida();
+        return true;
+    } catch (e) {
+        console.error('Error procesando partida reanudada:', e);
+    }
+
+    return false;
+}
+
 function aplicarZoomConfiguracion(activo) {
     const zoomValor = activo ? '90%' : '';
     const overflowValor = activo ? 'hidden' : '';
@@ -2649,6 +2688,14 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     actualizarMedidoresConfiguracion();
+
+    // Verificar si es una partida reanudada
+    const esPartidaReanudada = verificarYCargarPartidaReanudada();
+    if (esPartidaReanudada) {
+        // Si es partida reanudada, cargar el siguiente turno
+        cargarSiguienteEscenario();
+        return;
+    }
 
     if (!window.__graficaCiaResizeRegistrada) {
         window.__graficaCiaResizeRegistrada = true;
