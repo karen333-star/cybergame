@@ -13,17 +13,92 @@ body.menu-page {
         linear-gradient(180deg, #000000 0%, #000000 100%);
 }
 
+body.menu-page::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: -6px;
+    width: 92px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='92' height='2000' viewBox='0 0 92 2000'%3E%3Cstyle%3Etext%7Bfont:400 16px 'Share Tech Mono',monospace;letter-spacing:2.8px;fill:%23ad68ff;paint-order:fill;stroke-width:0.12;stroke:%23a36bff;text-rendering:geometricPrecision;shape-rendering:crispEdges;dominant-baseline:central;%7D%3C/style%3E%3Ctext x='2' y='15'%3E0 1 1 1 0 1 0 1%3C/text%3E%3Ctext x='2' y='35'%3E1 0 0 1 1 0 1 1%3C/text%3E%3Ctext x='2' y='55'%3E1 1 0 1 1 1 0 0%3C/text%3E%3Ctext x='2' y='75'%3E0 1 0 0 1 0 1 1%3C/text%3E%3Ctext x='2' y='95'%3E0 1 0 1 0 1 1 0%3C/text%3E%3Ctext x='2' y='115'%3E1 1 1 0 1 0 0 1%3C/text%3E%3Ctext x='2' y='135'%3E1 1 1 0 0 1 1 0%3C/text%3E%3Ctext x='2' y='155'%3E0 0 1 1 1 0 1 1%3C/text%3E%3Ctext x='2' y='175'%3E0 0 1 0 1 1 1 0%3C/text%3E%3Ctext x='2' y='195'%3E1 1 0 0 1 0 1 1%3C/text%3E%3Ctext x='2' y='215'%3E0 1 1 1 1 0 0 1%3C/text%3E%3Ctext x='2' y='235'%3E1 0 1 0 0 1 0 1%3C/text%3E%3Ctext x='2' y='255'%3E0 1 0 0 1 1 1 0%3C/text%3E%3Ctext x='2' y='275'%3E1 1 0 1 0 1 1 0%3C/text%3E%3Ctext x='2' y='295'%3E0 1 1 0 1 0 0 1%3C/text%3E%3Ctext x='2' y='315'%3E1 1 0 0 1 1 0 1%3C/text%3E%3Ctext x='2' y='335'%3E0 1 1 0 1 1 0 0%3C/text%3E%3Ctext x='2' y='355'%3E1 0 0 1 0 1 1 1%3C/text%3E%3Ctext x='2' y='375'%3E0 1 0 1 1 0 1 1%3C/text%3E%3Ctext x='2' y='395'%3E1 1 1 0 0 1 0 1%3C/text%3E%3Ctext x='2' y='415'%3E0 0 1 1 1 0 0 1%3C/text%3E%3Ctext x='2' y='435'%3E1 1 0 1 1 0 1 0%3C/text%3E%3Ctext x='2' y='455'%3E0 1 1 0 0 1 1 1%3C/text%3E%3Ctext x='2' y='475'%3E1 0 1 0 1 0 1 1%3C/text%3E%3Ctext x='2' y='495'%3E0 1 0 1 1 1 0 0%3C/text%3E%3Ctext x='2' y='515'%3E1 1 0 0 1 0 0 1%3C/text%3E%3Ctext x='2' y='535'%3E0 0 1 1 1 1 1 0%3C/text%3E%3Ctext x='2' y='555'%3E1 1 1 0 1 0 0 1%3C/text%3E%3Ctext x='2' y='575'%3E0 1 0 0 1 1 0 0%3C/text%3E%3Ctext x='2' y='595'%3E1 1 0 1 0 1 1 0%3C/text%3E%3Ctext x='2' y='615'%3E0 1 1 0 1 1 0 0%3C/text%3E%3Ctext x='2' y='635'%3E1 1 0 1 1 0 0 1%3C/text%3E%3Ctext x='2' y='655'%3E0 0 1 0 1 0 1 1%3C/text%3E%3Ctext x='2' y='675'%3E1 0 1 1 0 1 1 1%3C/text%3E%3Ctext x='2' y='695'%3E0 1 1 0 0 1 0 1%3C/text%3E%3Ctext x='2' y='715'%3E1 1 0 0 1 1 0 1%3C/text%3E%3Ctext x='2' y='735'%3E0 1 0 1 0 1 0 1%3C/text%3E%3Ctext x='2' y='755'%3E1 0 0 1 1 0 1 0%3C/text%3E%3Ctext x='2' y='775'%3E0 1 1 1 0 0 1 1%3C/text%3E%3Ctext x='2' y='795'%3E1 1 0 1 1 1 0 0%3C/text%3E%3Ctext x='2' y='815'%3E0 0 1 0 0 1 1 1%3C/text%3E%3Ctext x='2' y='835'%3E1 1 0 0 1 0 1 0%3C/text%3E%3Ctext x='2' y='855'%3E0 1 0 1 1 0 1 1%3C/text%3E%3Ctext x='2' y='875'%3E1 1 1 0 0 1 1 0%3C/text%3E%3Ctext x='2' y='895'%3E0 0 1 1 1 0 1 1%3C/text%3E%3Ctext x='2' y='915'%3E1 0 1 0 1 1 0 0%3C/text%3E%3Ctext x='2' y='935'%3E0 1 1 0 1 0 0 1%3C/text%3E%3Ctext x='2' y='955'%3E1 1 0 1 0 1 1 0%3C/text%3E%3Ctext x='2' y='975'%3E0 0 1 1 1 0 0 1%3C/text%3E%3Ctext x='2' y='995'%3E1 1 0 1 1 1 0 0%3C/text%3E%3Ctext x='2' y='1015'%3E0 1 0 1 0 1 1 0%3C/text%3E%3Ctext x='2' y='1035'%3E1 0 0 1 1 0 1 1%3C/text%3E%3Ctext x='2' y='1055'%3E0 1 1 0 1 0 0 1%3C/text%3E%3Ctext x='2' y='1075'%3E1 1 0 0 1 1 0 1%3C/text%3E%3Ctext x='2' y='1095'%3E0 1 0 1 0 1 0 1%3C/text%3E%3Ctext x='2' y='1115'%3E1 1 1 0 1 0 1 0%3C/text%3E%3Ctext x='2' y='1135'%3E0 0 1 0 1 1 1 1%3C/text%3E%3Ctext x='2' y='1155'%3E1 0 1 1 0 1 0 1%3C/text%3E%3Ctext x='2' y='1175'%3E0 1 1 0 0 1 1 0%3C/text%3E%3Ctext x='2' y='1195'%3E1 1 0 1 1 0 1 1%3C/text%3E%3Ctext x='2' y='1215'%3E0 0 1 0 1 0 0 1%3C/text%3E%3Ctext x='2' y='1235'%3E1 1 0 0 1 1 1 0%3C/text%3E%3Ctext x='2' y='1255'%3E0 1 0 1 1 0 1 0%3C/text%3E%3Ctext x='2' y='1275'%3E1 1 1 0 0 0 1 1%3C/text%3E%3Ctext x='2' y='1295'%3E0 0 1 1 0 1 0 1%3C/text%3E%3Ctext x='2' y='1315'%3E1 0 1 0 1 1 1 0%3C/text%3E%3Ctext x='2' y='1335'%3E0 1 0 0 1 0 1 1%3C/text%3E%3Ctext x='2' y='1355'%3E1 1 1 0 1 1 0 0%3C/text%3E%3Ctext x='2' y='1375'%3E0 1 0 1 0 1 0 1%3C/text%3E%3Ctext x='2' y='1395'%3E1 0 0 1 1 0 1 0%3C/text%3E%3Ctext x='2' y='1415'%3E0 1 1 1 0 0 1 1%3C/text%3E%3Ctext x='2' y='1435'%3E1 1 0 1 1 1 0 0%3C/text%3E%3Ctext x='2' y='1455'%3E0 0 1 0 0 1 1 1%3C/text%3E%3Ctext x='2' y='1475'%3E1 1 0 0 1 0 1 0%3C/text%3E%3Ctext x='2' y='1495'%3E0 1 0 1 1 0 1 1%3C/text%3E%3Ctext x='2' y='1515'%3E1 1 1 0 0 1 1 0%3C/text%3E%3Ctext x='2' y='1535'%3E0 0 1 1 1 0 1 1%3C/text%3E%3Ctext x='2' y='1555'%3E1 0 1 0 1 1 0 0%3C/text%3E%3Ctext x='2' y='1575'%3E0 1 1 0 1 0 0 1%3C/text%3E%3Ctext x='2' y='1595'%3E1 1 0 1 0 1 1 0%3C/text%3E%3Ctext x='2' y='1615'%3E0 1 1 1 1 0 1 0%3C/text%3E%3Ctext x='2' y='1635'%3E1 0 0 1 0 1 1 1%3C/text%3E%3Ctext x='2' y='1655'%3E0 1 0 1 1 1 0 0%3C/text%3E%3Ctext x='2' y='1675'%3E1 1 0 0 1 0 1 1%3C/text%3E%3Ctext x='2' y='1695'%3E0 0 1 1 0 1 1 0%3C/text%3E%3Ctext x='2' y='1715'%3E1 1 0 1 1 0 0 1%3C/text%3E%3Ctext x='2' y='1735'%3E0 1 1 0 1 0 1 1%3C/text%3E%3Ctext x='2' y='1755'%3E1 0 1 0 1 0 1 0%3C/text%3E%3Ctext x='2' y='1775'%3E0 1 1 1 0 1 1 0%3C/text%3E%3Ctext x='2' y='1795'%3E1 1 0 1 1 0 1 0%3C/text%3E%3Ctext x='2' y='1815'%3E0 0 1 0 1 1 0 1%3C/text%3E%3Ctext x='2' y='1835'%3E1 1 0 0 1 0 1 1%3C/text%3E%3Ctext x='2' y='1855'%3E0 1 0 1 0 1 0 1%3C/text%3E%3Ctext x='2' y='1875'%3E1 1 1 0 1 1 1 0%3C/text%3E%3Ctext x='2' y='1895'%3E0 0 1 1 0 1 0 1%3C/text%3E%3Ctext x='2' y='1915'%3E1 0 1 0 1 1 1 0%3C/text%3E%3Ctext x='2' y='1935'%3E0 1 0 0 1 0 1 1%3C/text%3E%3Ctext x='2' y='1955'%3E1 1 1 0 1 0 0 1%3C/text%3E%3Ctext x='2' y='1975'%3E0 1 0 1 0 1 1 0%3C/text%3E%3Ctext x='2' y='1995'%3E1 1 0 1 1 1 0 0%3C/text%3E%3C/svg%3E") left top / 92px 2000px repeat-y;
+    -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 40%), linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 8%, rgba(0,0,0,1) 92%, rgba(0,0,0,0) 100%);
+    -webkit-mask-composite: destination-in;
+    mask-image: linear-gradient(to left, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 40%), linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 8%, rgba(0,0,0,1) 92%, rgba(0,0,0,0) 100%);
+    mask-composite: intersect;
+    z-index: 0;
+    opacity: 0.70;
+    box-shadow: inset 10px 0 24px rgba(0,0,0,0.45), 0 0 8px rgba(173,104,255,0.06);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+}
+
+body.menu-page::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: -6px;
+    width: 92px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='92' height='2000' viewBox='0 0 92 2000'%3E%3Cstyle%3Etext%7Bfont:400 16px 'Share Tech Mono',monospace;letter-spacing:2.8px;fill:%2330c9ff;paint-order:fill;stroke-width:0.12;stroke:%231f8fbf;text-rendering:geometricPrecision;shape-rendering:crispEdges;dominant-baseline:central;%7D%3C/style%3E%3Ctext x='2' y='15'%3E1 1 0 1 1 1 0 0%3C/text%3E%3Ctext x='2' y='35'%3E0 0 1 0 0 1 1 1%3C/text%3E%3Ctext x='2' y='55'%3E0 1 1 1 0 1 0 1%3C/text%3E%3Ctext x='2' y='75'%3E1 1 0 0 1 0 1 0%3C/text%3E%3Ctext x='2' y='95'%3E1 1 1 0 0 1 1 0%3C/text%3E%3Ctext x='2' y='115'%3E0 1 0 1 1 1 0 1%3C/text%3E%3Ctext x='2' y='135'%3E1 1 0 0 1 0 0 1%3C/text%3E%3Ctext x='2' y='155'%3E0 0 1 1 1 1 1 0%3C/text%3E%3Ctext x='2' y='175'%3E1 0 1 0 1 0 1 1%3C/text%3E%3Ctext x='2' y='195'%3E1 1 1 0 1 0 0 1%3C/text%3E%3Ctext x='2' y='215'%3E0 1 0 0 1 1 0 0%3C/text%3E%3Ctext x='2' y='235'%3E1 0 1 1 0 1 0 1%3C/text%3E%3Ctext x='2' y='255'%3E0 1 1 0 1 1 0 0%3C/text%3E%3Ctext x='2' y='275'%3E1 1 0 1 0 1 1 0%3C/text%3E%3Ctext x='2' y='295'%3E0 1 1 0 1 1 0 1%3C/text%3E%3Ctext x='2' y='315'%3E1 1 1 1 0 0 1 0%3C/text%3E%3Ctext x='2' y='335'%3E0 0 1 1 0 1 1 1%3C/text%3E%3Ctext x='2' y='355'%3E1 1 0 0 1 1 0 1%3C/text%3E%3Ctext x='2' y='375'%3E0 1 0 1 0 1 1 1%3C/text%3E%3Ctext x='2' y='395'%3E1 0 1 1 0 0 1 0%3C/text%3E%3Ctext x='2' y='415'%3E0 1 0 0 0 1 1 1%3C/text%3E%3Ctext x='2' y='435'%3E1 0 1 0 1 1 0 1%3C/text%3E%3Ctext x='2' y='455'%3E0 1 1 0 0 1 1 0%3C/text%3E%3Ctext x='2' y='475'%3E1 1 0 1 1 0 1 1%3C/text%3E%3Ctext x='2' y='495'%3E0 0 1 0 1 0 0 1%3C/text%3E%3Ctext x='2' y='515'%3E1 1 0 0 1 1 1 0%3C/text%3E%3Ctext x='2' y='535'%3E0 1 0 1 1 0 1 0%3C/text%3E%3Ctext x='2' y='555'%3E1 1 1 0 0 0 1 1%3C/text%3E%3Ctext x='2' y='575'%3E0 0 1 1 0 1 0 1%3C/text%3E%3Ctext x='2' y='595'%3E1 0 1 0 1 1 1 0%3C/text%3E%3Ctext x='2' y='615'%3E0 1 0 0 1 0 1 1%3C/text%3E%3Ctext x='2' y='635'%3E1 1 1 0 1 1 0 0%3C/text%3E%3Ctext x='2' y='655'%3E0 1 0 1 0 1 0 1%3C/text%3E%3Ctext x='2' y='675'%3E1 0 0 1 1 0 1 0%3C/text%3E%3Ctext x='2' y='695'%3E0 1 1 1 0 0 1 1%3C/text%3E%3Ctext x='2' y='715'%3E1 1 0 1 1 1 0 0%3C/text%3E%3Ctext x='2' y='735'%3E0 0 1 0 0 1 1 1%3C/text%3E%3Ctext x='2' y='755'%3E1 1 0 0 1 0 1 0%3C/text%3E%3Ctext x='2' y='775'%3E0 1 0 1 1 0 1 1%3C/text%3E%3Ctext x='2' y='795'%3E1 1 1 0 0 1 1 0%3C/text%3E%3Ctext x='2' y='815'%3E0 0 1 1 1 0 1 1%3C/text%3E%3Ctext x='2' y='835'%3E1 0 1 0 1 1 0 0%3C/text%3E%3Ctext x='2' y='855'%3E0 1 1 0 1 0 0 1%3C/text%3E%3Ctext x='2' y='875'%3E1 1 0 1 0 1 1 0%3C/text%3E%3Ctext x='2' y='895'%3E0 1 1 1 1 0 1 0%3C/text%3E%3Ctext x='2' y='915'%3E1 0 0 1 0 1 1 1%3C/text%3E%3Ctext x='2' y='935'%3E0 1 0 1 1 1 0 0%3C/text%3E%3Ctext x='2' y='955'%3E1 1 0 0 1 0 1 1%3C/text%3E%3Ctext x='2' y='975'%3E0 0 1 1 0 1 1 0%3C/text%3E%3Ctext x='2' y='995'%3E1 1 0 1 1 0 0 1%3C/text%3E%3Ctext x='2' y='1015'%3E0 1 1 0 1 0 1 1%3C/text%3E%3Ctext x='2' y='1035'%3E1 0 1 0 1 0 1 0%3C/text%3E%3Ctext x='2' y='1055'%3E0 1 1 1 0 1 1 0%3C/text%3E%3Ctext x='2' y='1075'%3E1 1 0 1 1 0 1 0%3C/text%3E%3Ctext x='2' y='1095'%3E0 0 1 0 1 1 0 1%3C/text%3E%3Ctext x='2' y='1115'%3E1 1 0 0 1 0 1 1%3C/text%3E%3Ctext x='2' y='1135'%3E0 1 0 1 0 1 0 1%3C/text%3E%3Ctext x='2' y='1155'%3E1 1 1 0 1 1 1 0%3C/text%3E%3Ctext x='2' y='1175'%3E0 0 1 1 0 1 0 1%3C/text%3E%3Ctext x='2' y='1195'%3E1 0 1 0 1 1 1 0%3C/text%3E%3Ctext x='2' y='1215'%3E0 1 0 0 1 0 1 1%3C/text%3E%3Ctext x='2' y='1235'%3E1 1 1 0 1 0 0 1%3C/text%3E%3Ctext x='2' y='1255'%3E0 1 0 1 0 1 1 0%3C/text%3E%3Ctext x='2' y='1275'%3E1 1 0 1 1 1 0 0%3C/text%3E%3Ctext x='2' y='1295'%3E0 1 0 1 0 1 1 0%3C/text%3E%3Ctext x='2' y='1315'%3E1 0 0 1 1 0 1 1%3C/text%3E%3Ctext x='2' y='1335'%3E0 1 1 0 1 0 0 1%3C/text%3E%3Ctext x='2' y='1355'%3E1 1 0 0 1 1 0 1%3C/text%3E%3Ctext x='2' y='1375'%3E0 1 0 1 0 1 0 1%3C/text%3E%3Ctext x='2' y='1395'%3E1 1 1 0 1 0 1 0%3C/text%3E%3Ctext x='2' y='1415'%3E0 0 1 0 1 1 1 1%3C/text%3E%3Ctext x='2' y='1435'%3E1 0 1 1 0 1 0 1%3C/text%3E%3Ctext x='2' y='1455'%3E0 1 1 0 0 1 1 0%3C/text%3E%3Ctext x='2' y='1475'%3E1 1 0 1 1 0 1 1%3C/text%3E%3Ctext x='2' y='1495'%3E0 0 1 0 1 0 0 1%3C/text%3E%3Ctext x='2' y='1515'%3E1 1 0 0 1 1 1 0%3C/text%3E%3Ctext x='2' y='1535'%3E0 1 0 1 1 0 1 0%3C/text%3E%3Ctext x='2' y='1555'%3E1 1 1 0 0 0 1 1%3C/text%3E%3Ctext x='2' y='1575'%3E0 0 1 1 0 1 0 1%3C/text%3E%3Ctext x='2' y='1595'%3E1 0 1 0 1 1 1 0%3C/text%3E%3Ctext x='2' y='1615'%3E0 1 0 0 1 0 1 1%3C/text%3E%3Ctext x='2' y='1635'%3E1 1 1 0 1 1 0 0%3C/text%3E%3Ctext x='2' y='1655'%3E0 1 0 1 0 1 0 1%3C/text%3E%3Ctext x='2' y='1675'%3E1 0 0 1 1 0 1 0%3C/text%3E%3Ctext x='2' y='1695'%3E0 1 1 1 0 0 1 1%3C/text%3E%3Ctext x='2' y='1715'%3E1 1 0 1 1 1 0 0%3C/text%3E%3Ctext x='2' y='1735'%3E0 0 1 0 0 1 1 1%3C/text%3E%3Ctext x='2' y='1755'%3E1 1 0 0 1 0 1 0%3C/text%3E%3Ctext x='2' y='1775'%3E0 1 0 1 1 0 1 1%3C/text%3E%3Ctext x='2' y='1795'%3E1 1 1 0 0 1 1 0%3C/text%3E%3Ctext x='2' y='1815'%3E0 0 1 1 1 0 1 1%3C/text%3E%3Ctext x='2' y='1835'%3E1 0 1 0 1 1 0 0%3C/text%3E%3Ctext x='2' y='1855'%3E0 1 1 0 1 0 0 1%3C/text%3E%3Ctext x='2' y='1875'%3E1 1 0 1 0 1 1 0%3C/text%3E%3Ctext x='2' y='1895'%3E0 1 1 1 1 0 1 0%3C/text%3E%3Ctext x='2' y='1915'%3E1 0 0 1 0 1 1 1%3C/text%3E%3Ctext x='2' y='1935'%3E0 1 0 1 1 1 0 0%3C/text%3E%3Ctext x='2' y='1955'%3E1 1 0 0 1 0 1 1%3C/text%3E%3Ctext x='2' y='1975'%3E0 0 1 1 0 1 1 0%3C/text%3E%3Ctext x='2' y='1995'%3E1 1 0 1 1 0 0 1%3C/text%3E%3C/svg%3E") right top / 92px 2000px repeat-y;
+    -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 40%), linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 8%, rgba(0,0,0,1) 92%, rgba(0,0,0,0) 100%);
+    -webkit-mask-composite: destination-in;
+    mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 40%), linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 8%, rgba(0,0,0,1) 92%, rgba(0,0,0,0) 100%);
+    mask-composite: intersect;
+    z-index: 0;
+    opacity: 0.70;
+    box-shadow: inset -10px 0 24px rgba(0,0,0,0.45), 0 0 8px rgba(48,201,255,0.06);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+}
+
+/* Override final para que el boton de continuar partida quede centrado y en una sola linea */
+body.menu-page .menu-col-center .menu-btn.main-btn {
+    width: min(260px, 100%) !important;
+    min-height: 88px !important;
+    padding: 14px 18px !important;
+    justify-content: center;
+}
+
+/* Override final para que el boton de continuar partida quede centrado y en una sola linea */
+body.menu-page .menu-col-center .menu-btn.main-btn {
+    width: min(260px, 100%) !important;
+    min-height: 88px !important;
+    padding: 14px 18px !important;
+    justify-content: center !important;
+}
+
+body.menu-page .menu-col-center .menu-btn.main-btn span {
+    display: block !important;
+    width: 100% !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: clip !important;
+    font-size: clamp(15px, 1.80vw, 18px) !important;
+    line-height: 1 !important;
+}
+
+body.menu-page .menu-col-center .menu-btn.main-btn span {
+    display: block;
+    width: 100%;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+    font-size: clamp(24px, 1.95vw, 30px) !important;
+    line-height: 1;
+}
+
 body.menu-page .menu-grid-overlay {
     position: fixed;
     inset: 0;
     pointer-events: none;
-    background:
-        linear-gradient(rgba(131, 184, 255, 0.26) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(131, 184, 255, 0.26) 1px, transparent 1px),
-        linear-gradient(rgba(95, 139, 232, 0.14) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(95, 139, 232, 0.14) 1px, transparent 1px);
-    background-size: 54px 54px, 54px 54px, 27px 27px, 27px 27px;
-    opacity: 0.3;
+    background: transparent;
+    opacity: 0;
     z-index: 0;
 }
 
@@ -224,66 +299,6 @@ body.menu-page .menu-btn .menu-icon {
     transform: translateY(-1px);
 }
 
-body.menu-page .menu-btn-primary {
-    /* Intensidad y color del boton Iniciar Partida */
-    border-color: rgba(120, 244, 255, 0.95);
-    color: #e8ffff;
-    background: linear-gradient(90deg, #0f8fd1 0%, #71eff7 100%);
-    box-shadow: 0 0 0 1px rgba(0, 245, 255, 0.72), 0 0 24px rgba(0, 245, 255, 0.82), 0 12px 28px rgba(87, 229, 255, 0.24);
-}
-
-body.menu-page .menu-btn-secondary {
-    /* Intensidad y color de los botones secundarios */
-    border-color: rgba(236, 123, 255, 0.96);
-    color: #f4ecff;
-    background: linear-gradient(90deg, #7f28e5 0%, #f07de4 100%);
-    box-shadow: 0 0 0 1px rgba(180, 120, 255, 0.74), 0 0 22px rgba(180, 120, 255, 0.82), 0 12px 28px rgba(185, 87, 255, 0.24);
-}
-
-body.menu-page .menu-opciones a:nth-child(3).menu-btn-secondary {
-    border-color: rgba(255, 146, 240, 0.96);
-    background: linear-gradient(90deg, #ce57e7 0%, #f59fe9 100%);
-}
-
-body.menu-page .menu-opciones a:nth-child(4).menu-btn-secondary {
-    border-color: rgba(255, 124, 165, 0.95);
-    background: linear-gradient(90deg, #f3007b 0%, #ff7d2f 100%);
-}
-
-body.menu-page .menu-btn-danger {
-    /* Intensidad y color del boton de cierre de sesion */
-    margin-top: 10px;
-    border-color: rgba(255, 116, 170, 1);
-    color: #ffe9f0;
-    background: linear-gradient(90deg, #c7327d 0%, #e2599d 100%);
-    box-shadow: 0 0 0 1px rgba(255, 92, 170, 0.74), 0 0 22px rgba(255, 92, 170, 0.82), 0 12px 28px rgba(233, 92, 170, 0.24);
-}
-
-body.menu-page .menu-btn:hover {
-    transform: translateY(-2px);
-    filter: brightness(1.18) saturate(1.12);
-    box-shadow: 0 0 0 1px rgba(185, 226, 255, 0.76), 0 0 28px rgba(104, 196, 255, 0.78), 0 0 42px rgba(104, 196, 255, 0.18);
-}
-
-body.menu-page .menu-btn-primary:hover {
-    box-shadow: 0 0 0 1px rgba(0, 245, 255, 0.92), 0 0 30px rgba(0, 245, 255, 0.86), 0 0 44px rgba(0, 245, 255, 0.24), 0 16px 32px rgba(87, 229, 255, 0.28);
-}
-
-body.menu-page .menu-btn-secondary:hover {
-    box-shadow: 0 0 0 1px rgba(180, 120, 255, 0.92), 0 0 30px rgba(180, 120, 255, 0.86), 0 0 44px rgba(180, 120, 255, 0.24), 0 16px 32px rgba(185, 87, 255, 0.28);
-}
-
-body.menu-page .menu-btn-danger:hover {
-    box-shadow: 0 0 0 1px rgba(255, 92, 170, 0.92), 0 0 30px rgba(255, 92, 170, 0.86), 0 0 44px rgba(255, 92, 170, 0.24), 0 16px 32px rgba(233, 92, 170, 0.28);
-}
-
-body.menu-page #tutorial-btn {
-    /* Tutorial en azul oscuro, con su propia intensidad neon */
-    border-color: rgba(223, 120, 255, 0.95);
-    color: #f8f2ff;
-    background: linear-gradient(90deg, #6d22d2 0%, #f058e5 100%);
-    box-shadow: 0 0 0 1px rgba(174, 100, 255, 0.88), 0 0 30px rgba(174, 100, 255, 0.84), 0 0 44px rgba(174, 100, 255, 0.22), 0 12px 28px rgba(174, 100, 255, 0.24);
-}
 
 body.menu-page #tutorial-btn:hover {
     filter: brightness(1.18) saturate(1.12);
@@ -602,9 +617,9 @@ body.menu-page .menu-card {
     max-height: 500px;            /* límite de altura para hacerlo más corto */
     padding: 24px 20px;
     border-radius: 12px;
-    border: 1px solid rgba(123, 88, 255, 0.78);
-    background: linear-gradient(180deg, rgba(4, 20, 44, 0.96), rgba(4, 15, 36, 0.98));
-    box-shadow: 0 0 20px rgba(95, 63, 214, 0.38), inset 0 0 30px rgba(6, 145, 255, 0.08);
+    border: none;
+    background: transparent;
+    box-shadow: none;
     color: #edf9ff;
     position: relative;
     overflow-y: auto;             /* si hay muchos botones, se activa scroll */
@@ -723,6 +738,24 @@ body.menu-page .menu-corner-bl,
 body.menu-page .menu-corner-br {
     display: none !important;
 }
+
+/* Aumento estricto de la tipografía de los botones del menú
+   - Solo cambia la letra (font-size + line-height)
+   - No modifica padding, width ni height de los botones
+   - Alta especificidad y !important para asegurarse de aplicar
+*/
+body.menu-page .menu-opciones .menu-btn span {
+    font-size: clamp(15px, 1.6vw, 35px) !important;
+    line-height: 1 !important;
+   
+}
+
+/* Ajustes opcionales para iconos dentro de botones (no tocar tamaño de botón) */
+body.menu-page .menu-opciones .menu-btn .menu-icon {
+    font-size: 0.8em !important;
+}
+
+
 
 /* Título global */
 body.menu-page .menu-title {
@@ -910,13 +943,10 @@ body.menu-page .menu-card {
     width: min(560px, 96%) !important;
     padding: 18px 18px 22px !important;
     margin: 0 !important;
-    background: linear-gradient(180deg, rgba(4, 20, 44, 0.96) 0%, rgba(4, 15, 36, 0.98) 100%) !important;
-    border: 1px solid rgba(123, 88, 255, 0.78) !important;
+    background: transparent !important;
+    border: none !important;
     border-radius: 10px !important;
-    box-shadow:
-        0 0 0 1px rgba(117, 195, 255, 0.1),
-        0 0 26px rgba(95, 63, 214, 0.38),
-        inset 0 0 40px rgba(6, 145, 255, 0.08) !important;
+    box-shadow: none !important;
     overflow: visible !important;
 }
 
@@ -970,7 +1000,7 @@ body.menu-page .menu-opciones {
     grid-template-columns: 1fr auto 1fr !important;
     align-items: center !important;
     justify-items: center !important;
-    gap: 22px !important;
+    gap: 10px !important;
     margin-top: 8px !important;
 }
 
@@ -981,7 +1011,7 @@ body.menu-page .menu-opciones {
 .menu-col-center { align-items: center; }
 
 /* Centro: botón principal más grande */
-.menu-col-center .menu-btn.main-btn { width: min(420px, 60%); min-height: 96px; padding-left: 0 !important; padding-right: 0 !important; }
+.menu-col-center .menu-btn.main-btn { width: min(280px, 100%); min-height: 96px; padding-left: 0; padding-right: 0; }
 
 /* Alineación de botones de columna izquierda/derecha para mantener el aspecto original */
 .menu-col-left .menu-btn,
@@ -1040,6 +1070,11 @@ body.menu-page .menu-opciones .menu-btn span {
     width: 100% !important;
     /* Esta regla centra o alinea el texto dentro del boton */
     text-align: center !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: clip !important;
+    font-size: clamp(20px, 1.5vw, 34px) !important;
+    line-height: 1 !important;
 }
 
 
@@ -1137,35 +1172,49 @@ body.menu-page .menu-opciones .menu-btn::before {
     z-index: 2 !important;
 }
 
-/* FINAL FORCE: Neon borders and transparent backgrounds */
-body.menu-page #tutorial-btn {
-    border-color: #3a37f7 !important;
-    background: black !important;
-    box-shadow: 0 0 0 2px #5e6eff, 0 0 20px rgba(89, 78, 243, 0.658), inset 0 0 20px rgba(218, 94, 255, 0.1) !important;
-}
-
-body.menu-page .menu-btn-primary {
-    border-color: #00ffc8 !important;
-    background: black !important;
-    box-shadow: 0 0 0 2px #00ffc8, 0 0 20px rgba(0, 255, 200, 0.6), inset 0 0 20px rgba(0, 245, 255, 0.1) !important;
-}
-
-body.menu-page .menu-opciones a:nth-child(3) {
-    border-color: #066df3 !important;
-    background: black !important;
-    box-shadow: 0 0 0 2px #5d96ff, 0 0 20px rgba(93, 218, 255, 0.6), inset 0 0 20px rgba(93, 218, 255, 0.1) !important;
-}
-
-body.menu-page .menu-opciones a:nth-child(4) {
-    border-color: #640af5 !important;
-    background: black !important;
-    box-shadow: 0 0 0 2px #8446f8, 0 0 20px rgba(112, 81, 250, 0.747), inset 0 0 20px rgba(218, 94, 255, 0.1) !important;
-}
-
+/* FINAL FORCE: todos los botones negros con borde azul */
+body.menu-page .menu-opciones .menu-btn,
+body.menu-page #tutorial-btn,
+body.menu-page .menu-btn-primary,
 body.menu-page .menu-btn-danger {
-    border-color: #a51d38 !important;
-    background: black !important;
-    box-shadow: 0 0 0 2px #ff1744, 0 0 20px rgba(243, 5, 52, 0.904), inset 0 0 20px rgba(255, 23, 68, 0.1) !important;
+    border-color: #03e0d5c5 !important;
+    background: #000000 !important;
+    box-shadow: 0 0 0 2px #02eee2bd, 0 0 12px rgba(1, 155, 142, 0.35), 0 0 22px rgba(1, 103, 98, 0.25), inset 0 0 12px rgba(1, 74, 103, 0.24) !important;
+}
+
+body.menu-page .menu-opciones .menu-btn:hover,
+body.menu-page #tutorial-btn:hover,
+body.menu-page .menu-btn-primary:hover,
+body.menu-page .menu-btn-danger:hover {
+    box-shadow: 0 0 0 2px #099999, 0 0 18px rgba(11, 145, 138, 0.78), 0 0 32px rgba(11, 106, 145, 0.48), inset 0 0 14px rgba(11, 106, 145, 0.28) !important;
+    filter: brightness(1.08) !important;
+}
+ 
+body.menu-page .logout-btn,
+body.menu-page .menu-btn-danger.logout-btn {
+    border-color: #015feb !important;
+    box-shadow: 0 0 0 2px #0159dd, 0 0 12px rgba(15, 58, 107, 0.35), 0 0 22px rgba(15, 63, 107, 0.2), inset 0 0 12px rgba(15, 66, 107, 0.2) !important;
+}
+
+body.menu-page .logout-btn:hover,
+body.menu-page .menu-btn-danger.logout-btn:hover {
+    box-shadow: 0 0 0 2px #0049b6, 0 0 18px rgba(0, 73, 182, 0.8), 0 0 34px rgba(0, 79, 182, 0.45), inset 0 0 14px rgba(70, 0, 182, 0.3) !important;
+    filter: brightness(1.08) !important;
+}
+
+body.menu-page #iniciar-partida-btn,
+body.menu-page #continuar-partida-btn,
+body.menu-page .menu-center-row .menu-btn.main-btn {
+    background: rgba(113, 51, 226, 0.247) !important;
+    border-color: #8a2be2 !important;
+    box-shadow: 0 0 0 2px #8a2be2, 0 0 14px rgba(138, 43, 226, 0.5), 0 0 26px rgba(138, 43, 226, 0.32), inset 0 0 14px rgba(138, 43, 226, 0.2) !important;
+}
+
+body.menu-page #iniciar-partida-btn:hover,
+body.menu-page #continuar-partida-btn:hover,
+body.menu-page .menu-center-row .menu-btn.main-btn:hover {
+    box-shadow: 0 0 0 2px #a54dff, 0 0 20px rgba(165, 77, 255, 0.8), 0 0 36px rgba(165, 77, 255, 0.5), inset 0 0 16px rgba(165, 77, 255, 0.28) !important;
+    filter: brightness(1.1) !important;
 }
 
 /* ==================================
@@ -1214,7 +1263,7 @@ body.menu-page .menu-tagline {
     text-align: center;
     color: #ffffff;
     font-family: 'Rajdhani', sans-serif;
-    font-size: calc(clamp(16px, 1.35vw, 22px) + 2px);
+    font-size: clamp(14px, 1.05vw, 18px);
     letter-spacing: 0.02em;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.22);
 }
@@ -1226,7 +1275,7 @@ body.menu-page .menu-welcome::after {
 
 body.menu-page .menu-opciones {
     width: min(1060px, 82vw) !important;
-    margin: 36px auto 0 !important;
+    margin: 48px auto 0 !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
@@ -1237,9 +1286,9 @@ body.menu-page .menu-top-row {
     width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    column-gap: clamp(10px, 2vw, 24px);
+    column-gap: clamp(4px, 1vw, 14px);
     align-items: start;
-    padding-inline: clamp(0px, 1vw, 12px);
+    padding-inline: clamp(0px, 0.4vw, 6px);
     box-sizing: border-box;
 }
 
@@ -1247,7 +1296,7 @@ body.menu-page .menu-center-row {
     width: 100%;
     display: flex;
     justify-content: center;
-    margin-top: -8px;
+    margin-top: 20px;
 }
 
 body.menu-page .menu-col-left {
@@ -1275,13 +1324,35 @@ body.menu-page .menu-col-right .menu-btn {
 body.menu-page .menu-col-center .menu-btn.main-btn {
     width: min(280px, 100%) !important;
     min-height: 88px !important;
-    padding: 14px 18px 14px 104px !important;
+    padding: 14px 18px !important;
+    justify-content: center !important;
     font-size: clamp(24px, 1.95vw, 30px) !important;
 }
 
 body.menu-page .menu-col-center .menu-btn.main-btn::before {
-    width: 180px !important;
-    left: -20px !important;
+    width: 180px;
+    left: -20px;
+}
+
+body.menu-page .menu-col-center .menu-btn.main-btn span {
+    width: 100% !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: clip !important;
+}
+
+/* Acerca realmente los botones laterales: evita que las columnas se estiren al 1fr */
+body.menu-page .menu-top-row {
+    grid-template-columns: 1fr 1fr !important;
+    justify-content: center !important;
+    column-gap: clamp(20px, 8vw, 30px) !important;
+}
+
+body.menu-page .menu-col-left,
+body.menu-page .menu-col-right {
+    width: fit-content !important;
+    justify-self: center !important;
 }
 
 @media (max-width: 1100px) {
@@ -1311,7 +1382,7 @@ body.menu-page .menu-col-center .menu-btn.main-btn::before {
     }
 
     body.menu-page .menu-center-row {
-        margin-top: 4px;
+        margin-top: 40px;
     }
 
     body.menu-page .menu-col-left .menu-btn::before,
@@ -1322,9 +1393,37 @@ body.menu-page .menu-col-center .menu-btn.main-btn::before {
     }
 
     body.menu-page .menu-col-center .menu-btn.main-btn {
-        width: min(520px, 100%) !important;
+    width: min(260px, 100%) !important;
         min-height: 78px !important;
-        padding: 12px 18px 12px 118px !important;
+        padding: 12px 18px 12px 18px !important;
         font-size: clamp(22px, 5vw, 30px) !important;
     }
+}
+
+/* ==================================
+   RESTAURAR TIPOGRAFIAS DEL SISTEMA
+   ================================== */
+body.menu-page,
+body.menu-page p,
+body.menu-page span,
+body.menu-page a,
+body.menu-page button,
+body.menu-page .menu-tagline,
+body.menu-page .menu-welcome,
+body.menu-page .menu-opciones .menu-btn,
+body.menu-page .menu-opciones .menu-btn span,
+body.menu-page .tutorial-title,
+body.menu-page .tutorial-text,
+body.menu-page .tutorial-btn {
+    font-family: 'Rajdhani', sans-serif !important;
+}
+
+body.menu-page #main-title,
+body.menu-page .menu-title {
+    font-family: 'Orbitron', sans-serif !important;
+}
+
+body.menu-page .menu-status,
+body.menu-page .tutorial-step-indicator {
+    font-family: 'Share Tech Mono', monospace !important;
 }

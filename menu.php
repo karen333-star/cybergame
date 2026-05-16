@@ -37,9 +37,9 @@ $usuario_param = urlencode($nombre_usuario);
             <div class="menu-corner menu-corner-br" aria-hidden="true"></div>
 
             <h1 id="main-title" class="menu-title"><span class="brand-shield">◬</span> CYBER⥂GAME ◬</h1>
-            <p class="menu-tagline">Descubre amenazas y conviertete en un defensor informatico</p>
-            <div class="menu-title-divider" aria-hidden="true"></div>
             <h2 class="menu-welcome oxanium-700">Bienvenido <?php echo htmlspecialchars($nombre_usuario); ?></h2>
+            <div class="menu-title-divider" aria-hidden="true"></div>
+            <p class="menu-tagline">Eres el CISO "Director de Seguridad de la Información" de tu compañía. Tu misión es mantener a flote la empresa:<br>analiza correos, detecta intentos de phishing y responde con las mejores prácticas de seguridad.<br>Aprende a reconocer riesgos y fortalece la protección de tu organización. Buena Suerte!</p>
             <div class="menu-title-divider menu-title-divider-bottom" aria-hidden="true"></div>
 
             <div class="menu-opciones">
@@ -65,10 +65,10 @@ $usuario_param = urlencode($nombre_usuario);
 
                 <div class="menu-center-row">
                     <a href="#" id="continuar-partida-btn" class="menu-btn menu-btn-primary main-btn" style="display: none;">
-                        <span>CONTINUAR PARTIDA</span>
+                        <span>CONTINUAR JUEGO</span>
                     </a>
                     <a href="index.html?view=config&usuario=<?php echo $usuario_param; ?>" id="iniciar-partida-btn" class="menu-btn menu-btn-primary main-btn">
-                        <span>INICIAR PARTIDA</span>
+                        <span>JUGAR</span>
                     </a>
                 </div>
             </div>
