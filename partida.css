@@ -1442,6 +1442,10 @@
     backdrop-filter: blur(3px);
 }
 
+#partida .partida-exit-modal {
+    z-index: 1250;
+}
+
 #partida .partida-result-card {
     width: min(560px, 100%);
     border: 2px solid rgba(255, 104, 132, 0.72);
@@ -1451,6 +1455,10 @@
     padding: 22px;
     position: relative;
     overflow: hidden;
+}
+
+#partida .partida-exit-card {
+    width: min(520px, 100%);
 }
 
 #partida .partida-result-card::before {
@@ -1490,6 +1498,24 @@
     font-weight: 800;
     letter-spacing: 0.18em;
     text-transform: uppercase;
+}
+
+#partida .partida-exit-badge {
+    background: rgba(15, 23, 42, 0.88);
+    color: #a5f3fc;
+    border: 1px solid rgba(165, 243, 252, 0.35);
+}
+
+#partida .partida-exit-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+}
+
+#partida .partida-exit-actions .partida-result-btn {
+    min-width: 150px;
 }
 
 #partida .partida-result-card.is-victory .partida-result-badge {

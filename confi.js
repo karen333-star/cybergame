@@ -230,6 +230,70 @@ function alternarVistaCentroSinCorreo(mostrar) {
     if (mostrar && botonResponder) {
         botonResponder.style.display = 'none';
     }
+
+    // Pausar el contador de inter-eventos cuando se muestra un correo
+    // (i.e., `mostrar === false` significa que se está mostrando el panel de correo)
+    if (window.estadoPartida.ticker_inter_eventos) {
+        if (mostrar) {
+            reanudarInterEventos();
+        } else {
+            pausarInterEventos();
+        }
+    }
+}
+
+function obtenerUrlSalidaPartida(destino) {
+    if (destino === 'config') {
+        const url = new URL(window.location.href);
+        url.searchParams.set('view', 'config');
+        return url.toString();
+    }
+
+    return destino;
+}
+
+function cerrarModalSalidaPartida() {
+    const overlay = document.getElementById('modal-salir-partida');
+    if (overlay) {
+        overlay.style.display = 'none';
+        overlay.setAttribute('aria-hidden', 'true');
+    }
+    window.estadoPartida.salidaPendienteDestino = null;
+}
+
+function confirmarSalidaDePartida(destino) {
+    if (!window.estadoPartida || window.estadoPartida.partida_finalizada) {
+        window.location.href = obtenerUrlSalidaPartida(destino);
+        return true;
+    }
+
+    window.estadoPartida.salidaPendienteDestino = destino;
+    const overlay = document.getElementById('modal-salir-partida');
+    const titulo = document.getElementById('modal-salir-titulo');
+    const mensaje = document.getElementById('modal-salir-mensaje');
+    if (titulo) {
+        titulo.textContent = destino === 'config' ? 'Salir hacia configuración' : 'Salir al menú';
+    }
+    if (mensaje) {
+        mensaje.textContent = '¿seguro que quieres salir de la partida?';
+    }
+    if (overlay) {
+        overlay.style.display = 'flex';
+        overlay.setAttribute('aria-hidden', 'false');
+    }
+
+    return false;
+}
+
+function aceptarSalidaDePartida() {
+    const destino = window.estadoPartida && window.estadoPartida.salidaPendienteDestino;
+    if (!destino) {
+        cerrarModalSalidaPartida();
+        return;
+    }
+
+    cerrarModalSalidaPartida();
+    window.location.href = obtenerUrlSalidaPartida(destino);
 }
 
 function escaparHtml(valor) {
@@ -817,9 +881,9 @@ function inicializarGraficaCIADesdePartida() {
 }
 
 function calcularIntervaloEsperaSegundos(presupuestoActual) {
-    const presupuesto = clamp(Number(presupuestoActual) || 0, 0, 100);
-    const intervalo = 15 - ((presupuesto / 100) * 9);
-    return clamp(intervalo, 6, 15);
+    // El intervalo ya no depende del presupuesto.
+    // Se fija en 5 segundos tal como nuevo diseño de juego indica.
+    return 5;
 }
 
 function elegirAleatorio(arr) {
@@ -1892,11 +1956,8 @@ function mostrarCorreoFinalizacion(mensaje, resultado, opciones) {
 
 function iniciarFlujoEntreEscenarios(respuesta, contexto) {
     limpiarTemporizadoresEspera();
-
-    const presupuestoParaEspera = (contexto && typeof contexto.presupuestoParaEspera !== 'undefined')
-        ? Number(contexto.presupuestoParaEspera)
-        : Number(window.estadoPartida.presupuesto);
-    const esperaSegundos = calcularIntervaloEsperaSegundos(presupuestoParaEspera);
+    // El intervalo ya no depende del presupuesto; usar valor fijo.
+    const esperaSegundos = calcularIntervaloEsperaSegundos();
     const esperaMs = Math.round(esperaSegundos * 1000);
     const mitadMs = Math.round(esperaMs / 2);
 
@@ -1904,7 +1965,7 @@ function iniciarFlujoEntreEscenarios(respuesta, contexto) {
     establecerVistaCorreoActiva('escenario');
     alternarVistaCentroSinCorreo(true);
     window.estadoPartida.escenario_abierto_accionable = false;
-    actualizarEstadoEspera('Espera a siguiente escenario... ' + Math.ceil(esperaSegundos) + 's');
+    actualizarEstadoEspera('Tú siguiente correo llegara unos segundos despues de que cierres este correo');
 
     const opcionesContainer = document.getElementById('opciones-container');
     if (opcionesContainer) {
@@ -1930,38 +1991,39 @@ function iniciarFlujoEntreEscenarios(respuesta, contexto) {
 
         window.estadoPartida.inter_evento_transcurrido_ms += tickMs;
 
-        if (!window.estadoPartida.inter_evento_efecto_emitido && window.estadoPartida.inter_evento_transcurrido_ms >= mitadMs) {
-            window.estadoPartida.inter_evento_efecto_emitido = true;
-            if (!suppressEffectMail) {
-                aplicarEstadoDesdeRespuesta(window.estadoPartida.inter_evento_contexto.respuesta);
-                agregarCorreoBandeja('effects', {
-                    subject: 'Repercusion - ' + (window.estadoPartida.asunto_actual || 'Escenario'),
-                    payload: {
-                        respuesta: window.estadoPartida.inter_evento_contexto.respuesta,
-                        contexto: window.estadoPartida.inter_evento_contexto.contexto
-                    }
-                });
-
-                const ajusteTrimestral = window.estadoPartida.inter_evento_contexto.respuesta.ajuste_trimestral;
-                if (ajusteTrimestral && ajusteTrimestral.emitir_correo) {
-                    agregarCorreoBandeja('effects', {
-                        subject: 'Movimiento trimestral de presupuesto',
-                        payload: {
-                            tipo: 'ajuste_trimestral',
-                            ajuste: ajusteTrimestral
-                        }
-                    });
-                }
-            }
-        }
-
         const restanteMs = Math.max(0, window.estadoPartida.inter_evento_total_ms - window.estadoPartida.inter_evento_transcurrido_ms);
         const restanteSeg = Math.ceil(restanteMs / 1000);
         if (restanteSeg > 0) {
-            actualizarEstadoEspera('Espera a siguiente escenario... ' + restanteSeg + 's');
+            actualizarEstadoEspera('Tú siguiente correo llegara unos segundos despues de que cierres este correo');
         }
 
         if (window.estadoPartida.inter_evento_transcurrido_ms >= window.estadoPartida.inter_evento_total_ms) {
+            // Emitir efectos y ajustes al finalizar el periodo de espera (ambos llegan al mismo tiempo)
+            if (!window.estadoPartida.inter_evento_efecto_emitido) {
+                window.estadoPartida.inter_evento_efecto_emitido = true;
+                if (!suppressEffectMail) {
+                    aplicarEstadoDesdeRespuesta(window.estadoPartida.inter_evento_contexto.respuesta);
+                    agregarCorreoBandeja('effects', {
+                        subject: 'Repercusion - ' + (window.estadoPartida.asunto_actual || 'Escenario'),
+                        payload: {
+                            respuesta: window.estadoPartida.inter_evento_contexto.respuesta,
+                            contexto: window.estadoPartida.inter_evento_contexto.contexto
+                        }
+                    });
+
+                    const ajusteTrimestral = window.estadoPartida.inter_evento_contexto.respuesta.ajuste_trimestral;
+                    if (ajusteTrimestral && ajusteTrimestral.emitir_correo) {
+                        agregarCorreoBandeja('effects', {
+                            subject: 'Movimiento trimestral de presupuesto',
+                            payload: {
+                                tipo: 'ajuste_trimestral',
+                                ajuste: ajusteTrimestral
+                            }
+                        });
+                    }
+                }
+            }
+
             const respuestaFinal = window.estadoPartida.inter_evento_contexto
                 ? window.estadoPartida.inter_evento_contexto.respuesta
                 : null;
@@ -1977,6 +2039,7 @@ function iniciarFlujoEntreEscenarios(respuesta, contexto) {
                 return;
             }
 
+            // Tras emitir efectos, cargar el siguiente escenario (llegará en la bandeja)
             cargarSiguienteEscenario();
         }
     }, tickMs);
@@ -2089,8 +2152,7 @@ function aplicarTimeoutAutomatico(motivo) {
             iniciarFlujoEntreEscenarios(respuesta, {
                 fueTimeout: true,
                 motivo: motivo || 'tiempo',
-                codigoOpcion: 'timeout',
-                presupuestoParaEspera: respuesta.nuevo_estado ? respuesta.nuevo_estado.presupuesto : window.estadoPartida.presupuesto
+                codigoOpcion: 'timeout'
             });
         })
         .catch(function(err) {
@@ -2244,8 +2306,7 @@ function procesarOpcion(idOpcion, codigoOpcion, deltaPresupuestoBase) {
             iniciarFlujoEntreEscenarios(respuesta, {
                 fueTimeout: false,
                 motivo: 'decision',
-                codigoOpcion: codigoOpcion,
-                presupuestoParaEspera: respuesta.nuevo_estado ? respuesta.nuevo_estado.presupuesto : window.estadoPartida.presupuesto
+                codigoOpcion: codigoOpcion
             });
         })
         .catch(function(err) {
@@ -2669,6 +2730,88 @@ function cargarSiguienteEscenario() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    const params = new URLSearchParams(window.location.search);
+    const esPartida = params.get('view') === 'partida';
+    const navigationEntries = (window.performance && typeof window.performance.getEntriesByType === 'function')
+        ? window.performance.getEntriesByType('navigation')
+        : [];
+    const esReload = (navigationEntries[0] && navigationEntries[0].type === 'reload') ||
+        (window.performance && window.performance.navigation && window.performance.navigation.type === 1);
+
+    if (esPartida && esReload) {
+        window.location.href = 'menu.php';
+        return;
+    }
+
+    const btnSalirMenu = document.getElementById('btn-salir-menu-partida');
+    if (btnSalirMenu) {
+        btnSalirMenu.addEventListener('click', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            confirmarSalidaDePartida('menu.php');
+        });
+    }
+
+    const btnSalirConfig = document.getElementById('btn-salir-config-partida');
+    if (btnSalirConfig) {
+        btnSalirConfig.addEventListener('click', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            confirmarSalidaDePartida('config');
+        });
+    }
+
+    const linkSalirConfig = document.getElementById('link-salir-config-partida');
+    if (linkSalirConfig) {
+        linkSalirConfig.addEventListener('click', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            confirmarSalidaDePartida('config');
+        });
+    }
+
+    const overlaySalida = document.getElementById('modal-salir-partida');
+    const cardSalida = document.getElementById('modal-salir-card');
+    const btnSalirConfirmar = document.getElementById('btn-salir-confirmar');
+    const btnSalirCancelar = document.getElementById('btn-salir-cancelar');
+
+    if (overlaySalida) {
+        overlaySalida.addEventListener('click', function(event) {
+            if (event.target === overlaySalida) {
+                cerrarModalSalidaPartida();
+            }
+        });
+    }
+
+    if (cardSalida) {
+        cardSalida.addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+    }
+
+    if (btnSalirConfirmar) {
+        btnSalirConfirmar.addEventListener('click', function(event) {
+            event.preventDefault();
+            aceptarSalidaDePartida();
+        });
+    }
+
+    if (btnSalirCancelar) {
+        btnSalirCancelar.addEventListener('click', function(event) {
+            event.preventDefault();
+            cerrarModalSalidaPartida();
+        });
+    }
+
+    window.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const overlayVisible = overlaySalida && overlaySalida.style.display !== 'none';
+            if (overlayVisible) {
+                cerrarModalSalidaPartida();
+            }
+        }
+    });
+
     actualizarBandejasUI();
     actualizarNombreUsuarioPerfil();
     actualizarPerfilOperativo();
@@ -2706,7 +2849,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     inicializarGraficaCIADesdePartida();
 
-    const params = new URLSearchParams(window.location.search);
     if (params.get('view') === 'config') {
         mostrarConfig();
     } else {

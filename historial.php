@@ -8,6 +8,11 @@ $nombreUsuario = $_SESSION['nombre_usuario'] ?? 'Jugador';
 $seccion = $_GET['seccion'] ?? 'menu';
 $partidaSeleccionada = isset($_GET['partida']) ? (int)$_GET['partida'] : 0;
 
+// Filtros para partidas finalizadas
+$filtroEstado = $_GET['filtro_estado'] ?? 'todas'; // 'todas', 'ganada', 'perdida'
+$filtroFechaDesde = $_GET['filtro_fecha_desde'] ?? '';
+$filtroFechaHasta = $_GET['filtro_fecha_hasta'] ?? '';
+
 function h($valor): string {
     return htmlspecialchars((string)$valor, ENT_QUOTES, 'UTF-8');
 }
@@ -65,6 +70,38 @@ $stmtResumenUsuario->bind_param('i', $idUsuario);
 $stmtResumenUsuario->execute();
 $resumenUsuario = $stmtResumenUsuario->get_result()->fetch_assoc() ?: [];
 
+// Construir query con filtros
+$condicionesFiltro = array();
+$parametrosFiltro = array('i', $idUsuario);
+$tiposParametros = 'i';
+
+$condicionesFiltro[] = "p.id_usuario = ?";
+$condicionesFiltro[] = "p.estado_partida IN ('ganada', 'perdida')";
+
+// Filtro de estado
+if ($filtroEstado !== 'todas') {
+    $condicionesFiltro[] = "p.estado_partida = ?";
+    $parametrosFiltro[0] .= 's';
+    $parametrosFiltro[] = $filtroEstado;
+    $tiposParametros .= 's';
+}
+
+// Filtro de fecha desde
+if (!empty($filtroFechaDesde)) {
+    $condicionesFiltro[] = "DATE(p.tiempo_inicial) >= ?";
+    $parametrosFiltro[0] .= 's';
+    $parametrosFiltro[] = $filtroFechaDesde;
+    $tiposParametros .= 's';
+}
+
+// Filtro de fecha hasta
+if (!empty($filtroFechaHasta)) {
+    $condicionesFiltro[] = "DATE(p.tiempo_inicial) <= ?";
+    $parametrosFiltro[0] .= 's';
+    $parametrosFiltro[] = $filtroFechaHasta;
+    $tiposParametros .= 's';
+}
+
 $sqlPartidas = "
     SELECT
         p.id_partida,
@@ -97,15 +134,18 @@ $sqlPartidas = "
             WHERE pe.id_partida = p.id_partida
         ) AS eventos_registrados
     FROM partidas p
-    WHERE p.id_usuario = ?
-      AND p.estado_partida IN ('ganada', 'perdida')
+    WHERE " . implode(' AND ', $condicionesFiltro) . "
     ORDER BY p.tiempo_inicial DESC, p.id_partida DESC
 ";
+
 $stmtPartidas = $conn->prepare($sqlPartidas);
 if (!$stmtPartidas) {
     die('No se pudo cargar el historial.');
 }
-$stmtPartidas->bind_param('i', $idUsuario);
+
+// Preparar binding de parámetros
+$tipos = array_shift($parametrosFiltro);
+$stmtPartidas->bind_param($tipos, ...$parametrosFiltro);
 $stmtPartidas->execute();
 $partidas = $stmtPartidas->get_result()->fetch_all(MYSQLI_ASSOC);
 
@@ -340,102 +380,229 @@ function es_activa(string $seccionActual, string $esperada): string {
             <?php if ($seccion === 'resumen'): ?>
                 <div class="history-panel-block">
                     <h3>Resumen general</h3>
-                    <div class="history-summary-grid">
-                        <article class="history-summary-card">
-                            <span>Partidas finalizadas</span>
-                            <strong><?php echo (int)($resumenUsuario['partidas_finalizadas'] ?? 0); ?></strong>
-                        </article>
-                        <article class="history-summary-card">
-                            <span>Partidas no finalizadas</span>
-                            <strong><?php echo (int)($resumenUsuario['partidas_no_finalizadas'] ?? 0); ?></strong>
-                        </article>
-                        <article class="history-summary-card">
-                            <span>Promedio CIA</span>
-                            <strong><?php echo $resumenUsuario['promedio_cia'] !== null ? h(number_format((float)$resumenUsuario['promedio_cia'], 2)) : '-'; ?></strong>
-                        </article>
-                        <article class="history-summary-card">
-                            <span>Promedio Confidencialidad (C)</span>
-                            <strong><?php echo $resumenUsuario['promedio_c'] !== null ? h(number_format((float)$resumenUsuario['promedio_c'], 2)) : '-'; ?></strong>
-                        </article>
-                        <article class="history-summary-card">
-                            <span>Promedio Integridad (I)</span>
-                            <strong><?php echo $resumenUsuario['promedio_i'] !== null ? h(number_format((float)$resumenUsuario['promedio_i'], 2)) : '-'; ?></strong>
-                        </article>
-                        <article class="history-summary-card">
-                            <span>Promedio Accesibilidad (A)</span>
-                            <strong><?php echo $resumenUsuario['promedio_a'] !== null ? h(number_format((float)$resumenUsuario['promedio_a'], 2)) : '-'; ?></strong>
-                        </article>
-                        <article class="history-summary-card">
-                            <span>Promedio Presupuesto</span>
-                            <strong><?php echo $resumenUsuario['promedio_presupuesto'] !== null ? h(number_format((float)$resumenUsuario['promedio_presupuesto'], 2)) : '-'; ?></strong>
-                        </article>
-                        <article class="history-summary-card">
-                            <span>Promedio Despido</span>
-                            <strong><?php echo $resumenUsuario['promedio_despido'] !== null ? h(number_format((float)$resumenUsuario['promedio_despido'], 2)) : '-'; ?></strong>
-                        </article>
-                        <article class="history-summary-card">
-                            <span>Partidas Ganadas</span>
-                            <strong><?php echo (int)($resumenUsuario['partidas_ganadas'] ?? 0); ?></strong>
-                        </article>
-                        <article class="history-summary-card">
-                            <span>Partidas Perdidas</span>
-                            <strong><?php echo (int)($resumenUsuario['partidas_perdidas'] ?? 0); ?></strong>
-                        </article>
+                    <div class="partidas-table-container">
+                        <table class="partidas-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50%;">Métrica</th>
+                                    <th style="width: 50%;">Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="partida-row">
+                                    <td><strong>Partidas finalizadas</strong></td>
+                                    <td><?php echo (int)($resumenUsuario['partidas_finalizadas'] ?? 0); ?></td>
+                                </tr>
+                                <tr class="partida-row">
+                                    <td><strong>Partidas no finalizadas</strong></td>
+                                    <td><?php echo (int)($resumenUsuario['partidas_no_finalizadas'] ?? 0); ?></td>
+                                </tr>
+                                <tr class="partida-row">
+                                    <td><strong>Partidas Ganadas</strong></td>
+                                    <td><?php echo (int)($resumenUsuario['partidas_ganadas'] ?? 0); ?></td>
+                                </tr>
+                                <tr class="partida-row">
+                                    <td><strong>Partidas Perdidas</strong></td>
+                                    <td><?php echo (int)($resumenUsuario['partidas_perdidas'] ?? 0); ?></td>
+                                </tr>
+                                <tr class="partida-row">
+                                    <td><strong>Promedio CIA</strong></td>
+                                    <td><?php echo $resumenUsuario['promedio_cia'] !== null ? h(number_format((float)$resumenUsuario['promedio_cia'], 2)) : '-'; ?></td>
+                                </tr>
+                                <tr class="partida-row">
+                                    <td><strong>Promedio Confidencialidad (C)</strong></td>
+                                    <td><?php echo $resumenUsuario['promedio_c'] !== null ? h(number_format((float)$resumenUsuario['promedio_c'], 2)) : '-'; ?></td>
+                                </tr>
+                                <tr class="partida-row">
+                                    <td><strong>Promedio Integridad (I)</strong></td>
+                                    <td><?php echo $resumenUsuario['promedio_i'] !== null ? h(number_format((float)$resumenUsuario['promedio_i'], 2)) : '-'; ?></td>
+                                </tr>
+                                <tr class="partida-row">
+                                    <td><strong>Promedio Accesibilidad (A)</strong></td>
+                                    <td><?php echo $resumenUsuario['promedio_a'] !== null ? h(number_format((float)$resumenUsuario['promedio_a'], 2)) : '-'; ?></td>
+                                </tr>
+                                <tr class="partida-row">
+                                    <td><strong>Promedio Presupuesto</strong></td>
+                                    <td><?php echo $resumenUsuario['promedio_presupuesto'] !== null ? h(number_format((float)$resumenUsuario['promedio_presupuesto'], 2)) : '-'; ?></td>
+                                </tr>
+                                <tr class="partida-row">
+                                    <td><strong>Promedio Despido</strong></td>
+                                    <td><?php echo $resumenUsuario['promedio_despido'] !== null ? h(number_format((float)$resumenUsuario['promedio_despido'], 2)) : '-'; ?></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             <?php endif; ?>
 
             <?php if ($seccion === 'partidas'): ?>
                 <div class="history-panel-block">
-                    <h3>Mis partidas finalizadas</h3>
+                    <div class="partidas-header">
+                        <h3>Mis partidas finalizadas</h3>
+                        <div class="partidas-stats">
+                            <span id="contador-partidas">Total: <?php echo count($partidas); ?></span>
+                        </div>
+                    </div>
+
+                    <!-- Filtros -->
+                    <div class="partidas-filters-container">
+                        <form method="get" id="form-filtros" class="partidas-filters">
+                            <input type="hidden" name="seccion" value="partidas">
+                            
+                            <div class="filter-group">
+                                <label for="filtro_estado">Estado:</label>
+                                <select name="filtro_estado" id="filtro_estado" class="filter-select">
+                                    <option value="todas" <?php echo $filtroEstado === 'todas' ? 'selected' : ''; ?>>Todas</option>
+                                    <option value="ganada" <?php echo $filtroEstado === 'ganada' ? 'selected' : ''; ?>>Ganadas</option>
+                                    <option value="perdida" <?php echo $filtroEstado === 'perdida' ? 'selected' : ''; ?>>Perdidas</option>
+                                </select>
+                            </div>
+
+                            <button type="button" class="filter-toggle-btn" id="toggle-fecha-btn" onclick="toggleFiltroFecha()">
+                                <span class="toggle-icon">+</span> Filtrar por fecha
+                            </button>
+
+                            <div class="filtros-fecha" id="filtros-fecha">
+                                <div class="filter-group">
+                                    <label for="filtro_fecha_desde">Desde:</label>
+                                    <input type="date" name="filtro_fecha_desde" id="filtro_fecha_desde" class="filter-input" value="<?php echo h($filtroFechaDesde); ?>">
+                                </div>
+
+                                <div class="filter-group">
+                                    <label for="filtro_fecha_hasta">Hasta:</label>
+                                    <input type="date" name="filtro_fecha_hasta" id="filtro_fecha_hasta" class="filter-input" value="<?php echo h($filtroFechaHasta); ?>">
+                                </div>
+                            </div>
+
+                            <div class="filter-group">
+                                <button type="submit" class="filter-button">Aplicar filtros</button>
+                                <a href="historial.php?seccion=partidas" class="filter-button filter-button-reset">Limpiar</a>
+                            </div>
+                        </form>
+                    </div>
 
                     <?php if (empty($partidas)): ?>
-                        <div class="history-empty">Aún no tienes partidas finalizadas registradas.</div>
+                        <div class="history-empty">Aún no tienes partidas finalizadas con esos filtros.</div>
                     <?php else: ?>
-                        <div class="history-list">
-                            <?php foreach ($partidas as $partida): ?>
-                                <div class="history-item <?php echo $partidaSeleccionada === (int)$partida['id_partida'] ? 'is-active' : ''; ?>">
-                                    <div class="history-item-head">
-                                        <div>
-                                            <strong>Partida #<?php echo (int)$partida['id_partida']; ?></strong>
-                                            <div class="history-item-subtitle">
-                                                <span>Finalizada</span>
-                                                <span><?php echo formatear_fecha($partida['tiempo_inicial'] ?? null); ?> - <?php echo formatear_fecha($partida['tiempo_final'] ?? null); ?></span>
-                                            </div>
-                                        </div>
-                                        <span class="status-pill <?php echo clase_estado((string)$partida['estado_partida']); ?>"><?php echo h($partida['estado_partida']); ?></span>
-                                    </div>
-                                    <div class="history-item-grid">
-                                        <div>
-                                            <span>Estado</span>
-                                            <strong><?php echo h($partida['estado_partida']); ?></strong>
-                                        </div>
-                                        <div>
-                                            <span>Rondas</span>
-                                            <strong><?php echo (int)$partida['rondas_jugadas']; ?>/<?php echo (int)$partida['max_rondas']; ?></strong>
-                                        </div>
-                                        <div>
-                                            <span>Eventos</span>
-                                            <strong><?php echo (int)$partida['eventos_registrados']; ?></strong>
-                                        </div>
-                                        <div>
-                                            <span>CIA final</span>
-                                            <strong><?php echo $partida['cia_final'] !== null ? (int)$partida['cia_final'] . '%' : '-'; ?></strong>
-                                        </div>
-                                        <div>
-                                            <span>Presupuesto</span>
-                                            <strong><?php echo $partida['presupuesto_final'] !== null ? (int)$partida['presupuesto_final'] : '-'; ?></strong>
-                                        </div>
-                                        <div>
-                                            <span>Despido</span>
-                                            <strong><?php echo $partida['despido_final'] !== null ? h(number_format((float)$partida['despido_final'], 2)) . '%' : '-'; ?></strong>
-                                        </div>
-                                    </div>
-                                    <div class="history-item-actions">
-                                        <a class="history-item-button" href="historial.php?seccion=detalle&partida=<?php echo (int)$partida['id_partida']; ?>">Ver detalle</a>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
+                        <!-- Tabla de partidas -->
+                        <div class="partidas-table-container">
+                            <table class="partidas-table">
+                                <thead>
+                                    <tr>
+                                        <th class="col-fecha">Fecha</th>
+                                        <th class="col-partida">Partida</th>
+                                        <th class="col-estado">Estado</th>
+                                        <th class="col-cia">CIA</th>
+                                        <th class="col-presupuesto">Presupuesto</th>
+                                        <th class="col-despido">Despido</th>
+                                        <th class="col-acciones">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($partidas as $partida): ?>
+                                        <tr class="partida-row" data-partida-id="<?php echo (int)$partida['id_partida']; ?>">
+                                            <td class="col-fecha">
+                                                <span class="fecha-valor"><?php echo date('d/m/Y', strtotime($partida['tiempo_inicial'])); ?></span>
+                                                <span class="hora-valor"><?php echo date('H:i', strtotime($partida['tiempo_inicial'])); ?></span>
+                                            </td>
+                                            <td class="col-partida">
+                                                #<?php echo (int)$partida['id_partida']; ?>
+                                            </td>
+                                            <td class="col-estado">
+                                                <span class="status-pill <?php echo clase_estado((string)$partida['estado_partida']); ?>">
+                                                    <?php echo $partida['estado_partida'] === 'ganada' ? '✓ Ganada' : '✗ Perdida'; ?>
+                                                </span>
+                                            </td>
+                                            <td class="col-cia">
+                                                <?php echo $partida['cia_final'] !== null ? (int)$partida['cia_final'] . '%' : '-'; ?>
+                                            </td>
+                                            <td class="col-presupuesto">
+                                                <?php echo $partida['presupuesto_final'] !== null ? (int)$partida['presupuesto_final'] : '-'; ?>
+                                            </td>
+                                            <td class="col-despido">
+                                                <?php echo $partida['despido_final'] !== null ? number_format((float)$partida['despido_final'], 1) . '%' : '-'; ?>
+                                            </td>
+                                            <td class="col-acciones">
+                                                <button type="button" class="btn-expandir" onclick="toggleDetallPartida(this, <?php echo (int)$partida['id_partida']; ?>)">
+                                                    <span class="btn-icon">▶</span> Detalles
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <!-- Fila expandible de detalles -->
+                                        <tr class="partida-detail-row" id="detail-<?php echo (int)$partida['id_partida']; ?>">
+                                            <td colspan="7">
+                                                <div class="partida-detail-content">
+                                                    <div class="detail-grid">
+                                                        <div class="detail-section">
+                                                            <h4>Datos básicos</h4>
+                                                            <div class="detail-row">
+                                                                <span class="label">Duración:</span>
+                                                                <span class="value"><?php echo $partida['duracion_segundos'] !== null ? number_format((float)$partida['duracion_segundos'] / 60, 1) . ' min' : '-'; ?></span>
+                                                            </div>
+                                                            <div class="detail-row">
+                                                                <span class="label">Rondas:</span>
+                                                                <span class="value"><?php echo (int)$partida['rondas_jugadas']; ?>/<?php echo (int)$partida['max_rondas']; ?></span>
+                                                            </div>
+                                                            <div class="detail-row">
+                                                                <span class="label">Eventos:</span>
+                                                                <span class="value"><?php echo (int)$partida['eventos_registrados']; ?></span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="detail-section">
+                                                            <h4>Puntajes (Inicial → Final)</h4>
+                                                            <div class="detail-row">
+                                                                <span class="label">CIA:</span>
+                                                                <span class="value">
+                                                                    <?php echo $partida['cia_inicial']; ?>% → <?php echo $partida['cia_final'] !== null ? (int)$partida['cia_final'] . '%' : '-'; ?>
+                                                                </span>
+                                                            </div>
+                                                            <div class="detail-row">
+                                                                <span class="label">Confidencialidad:</span>
+                                                                <span class="value">
+                                                                    <?php echo $partida['c_inicial'] !== null ? (int)$partida['c_inicial'] . '%' : '-'; ?> → <?php echo $partida['c_final'] !== null ? (int)$partida['c_final'] . '%' : '-'; ?>
+                                                                </span>
+                                                            </div>
+                                                            <div class="detail-row">
+                                                                <span class="label">Integridad:</span>
+                                                                <span class="value">
+                                                                    <?php echo $partida['i_inicial'] !== null ? (int)$partida['i_inicial'] . '%' : '-'; ?> → <?php echo $partida['i_final'] !== null ? (int)$partida['i_final'] . '%' : '-'; ?>
+                                                                </span>
+                                                            </div>
+                                                            <div class="detail-row">
+                                                                <span class="label">Accesibilidad:</span>
+                                                                <span class="value">
+                                                                    <?php echo $partida['a_inicial'] !== null ? (int)$partida['a_inicial'] . '%' : '-'; ?> → <?php echo $partida['a_final'] !== null ? (int)$partida['a_final'] . '%' : '-'; ?>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="detail-section">
+                                                            <h4>Presupuesto y Despido</h4>
+                                                            <div class="detail-row">
+                                                                <span class="label">Presupuesto:</span>
+                                                                <span class="value">
+                                                                    <?php echo (int)$partida['presupuesto_inicial']; ?> → <?php echo $partida['presupuesto_final'] !== null ? (int)$partida['presupuesto_final'] : '-'; ?>
+                                                                </span>
+                                                            </div>
+                                                            <div class="detail-row">
+                                                                <span class="label">Despido:</span>
+                                                                <span class="value">
+                                                                    <?php echo number_format((float)$partida['despido_inicial'], 1); ?>% → <?php echo $partida['despido_final'] !== null ? number_format((float)$partida['despido_final'], 1) . '%' : '-'; ?>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="detail-actions">
+                                                        <a href="historial.php?seccion=detalle&partida=<?php echo (int)$partida['id_partida']; ?>" class="btn-ver-completo">Ver análisis completo →</a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -453,23 +620,106 @@ function es_activa(string $seccionActual, string $esperada): string {
                         <div class="history-empty">No se pudo cargar la partida seleccionada. Verifica que pertenezca a tu usuario y que esté finalizada.</div>
                     <?php else: ?>
                         <h3>Detalle de la partida #<?php echo (int)$partidaDetalle['id_partida']; ?></h3>
-                        <div class="history-detail-summary">
-                            <div><span>Duración</span><strong><?php echo !empty($partidaDetalle['duracion_segundos']) ? h(number_format(((float)$partidaDetalle['duracion_segundos']) / 60, 1)) . ' min' : '-'; ?></strong></div>
-                            <div><span>Estado</span><strong><?php echo h($partidaDetalle['estado_partida']); ?></strong></div>
-                        </div>
-                        <div class="history-detail-summary history-detail-summary-small">
-                            <div><span>CIA inicial</span><strong><?php echo (int)$partidaDetalle['cia_inicial']; ?>%</strong></div>
-                            <div><span>C inicial</span><strong><?php echo $partidaDetalle['c_inicial'] !== null ? (int)$partidaDetalle['c_inicial'] . '%' : 'Puntaje individual no disponible'; ?></strong></div>
-                            <div><span>I inicial</span><strong><?php echo $partidaDetalle['i_inicial'] !== null ? (int)$partidaDetalle['i_inicial'] . '%' : 'Puntaje individual no disponible'; ?></strong></div>
-                            <div><span>A inicial</span><strong><?php echo $partidaDetalle['a_inicial'] !== null ? (int)$partidaDetalle['a_inicial'] . '%' : 'Puntaje individual no disponible'; ?></strong></div>
-                            <div><span>Presupuesto inicial</span><strong><?php echo (int)$partidaDetalle['presupuesto_inicial']; ?></strong></div>
-                            <div><span>Despido inicial</span><strong><?php echo h(number_format((float)$partidaDetalle['despido_inicial'], 2)); ?>%</strong></div>
-                            <div><span>CIA final</span><strong><?php echo $partidaDetalle['cia_final'] !== null ? (int)$partidaDetalle['cia_final'] . '%' : '-'; ?></strong></div>
-                            <div><span>C final</span><strong><?php echo $partidaDetalle['c_final'] !== null ? (int)$partidaDetalle['c_final'] . '%' : 'Puntaje individual no disponible'; ?></strong></div>
-                            <div><span>I final</span><strong><?php echo $partidaDetalle['i_final'] !== null ? (int)$partidaDetalle['i_final'] . '%' : 'Puntaje individual no disponible'; ?></strong></div>
-                            <div><span>A final</span><strong><?php echo $partidaDetalle['a_final'] !== null ? (int)$partidaDetalle['a_final'] . '%' : 'Puntaje individual no disponible'; ?></strong></div>
-                            <div><span>Presupuesto final</span><strong><?php echo $partidaDetalle['presupuesto_final'] !== null ? (int)$partidaDetalle['presupuesto_final'] : '-'; ?></strong></div>
-                            <div><span>Despido final</span><strong><?php echo $partidaDetalle['despido_final'] !== null ? h(number_format((float)$partidaDetalle['despido_final'], 2)) . '%' : '-'; ?></strong></div>
+                        
+                        <div class="partidas-table-container">
+                            <table class="partidas-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 25%;">Parámetro</th>
+                                        <th style="width: 25%;">Valor Inicial</th>
+                                        <th style="width: 25%;">Valor Final</th>
+                                        <th style="width: 25%;">Cambio</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="partida-row">
+                                        <td><strong>CIA</strong></td>
+                                        <td><?php echo (int)$partidaDetalle['cia_inicial']; ?>%</td>
+                                        <td><?php echo $partidaDetalle['cia_final'] !== null ? (int)$partidaDetalle['cia_final'] . '%' : '-'; ?></td>
+                                        <td style="text-align: center;">
+                                            <?php 
+                                                $cambio_cia = ($partidaDetalle['cia_final'] !== null && $partidaDetalle['cia_inicial'] !== null) 
+                                                    ? (int)$partidaDetalle['cia_final'] - (int)$partidaDetalle['cia_inicial']
+                                                    : 0;
+                                                $color = $cambio_cia > 0 ? 'color: #9ef5ca;' : ($cambio_cia < 0 ? 'color: #ffc1d3;' : '');
+                                            ?>
+                                            <span style="<?php echo $color; ?>"><?php echo ($cambio_cia > 0 ? '+' : '') . $cambio_cia; ?>%</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="partida-row">
+                                        <td><strong>Confidencialidad</strong></td>
+                                        <td><?php echo $partidaDetalle['c_inicial'] !== null ? (int)$partidaDetalle['c_inicial'] . '%' : '-'; ?></td>
+                                        <td><?php echo $partidaDetalle['c_final'] !== null ? (int)$partidaDetalle['c_final'] . '%' : '-'; ?></td>
+                                        <td style="text-align: center;">
+                                            <?php 
+                                                $cambio_c = ($partidaDetalle['c_final'] !== null && $partidaDetalle['c_inicial'] !== null) 
+                                                    ? (int)$partidaDetalle['c_final'] - (int)$partidaDetalle['c_inicial']
+                                                    : 0;
+                                            ?>
+                                            <span><?php echo ($cambio_c > 0 ? '+' : '') . $cambio_c; ?>%</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="partida-row">
+                                        <td><strong>Integridad</strong></td>
+                                        <td><?php echo $partidaDetalle['i_inicial'] !== null ? (int)$partidaDetalle['i_inicial'] . '%' : '-'; ?></td>
+                                        <td><?php echo $partidaDetalle['i_final'] !== null ? (int)$partidaDetalle['i_final'] . '%' : '-'; ?></td>
+                                        <td style="text-align: center;">
+                                            <?php 
+                                                $cambio_i = ($partidaDetalle['i_final'] !== null && $partidaDetalle['i_inicial'] !== null) 
+                                                    ? (int)$partidaDetalle['i_final'] - (int)$partidaDetalle['i_inicial']
+                                                    : 0;
+                                            ?>
+                                            <span><?php echo ($cambio_i > 0 ? '+' : '') . $cambio_i; ?>%</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="partida-row">
+                                        <td><strong>Accesibilidad</strong></td>
+                                        <td><?php echo $partidaDetalle['a_inicial'] !== null ? (int)$partidaDetalle['a_inicial'] . '%' : '-'; ?></td>
+                                        <td><?php echo $partidaDetalle['a_final'] !== null ? (int)$partidaDetalle['a_final'] . '%' : '-'; ?></td>
+                                        <td style="text-align: center;">
+                                            <?php 
+                                                $cambio_a = ($partidaDetalle['a_final'] !== null && $partidaDetalle['a_inicial'] !== null) 
+                                                    ? (int)$partidaDetalle['a_final'] - (int)$partidaDetalle['a_inicial']
+                                                    : 0;
+                                            ?>
+                                            <span><?php echo ($cambio_a > 0 ? '+' : '') . $cambio_a; ?>%</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="partida-row">
+                                        <td><strong>Presupuesto</strong></td>
+                                        <td><?php echo (int)$partidaDetalle['presupuesto_inicial']; ?></td>
+                                        <td><?php echo $partidaDetalle['presupuesto_final'] !== null ? (int)$partidaDetalle['presupuesto_final'] : '-'; ?></td>
+                                        <td style="text-align: center;">
+                                            <?php 
+                                                $cambio_presupuesto = ($partidaDetalle['presupuesto_final'] !== null && $partidaDetalle['presupuesto_inicial'] !== null) 
+                                                    ? (int)$partidaDetalle['presupuesto_final'] - (int)$partidaDetalle['presupuesto_inicial']
+                                                    : 0;
+                                            ?>
+                                            <span><?php echo ($cambio_presupuesto > 0 ? '+' : '') . $cambio_presupuesto; ?></span>
+                                        </td>
+                                    </tr>
+                                    <tr class="partida-row">
+                                        <td><strong>Despido</strong></td>
+                                        <td><?php echo h(number_format((float)$partidaDetalle['despido_inicial'], 2)); ?>%</td>
+                                        <td><?php echo $partidaDetalle['despido_final'] !== null ? h(number_format((float)$partidaDetalle['despido_final'], 2)) . '%' : '-'; ?></td>
+                                        <td style="text-align: center;">
+                                            <?php 
+                                                $cambio_despido = ($partidaDetalle['despido_final'] !== null && $partidaDetalle['despido_inicial'] !== null) 
+                                                    ? (float)$partidaDetalle['despido_final'] - (float)$partidaDetalle['despido_inicial']
+                                                    : 0;
+                                            ?>
+                                            <span><?php echo ($cambio_despido > 0 ? '+' : '') . h(number_format($cambio_despido, 2)); ?>%</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="partida-row">
+                                        <td><strong>Duración</strong></td>
+                                        <td colspan="2" style="text-align: center;">
+                                            <?php echo !empty($partidaDetalle['duracion_segundos']) ? h(number_format(((float)$partidaDetalle['duracion_segundos']) / 60, 1)) . ' minutos' : '-'; ?>
+                                        </td>
+                                        <td style="text-align: center;">Estado: <?php echo h($partidaDetalle['estado_partida']); ?></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
 
                         <?php if (empty($eventos)): ?>
@@ -486,43 +736,73 @@ function es_activa(string $seccionActual, string $esperada): string {
                                             <div class="event-meta">
                                                 <span><?php echo h($evento['remitente_nombre'] ?: $evento['remitente_correo']); ?></span>
                                                 <span><?php echo h($evento['fue_timeout'] ? 'Timeout' : ((int)$evento['tiempo_respuesta_segundos'] . 's')); ?></span>
+                                                <?php 
+                                                    $cia_antes = (float)($evento['cia_antes'] ?? 0);
+                                                    $cia_despues = (float)($evento['cia_despues'] ?? 0);
+                                                    $cambio_cia = $cia_despues - $cia_antes;
+                                                    $es_buena = $cambio_cia > 0;
+                                                ?>
+                                                <span class="event-choice-badge <?php echo $es_buena ? 'good' : 'questionable'; ?>">
+                                                    <?php echo $es_buena ? '✓ Buena elección' : '✕ Elección cuestionable'; ?>
+                                                </span>
                                             </div>
                                         </div>
                                         <p class="event-text"><?php echo nl2br(h($evento['texto_correo'])); ?></p>
-                                        <div class="event-grid">
-                                            <div>
-                                                <span>Respuesta</span>
-                                                <strong><?php echo h($evento['texto_opcion'] ?: 'Timeout automático'); ?></strong>
-                                            </div>
-                                            <div>
-                                                <span>Feedback de respuesta</span>
-                                                <strong><?php echo h($evento['feedback_mostrado'] ?: $evento['feedback_opcion'] ?: '-'); ?></strong>
-                                            </div>
-                                            <div>
-                                                <span>Feedback del escenario</span>
-                                                <strong><?php echo h($evento['feedback_general'] ?: '-'); ?></strong>
-                                            </div>
+                                        
+                                        <div class="partidas-table-container" style="margin-top: 10px; margin-bottom: 10px;">
+                                            <table class="partidas-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="width: 25%;">Respuesta del usuario</th>
+                                                        <th style="width: 25%;">Feedback de respuesta</th>
+                                                        <th style="width: 25%;">Feedback del escenario</th>
+                                                        <th style="width: 25%;">Tiempo de respuesta</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr class="partida-row">
+                                                        <td><?php echo h($evento['texto_opcion'] ?: 'Timeout automático'); ?></td>
+                                                        <td><?php echo h($evento['feedback_mostrado'] ?: $evento['feedback_opcion'] ?: '-'); ?></td>
+                                                        <td><?php echo h($evento['feedback_general'] ?: '-'); ?></td>
+                                                        <td style="text-align: center;"><?php echo h($evento['fue_timeout'] ? 'Timeout' : ((int)$evento['tiempo_respuesta_segundos'] . 's')); ?></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </div>
-                                        <div class="event-grid event-grid-small">
-                                            <div>
-                                                <span>Antes</span>
-                                                <strong><?php echo h(formatear_desglose_cia([
-                                                    'confidencialidad' => $evento['c_antes'],
-                                                    'integridad' => $evento['i_antes'],
-                                                    'accesibilidad' => $evento['a_antes'],
-                                                    'cia' => $evento['cia_antes']
-                                                ])); ?> | Presupuesto <?php echo (int)$evento['presupuesto_antes']; ?> | Despido <?php echo h(number_format((float)$evento['despido_antes'], 2)); ?>%</strong>
-                                            </div>
-                                            <div>
-                                                <span>Después</span>
-                                                <strong><?php echo h(formatear_desglose_cia([
-                                                    'confidencialidad' => $evento['c_despues'],
-                                                    'integridad' => $evento['i_despues'],
-                                                    'accesibilidad' => $evento['a_despues'],
-                                                    'cia' => $evento['cia_despues']
-                                                ])); ?> | Presupuesto <?php echo (int)$evento['presupuesto_despues']; ?> | Despido <?php echo h(number_format((float)$evento['despido_despues'], 2)); ?>%</strong>
-                                            </div>
+
+                                        <div class="partidas-table-container">
+                                            <table class="partidas-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="width: 50%;">Estado antes del turno</th>
+                                                        <th style="width: 50%;">Estado después del turno</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr class="partida-row">
+                                                        <td>
+                                                            <small style="color: #a9b5ff;">CIA: <?php echo h(formatear_desglose_cia([
+                                                                'confidencialidad' => $evento['c_antes'],
+                                                                'integridad' => $evento['i_antes'],
+                                                                'accesibilidad' => $evento['a_antes'],
+                                                                'cia' => $evento['cia_antes']
+                                                            ])); ?></small><br>
+                                                            Presupuesto: <?php echo (int)$evento['presupuesto_antes']; ?> | Despido: <?php echo h(number_format((float)$evento['despido_antes'], 2)); ?>%
+                                                        </td>
+                                                        <td>
+                                                            <small style="color: #a9b5ff;">CIA: <?php echo h(formatear_desglose_cia([
+                                                                'confidencialidad' => $evento['c_despues'],
+                                                                'integridad' => $evento['i_despues'],
+                                                                'accesibilidad' => $evento['a_despues'],
+                                                                'cia' => $evento['cia_despues']
+                                                            ])); ?></small><br>
+                                                            Presupuesto: <?php echo (int)$evento['presupuesto_despues']; ?> | Despido: <?php echo h(number_format((float)$evento['despido_despues'], 2)); ?>%
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </div>
+                                        
                                         <div class="event-date">Registrado: <?php echo formatear_fecha($evento['fecha_evento'] ?? null); ?></div>
                                     </article>
                                 <?php endforeach; ?>
@@ -539,31 +819,99 @@ function es_activa(string $seccionActual, string $esperada): string {
                     <?php if (empty($rankingUsuarios)): ?>
                         <div class="history-empty">No hay usuarios para mostrar.</div>
                     <?php else: ?>
-                        <div class="ranking-list">
-                            <?php foreach ($rankingUsuarios as $index => $usuario): ?>
-                                <article class="ranking-item">
-                                    <div class="ranking-position">#<?php echo $index + 1; ?></div>
-                                    <div class="ranking-main">
-                                        <strong><?php echo h($usuario['nombre_usuario']); ?></strong>
-                                        <span><?php echo (int)$usuario['partidas_finalizadas']; ?> partidas finalizadas</span>
-                                    </div>
-                                    <div class="ranking-stats">
-                                        <div><span>Ganadas</span><strong><?php echo (int)$usuario['partidas_ganadas']; ?></strong></div>
-                                        <div><span>Perdidas</span><strong><?php echo (int)$usuario['partidas_perdidas']; ?></strong></div>
-                                        <div><span>CIA</span><strong><?php echo $usuario['promedio_cia'] !== null ? h(number_format((float)$usuario['promedio_cia'], 2)) : '-'; ?></strong></div>
-                                        <div><span>Confidencialidad</span><strong><?php echo $usuario['promedio_c'] !== null ? h(number_format((float)$usuario['promedio_c'], 2)) : '-'; ?></strong></div>
-                                        <div><span>Integridad</span><strong><?php echo $usuario['promedio_i'] !== null ? h(number_format((float)$usuario['promedio_i'], 2)) : '-'; ?></strong></div>
-                                        <div><span>Accesibilidad</span><strong><?php echo $usuario['promedio_a'] !== null ? h(number_format((float)$usuario['promedio_a'], 2)) : '-'; ?></strong></div>
-                                        <div><span>Presupuesto</span><strong><?php echo $usuario['promedio_presupuesto'] !== null ? h(number_format((float)$usuario['promedio_presupuesto'], 2)) : '-'; ?></strong></div>
-                                        <div><span>Despido</span><strong><?php echo $usuario['promedio_despido'] !== null ? h(number_format((float)$usuario['promedio_despido'], 2)) : '-'; ?></strong></div>
-                                    </div>
-                                </article>
-                            <?php endforeach; ?>
+                        <div class="partidas-table-container">
+                            <table class="partidas-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 8%;">Posición</th>
+                                        <th style="width: 25%;">Usuario</th>
+                                        <th style="width: 12%;">Partidas</th>
+                                        <th style="width: 12%;">Ganadas</th>
+                                        <th style="width: 12%;">CIA</th>
+                                        <th style="width: 15%;">Presupuesto</th>
+                                        <th style="width: 16%;">Despido</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($rankingUsuarios as $index => $usuario): ?>
+                                        <tr class="partida-row">
+                                            <td style="text-align: center; font-weight: 700; color: #a9b5ff;"><?php echo $index + 1; ?></td>
+                                            <td><?php echo h($usuario['nombre_usuario']); ?></td>
+                                            <td style="text-align: center;"><?php echo (int)$usuario['partidas_finalizadas']; ?></td>
+                                            <td style="text-align: center;"><?php echo (int)$usuario['partidas_ganadas']; ?></td>
+                                            <td style="text-align: center;"><?php echo $usuario['promedio_cia'] !== null ? h(number_format((float)$usuario['promedio_cia'], 2)) : '-'; ?></td>
+                                            <td style="text-align: center;"><?php echo $usuario['promedio_presupuesto'] !== null ? h(number_format((float)$usuario['promedio_presupuesto'], 2)) : '-'; ?></td>
+                                            <td style="text-align: center;"><?php echo $usuario['promedio_despido'] !== null ? h(number_format((float)$usuario['promedio_despido'], 2)) . '%' : '-'; ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
                         </div>
                     <?php endif; ?>
                 </div>
             <?php endif; ?>
         </div>
     </div>
+
+    <script>
+        // Toggle detalle de partida expandible
+        function toggleDetallPartida(button, idPartida) {
+            const detailRow = document.getElementById('detail-' + idPartida);
+            const isExpanded = detailRow.classList.contains('expanded');
+            
+            // Cerrar todas las otras filas de detalles
+            document.querySelectorAll('.partida-detail-row').forEach(row => {
+                row.classList.remove('expanded');
+            });
+            
+            // Resetear iconos de botones
+            document.querySelectorAll('.btn-expandir .btn-icon').forEach(icon => {
+                icon.textContent = '▶';
+            });
+            
+            // Mostrar la fila de detalles seleccionada
+            if (!isExpanded) {
+                detailRow.classList.add('expanded');
+                button.querySelector('.btn-icon').textContent = '▼';
+            }
+        }
+
+        // Toggle filtro de fecha
+        function toggleFiltroFecha() {
+            const filtrosFecha = document.getElementById('filtros-fecha');
+            const toggleBtn = document.getElementById('toggle-fecha-btn');
+            const toggleIcon = toggleBtn.querySelector('.toggle-icon');
+            
+            if (filtrosFecha.classList.contains('visible')) {
+                filtrosFecha.classList.remove('visible');
+                toggleIcon.textContent = '▶';
+            } else {
+                filtrosFecha.classList.add('visible');
+                toggleIcon.textContent = '▼';
+            }
+        }
+
+        // Mostrar filtro de fecha si hay valores activos
+        window.addEventListener('load', function() {
+            const fechaDesde = document.getElementById('filtro_fecha_desde').value;
+            const fechaHasta = document.getElementById('filtro_fecha_hasta').value;
+            
+            if (fechaDesde || fechaHasta) {
+                document.getElementById('filtros-fecha').classList.add('visible');
+                document.querySelector('#toggle-fecha-btn .toggle-icon').textContent = '▼';
+            }
+        });
+
+        // Permitir hacer click en la fila para abrir detalles
+        document.querySelectorAll('.partida-row').forEach(row => {
+            row.addEventListener('click', function(e) {
+                // No disparar si se hace click en el botón
+                if (!e.target.closest('.btn-expandir')) {
+                    const button = this.querySelector('.btn-expandir');
+                    button.click();
+                }
+            });
+        });
+    </script>
 </body>
 </html>

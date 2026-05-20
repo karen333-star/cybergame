@@ -378,8 +378,8 @@
 
             <section class="soc-panel nav-panel">
                 <h3>SYSTEM_NAV</h3>
-                <button type="button" class="soc-nav-btn menu-btn menu-btn-secondary" onclick="window.location.href='menu.php'">VOLVER AL MENU</button>
-                <button type="button" class="soc-nav-btn" onclick="mostrarConfig()">VOLVER A CONFIGURACION</button>
+                <button type="button" id="btn-salir-menu-partida" class="soc-nav-btn menu-btn menu-btn-secondary">VOLVER AL MENU</button>
+                <button type="button" id="btn-salir-config-partida" class="soc-nav-btn">VOLVER A CONFIGURACION</button>
 
                 <div id="mailbox-controls" class="soc-mailbox-controls">
                     <button type="button" id="btn-bandeja-escenarios" onclick="abrirBandeja('scenarios')">
@@ -497,7 +497,19 @@
                 </div>
             </div>
 
-            <div class="partida-link-legacy link" onclick="mostrarConfig()">Volver a configuración</div>
+            <div id="modal-salir-partida" class="partida-result-modal partida-exit-modal" style="display: none;" aria-hidden="true">
+                <div id="modal-salir-card" class="partida-result-card partida-exit-card">
+                    <div class="partida-result-badge partida-exit-badge">CONFIRMACION</div>
+                    <div id="modal-salir-titulo" class="partida-result-title">Salir de la partida</div>
+                    <div id="modal-salir-mensaje" class="partida-result-message">¿seguro que quieres salir de la partida?</div>
+                    <div class="partida-exit-actions">
+                        <button type="button" id="btn-salir-confirmar" class="partida-result-btn menu-btn menu-btn-primary">Sí, salir</button>
+                        <button type="button" id="btn-salir-cancelar" class="partida-result-btn menu-btn menu-btn-secondary">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="link-salir-config-partida" class="partida-link-legacy link">Volver a configuración</div>
         </main>
 
         <aside class="soc-right-col">
@@ -538,5 +550,6 @@
 
 <script src="script.js?v=20260402"></script>
 <script src="confi.js?v=20260429"></script>
+<script src="music-player.js?v=20260511"></script>
 </body>
 </html>             
